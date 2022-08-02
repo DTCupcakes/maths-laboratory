@@ -1,3 +1,29 @@
+## Gaussian Processes
+<script defer src="https://cdn.plot.ly/plotly-latest.min.js"> </script>
+  <script defer src="myScript.js"></script>
+
+  <div id="linModelPlot">'
+    <div class="slidecontainer" id="linSlopeSlideContainer">
+      <input type="range" min="0" max="10" value="1" class="slider" id="linSlope">
+      <p>m: <span id="linSlopeVal"></span></p>
+    </div>
+    <div class="slidecontainer" id="linIceptSlideContainer">
+      <input type="range" min="300" max="400" value="300" class="slider" id="linIcept">
+      <p>c: <span id="linIceptVal"></span></p>
+    </div>
+  </div>
+  
+  <div id="myPlot"></div>
+  <button onclick="javascript:randomize();">Randomize!</button>
+  <div class="slidecontainer" id="meanslidecontainer">
+    <input type="range" min="0" max="10" value="5" class="slider" id="myMean">
+    <p>Mean: <span id="meanValue"></span></p>
+  </div>
+  <div class="slidecontainer" id="stdslidecontainer">
+    <input type="range" min="1" max="5" value="1" class="slider" id="myStd">
+    <p>Standard deviation: <span id="stdValue"></span></p>
+  </div>
+
 ## Welcome to GitHub Pages
 
 You can use the [editor on GitHub](https://github.com/DTCupcakes/maths-laboratory/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
