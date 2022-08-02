@@ -35,7 +35,7 @@ Our CO2 data might, at first glance, look like it fits a single straight upwards
 
 **Figure 3 - CO2 concentration vs time plot with uncertainties**
 
-Ideally our line should fit within the uncertainties of all the data points. On the plot, our line will have the general formula $$y = mt +c$$. $t$ is the time at which we measure each data point (i.e. the year), $m$ is the slope of the line, $c$ moves the line vertically up and down, and $y$ is the value we predict for CO2 concentration.
+Ideally our line should fit within the uncertainties of all the data points. On the plot, our line will have the general formula $$y = mt +c.$$ $t$ is the time at which we measure each data point (i.e. the year), $m$ is the slope of the line, $c$ moves the line vertically up and down, and $y$ is the value we predict for CO2 concentration.
 
 We can experiment with different values of $m$ and $c$ to see what different lines we get. These values are the PARAMETERS for our model, since they change what our model looks like on the plot, and what predictions we get from it. We know that $m$ needs to be positive to produce an upwards slope.
 
@@ -57,6 +57,16 @@ Try adjusting the values of $m$ and $c$ on the plot below to find the linear mod
 This process of altering the parameters to find which version of the model best fits the data is known as OPTIMISATION and is an important step of model building. There are many different established optimisation algorithms that can be used to find the best parameters for any model.
 
 ### The Nomal (Gaussian) Distribution
+
+One way we can talk about our model is to say that the data is drawn from a DISTRIBUTION. Let’s see what happens if we assume our linear model is a completely accurate picture of reality. That means the atmospheric CO2 concentration increases linearly with time, such that at any time $t$ the CO2 concentration is given by our formula $$y = mt + c.$$
+
+So what happens now if we measure the CO2 concentration? What you would see is that we don’t actually measure the CO2 concentration exactly. Our measurements are all just a little bit off, maybe because of random variations, maybe because of systematic error in our measurement process. This is what we mean when we talk about adding uncertainty. We are allowing for the fact that our measurements will be inaccurate to some small degree due to factors that are not necessarily under our control.
+
+Let’s say that we make measurements of the atmospheric CO2 concentration in 2023. What is the probability of us measuring any given value of the CO2 concentration? Intuitively we understand that the probability should be higher closer to the “true” value of the CO2 concentration, and should decrease as we move further away from it. How quickly this distribution decreases is determined by the size of our uncertainties on each measurement. A smaller uncertainty means our measurement is more likely to be closer to the true value.
+
+This type of probability distribution is called a NORMAL DISTRIBUTION or a GAUSSIAN. We say that our measurements are DRAWN from this distribution, meaning that this distribution tells us the probability of the measurement taking a particular value. We indicate this by using this notation: $$y_i \sim N(\mu, \sigma)$$
+
+Our individual measurements $y_1$, $y_2$, $y_3$, etc are represented here by $y_i$.  is the location of the MEAN, or centre, of our Gaussian distribution, while  is the size of the uncertainty. The $N$ indicates that the probability of our measurements taking on particular values follows a normal distribution (as opposed to a different type of probability distribution).
 
 <div id="myPlot">
   <button onclick="javascript:randomize();">Randomize!</button>
