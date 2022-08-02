@@ -1,19 +1,35 @@
-## Gaussian Processes
 <script defer src="https://cdn.plot.ly/plotly-latest.min.js"> </script>
   <script defer src="myScript.js"></script>
 
-  <div id="linModelPlot">
-    <div class="slidecontainer" id="linSlopeSlideContainer">
-      <input type="range" min="0" max="10" value="1" class="slider" id="linSlope">
-      <p>m: <span id="linSlopeVal"></span></p>
-    </div>
-    <div class="slidecontainer" id="linIceptSlideContainer">
-      <input type="range" min="300" max="400" value="300" class="slider" id="linIcept">
-      <p>c: <span id="linIceptVal"></span></p>
-    </div>
+# Gaussian Processes
+## Introduction
+
+Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
+
+**Figure 1 - Plot of atmospheric CO2 concentration vs time**
+
+CO2 is a greenhouse gas, since it traps heat in the atmosphere, making it an important part of climate models. Let’s try to make a prediction about the concentration of CO2 in the atmosphere in March of 2035. Based on the data we have, which of the two predicted values shown below do you think is more likely?
+
+**Figure 2 - Plot of atmospheric CO2 concentration vs time with added predictions**
+
+I bet you noticed the upward trend in our data, and so you think the higher data point is much more likely than the lower data point. How do we quantify this intuition?
+
+In order to make a prediction we need to engage in an exercise of model building. We’ll start with some simple linear models and extend out the necessary ideas until we can build a much more flexible model known as a Gaussian process. 
+
+Unlike many models you may be familiar with, Gaussian processes aren’t restricted to a particular relationship between the parameters and instead use the distribution of the existing data to build the model. What we will end up with is a model that tells us the probability of measuring a particular value of the CO2 concentration at any given time. To make predictions all we need to do is find the points with the highest probability.
+
+<div id="linModelPlot">
+  <div class="slidecontainer" id="linSlopeSlideContainer">
+    <input type="range" min="0" max="10" value="1" class="slider" id="linSlope">
+    <p>m: <span id="linSlopeVal"></span></p>
   </div>
+  <div class="slidecontainer" id="linIceptSlideContainer">
+    <input type="range" min="300" max="400" value="300" class="slider" id="linIcept">
+    <p>c: <span id="linIceptVal"></span></p>
+  </div>
+</div>
   
-  <div id="myPlot"></div>
+<div id="myPlot">
   <button onclick="javascript:randomize();">Randomize!</button>
   <div class="slidecontainer" id="meanslidecontainer">
     <input type="range" min="0" max="10" value="5" class="slider" id="myMean">
@@ -23,6 +39,7 @@
     <input type="range" min="1" max="5" value="1" class="slider" id="myStd">
     <p>Standard deviation: <span id="stdValue"></span></p>
   </div>
+</div>
 
 ## Welcome to GitHub Pages
 
