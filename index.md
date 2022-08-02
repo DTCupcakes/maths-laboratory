@@ -27,6 +27,8 @@ In order to make a prediction we need to engage in an exercise of model building
 
 Unlike many models you may be familiar with, Gaussian processes aren’t restricted to a particular relationship between the parameters and instead use the distribution of the existing data to build the model. What we will end up with is a model that tells us the probability of measuring a particular value of the CO2 concentration at any given time. To make predictions all we need to do is find the points with the highest probability.
 
+Sample equation: $y = mx + c$
+
 <div id="linModelPlot">
   <div class="slidecontainer" id="linSlopeSlideContainer">
     <input type="range" min="0" max="10" value="1" class="slider" id="linSlope">
