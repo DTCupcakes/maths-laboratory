@@ -2,7 +2,7 @@
 <script defer src="https://cdn.plot.ly/plotly-latest.min.js"> </script>
   <script defer src="myScript.js"></script>
 
-  <div id="linModelPlot">'
+  <div id="linModelPlot">
     <div class="slidecontainer" id="linSlopeSlideContainer">
       <input type="range" min="0" max="10" value="1" class="slider" id="linSlope">
       <p>m: <span id="linSlopeVal"></span></p>
