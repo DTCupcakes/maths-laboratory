@@ -57,15 +57,28 @@ This process of altering the parameters to find which version of the model best 
 
 ### The Nomal (Gaussian) Distribution
 
-One way we can talk about our model is to say that the data is drawn from a DISTRIBUTION. Let’s see what happens if we assume our linear model is a completely accurate picture of reality. That means the atmospheric CO2 concentration increases linearly with time, such that at any time $t$ the CO2 concentration is given by our formula $$y = mt + c.$$
+One way we can talk about our model is to say that the data is drawn from a DISTRIBUTION. Let’s see what happens if we assume our linear model is a completely accurate picture of reality. That means the atmospheric CO2 concentration increases linearly with time, such that at any time $t$ the CO2 concentration is given by our formula: \[ y = mt + c \]
 
 So what happens now if we measure the CO2 concentration? What you would see is that we don’t actually measure the CO2 concentration exactly. Our measurements are all just a little bit off, maybe because of random variations, maybe because of systematic error in our measurement process. This is what we mean when we talk about adding uncertainty. We are allowing for the fact that our measurements will be inaccurate to some small degree due to factors that are not necessarily under our control.
 
 Let’s say that we make measurements of the atmospheric CO2 concentration in 2023. What is the probability of us measuring any given value of the CO2 concentration? Intuitively we understand that the probability should be higher closer to the “true” value of the CO2 concentration, and should decrease as we move further away from it. How quickly this distribution decreases is determined by the size of our uncertainties on each measurement. A smaller uncertainty means our measurement is more likely to be closer to the true value.
 
-This type of probability distribution is called a NORMAL DISTRIBUTION or a GAUSSIAN. We say that our measurements are DRAWN from this distribution, meaning that this distribution tells us the probability of the measurement taking a particular value. We indicate this by using this notation: $$y_i \sim N(\mu, \sigma)$$
+This type of probability distribution is called a NORMAL DISTRIBUTION or a GAUSSIAN. We say that our measurements are DRAWN from this distribution, meaning that this distribution tells us the probability of the measurement taking a particular value. We indicate this by using this notation: \[ y_i \sim N(\mu, \sigma) \]
 
 Our individual measurements $y_1$, $y_2$, $y_3$, etc are represented here by $y_i$.  is the location of the MEAN, or centre, of our Gaussian distribution, while  is the size of the uncertainty. The $N$ indicates that the probability of our measurements taking on particular values follows a normal distribution (as opposed to a different type of probability distribution).
+
+The mean should be the “true” value of $y$, given by our linear model, and so we can make the following replacement: \[ y_i \sim N(mt+c, \sigma) \]
+
+What we want is a formula to tell us the PROBABILITY of our measurement taking a particular value. The most basic formula for a Gaussian, or normal distribution, is \[P(y_i | t, \sigma) = \exp[-y_i^2] \].
+Our notation on the left hand side of this equation tells us we want the probability of getting a measurement $y_i$, given that we are measuring at time $t$, and have uncertainties of size $\sigma$.
+
+Since this is a probability distribution, we should add some constants to ensure the total area under the Gaussian, which corresponds to the probability of $y_i$ taking any value, is one: \[ P(y_i | t, \sigma) = \frac{1}{\sqrt{2\pi}} \exp[-\frac{1}{2} y_i^2] \]
+
+This Gaussian has a mean of 0 and a standard deviation of 1. These are the parameters of our Gaussian, and we want to change them so that they fit our model. We can add the mean $\mu$ and standard deviation $\sigma$ into the Gaussian formula like this: \[ P(y_i | t, \sigma) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp[ -\frac{(y_i - \mu)^2}{2\sigma^2} ] \]
+
+Let's replace the mean with the one from our linear model: \[ P(y_i | t, \sigma) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp[ -\frac{(y_i - [ mt + c ])^2}{2\sigma^2} ] \]
+
+By using this formula we are able to determine the probability of our CO2 concentration measurement taking a particular value given that we are measuring at time $t$. Try playing around with the model parameters and the Gaussian below to see where our measurements fall.
 
 <div id="myPlot">
   <button onclick="javascript:randomize();">Randomize!</button>
@@ -78,6 +91,8 @@ Our individual measurements $y_1$, $y_2$, $y_3$, etc are represented here by $y_
     <p>Standard deviation: <span id="stdValue"></span></p>
   </div>
 </div>
+
+**Figure 5 (Interactive) - CO2 vs time plot and 1D Gaussian over CO2 concentration**
 
 ## Welcome to GitHub Pages
 
