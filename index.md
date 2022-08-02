@@ -14,7 +14,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 1**
+**test caching: 2**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -74,13 +74,11 @@ The mean should be the “true” value of $y$, given by our linear model, and s
 What we want is a formula to tell us the PROBABILITY of our measurement taking a particular value. The most basic formula for a Gaussian, or normal distribution, is \[P(y_i | t, \sigma) = \exp(-y_i^2). \]
 Our notation on the left hand side of this equation tells us we want the probability of getting a measurement $y_i$, given that we are measuring at time $t$, and have uncertainties of size $ \sigma $.
 
-Since this is a probability distribution, we should add some constants to ensure the total area under the Gaussian, which corresponds to the probability of $y_i$ taking any value, is one: 
+Since this is a probability distribution, we should add some constants to ensure the total area under the Gaussian, which corresponds to the probability of $y_i$ taking any value, is one: \[ P(y_i \vert t, \sigma) = \frac{1}{\sqrt{2\pi}} \exp \left( - \frac{1}{2} y_i^2 \right) \]
 
-\[ P(y_i \vert t, \sigma) = \frac{1}{\sqrt{2\pi}} \exp( - \frac{1}{2} y_i^2) \]
+This Gaussian has a mean of 0 and a standard deviation of 1. These are the parameters of our Gaussian, and we want to change them so that they fit our model. We can add the mean $\mu$ and standard deviation $\sigma$ into the Gaussian formula like this: \[ P(y_i \vert t, \sigma) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp \left( -\frac{(y_i - \mu)^2}{2\sigma^2} \right) \]
 
-This Gaussian has a mean of 0 and a standard deviation of 1. These are the parameters of our Gaussian, and we want to change them so that they fit our model. We can add the mean $\mu$ and standard deviation $\sigma$ into the Gaussian formula like this: \[ P(y_i | t, \sigma) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp ( -\frac{(y_i - \mu)^2}{2\sigma^2} ) \]
-
-Let's replace the mean with the one from our linear model: \[ P(y_i | t, \sigma) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp ( -\frac{(y_i - (mt + c))^2}{2\sigma^2} ) \]
+Let's replace the mean with the one from our linear model: \[ P(y_i \vert t, \sigma) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp \left( -\frac{(y_i - (mt + c))^2}{2\sigma^2} \right) \]
 
 By using this formula we are able to determine the probability of our CO2 concentration measurement taking a particular value given that we are measuring at time $t$. Try playing around with the model parameters and the Gaussian below to see where our measurements fall.
 
