@@ -29,17 +29,35 @@ Unlike many models you may be familiar with, Gaussian processes aren’t restric
 
 Sample equation: $y = mx + c$
 
+## Linear Models
+
+Our CO2 data might, at first glance, look like it fits a single straight upwards facing line. Remember that scientific data comes with uncertainties, so let’s add some to our data.
+
+**Figure 3 - CO2 concentration vs time plot with uncertainties**
+
+Ideally our line should fit within the uncertainties of all the data points. On the plot, our line will have the general formula $$y = mt +c$$. $t$ is the time at which we measure each data point (i.e. the year), $m$ is the slope of the line, $c$ moves the line vertically up and down, and $y$ is the value we predict for CO2 concentration.
+
+We can experiment with different values of $m$ and $c$ to see what different lines we get. These values are the PARAMETERS for our model, since they change what our model looks like on the plot, and what predictions we get from it. We know that $m$ needs to be positive to produce an upwards slope.
+
+Try adjusting the values of $m$ and $c$ on the plot below to find the linear model that best fits our data.
+
 <div id="linModelPlot">
   <div class="slidecontainer" id="linSlopeSlideContainer">
     <input type="range" min="0" max="10" value="1" class="slider" id="linSlope">
-    <p>m: <span id="linSlopeVal"></span></p>
+    <p>$m$: <span id="linSlopeVal"></span></p>
   </div>
   <div class="slidecontainer" id="linIceptSlideContainer">
     <input type="range" min="300" max="400" value="300" class="slider" id="linIcept">
-    <p>c: <span id="linIceptVal"></span></p>
+    <p>$c$: <span id="linIceptVal"></span></p>
   </div>
 </div>
-  
+
+**Figure 4 (Interactive) - CO2 concentration vs time plot with overlaid linear models**
+
+This process of altering the parameters to find which version of the model best fits the data is known as OPTIMISATION and is an important step of model building. There are many different established optimisation algorithms that can be used to find the best parameters for any model.
+
+### The Nomal (Gaussian) Distribution
+
 <div id="myPlot">
   <button onclick="javascript:randomize();">Randomize!</button>
   <div class="slidecontainer" id="meanslidecontainer">
