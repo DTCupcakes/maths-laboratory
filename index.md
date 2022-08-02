@@ -3,7 +3,7 @@
       tex2jax: {
         skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
         inlineMath: [['$','$']],
-        displayMath: [ ['$$', '$$'] ]
+        displayMath: [ ['\[', '\]'] ]
       }
     });
   </script>
@@ -28,15 +28,13 @@ In order to make a prediction we need to engage in an exercise of model building
 
 Unlike many models you may be familiar with, Gaussian processes aren’t restricted to a particular relationship between the parameters and instead use the distribution of the existing data to build the model. What we will end up with is a model that tells us the probability of measuring a particular value of the CO2 concentration at any given time. To make predictions all we need to do is find the points with the highest probability.
 
-Sample equation: $y = mx + c$
-
 ## Linear Models
 
 Our CO2 data might, at first glance, look like it fits a single straight upwards facing line. Remember that scientific data comes with uncertainties, so let’s add some to our data.
 
 **Figure 3 - CO2 concentration vs time plot with uncertainties**
 
-Ideally our line should fit within the uncertainties of all the data points. On the plot, our line will have the general formula $$y = mt +c.$$ $t$ is the time at which we measure each data point (i.e. the year), $m$ is the slope of the line, $c$ moves the line vertically up and down, and $y$ is the value we predict for CO2 concentration.
+Ideally our line should fit within the uncertainties of all the data points. On the plot, our line will have the general formula \[y = mt +c.\] $t$ is the time at which we measure each data point (i.e. the year), $m$ is the slope of the line, $c$ moves the line vertically up and down, and $y$ is the value we predict for CO2 concentration.
 
 We can experiment with different values of $m$ and $c$ to see what different lines we get. These values are the PARAMETERS for our model, since they change what our model looks like on the plot, and what predictions we get from it. We know that $m$ needs to be positive to produce an upwards slope.
 
