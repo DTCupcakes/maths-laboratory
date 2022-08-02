@@ -14,6 +14,8 @@
 # Gaussian Processes
 ## Introduction
 
+**test caching: 1**
+
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
 **Figure 1 - Plot of atmospheric CO2 concentration vs time**
@@ -74,7 +76,7 @@ Our notation on the left hand side of this equation tells us we want the probabi
 
 Since this is a probability distribution, we should add some constants to ensure the total area under the Gaussian, which corresponds to the probability of $y_i$ taking any value, is one: 
 
-\[ P(y_i | t, \sigma) = \frac{1}{\sqrt{2\pi}} \exp(-\frac{1}{2} y_i^2) \]
+\[ P(y_i \vert t, \sigma) = \frac{1}{\sqrt{2\pi}} \exp( - \frac{1}{2} y_i^2) \]
 
 This Gaussian has a mean of 0 and a standard deviation of 1. These are the parameters of our Gaussian, and we want to change them so that they fit our model. We can add the mean $\mu$ and standard deviation $\sigma$ into the Gaussian formula like this: \[ P(y_i | t, \sigma) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp ( -\frac{(y_i - \mu)^2}{2\sigma^2} ) \]
 
