@@ -14,7 +14,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 6**
+**test caching: 7**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -44,7 +44,7 @@ Try adjusting the values of $m$ and $c$ on the plot below to find the linear mod
 
 <div id="linModelPlot">
   <div class="slidecontainer" id="linSlopeSlideContainer">
-    <input type="range" min="0" max="10" value="1" class="slider" id="linSlope">
+    <input type="range" min="0" max="100" value="10" class="slider" id="linSlope">
     <p>$m$: <span id="linSlopeVal"></span></p>
   </div>
   <div class="slidecontainer" id="linIceptSlideContainer">

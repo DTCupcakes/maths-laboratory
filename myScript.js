@@ -56,8 +56,18 @@ traceLinear = {
 var layoutLinear = {
   width: 500,
   height: 500,
-  xaxis: {range: xLimits, fixedrange: true},
-  yaxis: {range: yLimits, fixedrange: true}
+  xaxis: {
+    text: 'Carbon Dioxide Concentration (ppm)',
+    range: xLimits,
+    linecolor: 'black',
+    mirror: 'true'
+  },
+  yaxis: {
+    text: 'Year',
+    range: yLimits,
+    linecolor: 'black',
+    mirror: 'true'
+  }
 };
 
 // Create plot
@@ -73,7 +83,7 @@ var update ={
 };
 
 // Linear model slope (m) slider
-var linSlopeSliderScale = slope => 1 * slope;
+var linSlopeSliderScale = slope => 0.1 * slope;
 var linSlopeSlider = document.getElementById("linSlope");
 var linSlopeOutput = document.getElementById("linSlopeVal");
 linSlopeOutput.innerHTML = linSlopeSliderScale(linSlopeSlider.value);
