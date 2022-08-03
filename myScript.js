@@ -33,7 +33,7 @@ function Gauss1D(xVal, mean, std) {
 
 /* LINEAR PLOT */
 let xLimits = [1960, 2020];
-//ylim = 300, 400
+let yLimits = [300, 400];
 
 // x values and initial y values
 let xValLinear = arange(xLimits[0],  xLimits[1], 1);
@@ -55,7 +55,9 @@ traceLinear = {
 // Plot layout
 var layout = {
   width: 500,
-  height: 500
+  height: 500,
+  xaxis: {range: xLimits},
+  yaxis: {range: yLimits}
 };
 
 // Create plot
