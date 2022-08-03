@@ -56,8 +56,8 @@ traceLinear = {
 var layoutLinear = {
   width: 500,
   height: 500,
-  xaxis: {range: xLimits},
-  yaxis: {range: yLimits}
+  xaxis: {range: xLimits, fixedrange: true},
+  yaxis: {range: yLimits, fixedrange: true}
 };
 
 // Create plot
