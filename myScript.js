@@ -53,7 +53,7 @@ traceLinear = {
 };
 
 // Plot layout
-var layout = {
+var layoutLinear = {
   width: 500,
   height: 500,
   xaxis: {range: xLimits},
@@ -63,7 +63,7 @@ var layout = {
 // Create plot
 Plotly.newPlot('linModelPlot', {
   data: [traceLinear],
-  layout: layout,
+  layout: layoutLinear,
 });
 
 // Linear model slope (m) slider
@@ -94,7 +94,7 @@ linSlopeSlider.oninput = function() {
       width: 3
     }
   }]
-  Plotly.react('linModelPlot', data, layout)
+  Plotly.react('linModelPlot', data, layoutLinear)
 }
 
 linIceptSlider.oninput = function() {
@@ -113,7 +113,7 @@ linIceptSlider.oninput = function() {
       width: 3
     }
   }]
-  Plotly.react('linModelPlot', data, layout)
+  Plotly.react('linModelPlot', data, layoutLinear)
 }
 
 /* 1D GAUSSIAN PLOT */
