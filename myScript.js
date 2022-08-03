@@ -66,6 +66,12 @@ Plotly.newPlot('linModelPlot', {
   layout: layoutLinear,
 });
 
+// Update layout with slider movement
+var update ={
+  'xaxis.range': xLimits,
+  'yaxis.range': yLimits
+};
+
 // Linear model slope (m) slider
 var linSlopeSliderScale = slope => 1 * slope;
 var linSlopeSlider = document.getElementById("linSlope");
@@ -94,7 +100,8 @@ linSlopeSlider.oninput = function() {
       width: 3
     }
   }]
-  Plotly.react('linModelPlot', data, layoutLinear)
+  Plotly.react('linModelPlot', data, layoutLinear),
+  Plotly.relayout('linModelPlot', update)
 }
 
 linIceptSlider.oninput = function() {
@@ -113,7 +120,8 @@ linIceptSlider.oninput = function() {
       width: 3
     }
   }]
-  Plotly.react('linModelPlot', data, layoutLinear)
+  Plotly.react('linModelPlot', data, layoutLinear),
+  Plotly.relayout('linModelPlot', update)
 }
 
 /* 1D GAUSSIAN PLOT */

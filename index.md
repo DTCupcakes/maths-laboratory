@@ -14,7 +14,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 5**
+**test caching: 6**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
