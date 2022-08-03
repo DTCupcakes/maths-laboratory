@@ -32,11 +32,11 @@ function Gauss1D(xVal, mean, std) {
 }
 
 /* LINEAR PLOT */
-let xLimits = [1960, 2020];
-let yLimits = [300, 400];
+let xLimLin = [1960, 2020];
+let yLimLin = [300, 400];
 
 // x values and initial y values
-let xValLinear = arange(xLimits[0],  xLimits[1], 1);
+let xValLinear = arange(xLimLin[0],  xLimLin[1]+10, 1);
 let yValLinear = linModel(xValLinear, 1, 1)
 
 // Data
@@ -57,16 +57,16 @@ var layoutLinear = {
   width: 500,
   height: 500,
   xaxis: {
-    text: 'Carbon Dioxide Concentration (ppm)',
-    range: xLimits,
+    title: {text: 'Year'},
+    range: xLimLin,
     linecolor: 'black',
-    mirror: 'true'
+    mirror: true
   },
   yaxis: {
-    text: 'Year',
-    range: yLimits,
+    title: {text: 'Carbon Dioxide Concentration (ppm)'},
+    range: yLimLin,
     linecolor: 'black',
-    mirror: 'true'
+    mirror: true
   }
 };
 
@@ -77,9 +77,19 @@ Plotly.newPlot('linModelPlot', {
 });
 
 // Update layout with slider movement
-var update ={
-  'xaxis.range': xLimits,
-  'yaxis.range': yLimits
+var updateLinear ={
+  xaxis: {
+    title: {text: 'Year'},
+    range: xLimLin,
+    linecolor: 'black',
+    mirror: true
+  },
+  yaxis: {
+    title: {text: 'Carbon Dioxide Concentration (ppm)'},
+    range: yLimLin,
+    linecolor: 'black',
+    mirror: true
+  }
 };
 
 // Linear model slope (m) slider
@@ -97,7 +107,7 @@ linIceptOutput.innerHTML = linIceptSliderScale(linIceptSlider.value);
 linSlopeSlider.oninput = function() {
   let m = linSlopeSliderScale(this.value);
   let c = linIceptSliderScale(linIceptSlider.value);
-  linSlopeOutput.innerHTML = m;
+  linSlopeOutput.innerHTML = m.toPrecision(2);
   var newY = linModel(xValLinear, m, c);
   var data = [{
     type: 'scatter',
@@ -111,7 +121,7 @@ linSlopeSlider.oninput = function() {
     }
   }]
   Plotly.react('linModelPlot', data, layoutLinear),
-  Plotly.relayout('linModelPlot', update)
+  Plotly.relayout('linModelPlot', updateLinear)
 }
 
 linIceptSlider.oninput = function() {
@@ -131,20 +141,26 @@ linIceptSlider.oninput = function() {
     }
   }]
   Plotly.react('linModelPlot', data, layoutLinear),
-  Plotly.relayout('linModelPlot', update)
+  Plotly.relayout('linModelPlot', updateLinear)
 }
 
 /* 1D GAUSSIAN PLOT */
+// Axis limits for 1D Gaussian
+let xLimGauss1D = yLimLin;
+let yLimGauss1D = [0, 0.45];
+
 // Data
-let xValues = arange(0, 10, 0.1);
+let xValGauss1D = arange(xLimGauss1D[0], xLimGauss1D[1], 0.1);
 //yValues = linModel(xValues, 2, 1);
-yValues = Gauss1D(xValues, 5, 1);
+let yValGauss1D = Gauss1D(xValGauss1D, 350, 1);
 
 // Plot data
-trace = {
+traceGauss1D = {
   type: 'scatter',
-  x: xValues,
-  y: yValues,
+  x: xValGauss1D,
+  y: yValGauss1D,
+  xaxis: 'x2',
+  yaxis: 'y2',
   mode: 'lines',
   name: 'Red',
   line: {
@@ -154,17 +170,35 @@ trace = {
 };
 
 // Plot layout
-var layout = {
+var layoutGauss1D = {
   width: 500,
   height: 400,
-  grid: {rows: 1, columns: 1, pattern: 'independent'}
+  xaxis: {
+    title: {text: 'Carbon Dioxide Concentration (ppm)'},
+    range: xLimGauss1D,
+    linecolor: 'black',
+    mirror: true
+  },
+  yaxis: {
+    //title: {text: 'Carbon Dioxide Concentration (ppm)'},
+    range: yLimGauss1D,
+    linecolor: 'black',
+    mirror: true
+  },
+  grid: {rows: 1, columns: 2, pattern: 'independent'}
 };
 
+// Data for subplots
+var dataGauss1D = [traceLinear, traceGauss1D];
+
 // Create plot
-Plotly.newPlot('myPlot', {
-  data: [trace],
-  layout: layout,
+Plotly.newPlot('linGauss1DPlot', {
+  data: dataGauss1D,
+  layout: layoutGauss1D,
 });
+
+// Update layout with slider movement
+var updateGauss1D = layoutGauss1D;
 
 var meanSliderScale = mean => 1 * mean;
 var meanSlider = document.getElementById("myMean");
@@ -180,43 +214,51 @@ meanSlider.oninput = function() {
   let mean = meanSliderScale(this.value);
   let std = stdSliderScale(stdSlider.value);
   meanOutput.innerHTML = mean;
-  var newY = Gauss1D(xValues, mean, std);
-  var data = [{
+  var newY = Gauss1D(xValGauss1D, mean, std);
+  var traceGauss1D = {
     type: 'scatter',
-    x: xValues,
+    x: xValGauss1D,
     y: newY,
+    xaxis: 'x2',
+    yaxis: 'y2',
     mode: 'lines',
     name: 'Red',
     line: {
       color: 'rgb(219, 64, 82)',
       width: 3
     }
-  }]
-  Plotly.react('myPlot', data, layout)
+  };
+  var dataGauss1D = [traceLinear, traceGauss1D];
+  Plotly.react('linGauss1DPlot', dataGauss1D, layoutGauss1D),
+  Plotly.relayout('linGauss1DPlot', updateGauss1D)
 }
 
 stdSlider.oninput = function() {
   let mean = meanSliderScale(meanSlider.value);
   let std = stdSliderScale(this.value);
   stdOutput.innerHTML = std;
-  var newY = Gauss1D(xValues, mean, std);
-  var data = [{
+  var newY = Gauss1D(xValGauss1D, mean, std);
+  var traceGauss1D = {
     type: 'scatter',
-    x: xValues,
+    x: xValGauss1D,
     y: newY,
+    xaxis: 'x2',
+    yaxis: 'y2',
     mode: 'lines',
     name: 'Red',
     line: {
       color: 'rgb(219, 64, 82)',
       width: 3
     }
-  }]
-  Plotly.react('myPlot', data, layout)
+  };
+  var dataGauss1D = [traceLinear, traceGauss1D];
+  Plotly.react('linGauss1DPlot', dataGauss1D, layoutGauss1D),
+  Plotly.relayout('linGauss1DPlot', updateGauss1D)
 }
 
 // Randomize button
-function randomize() {
-  Plotly.animate('myPlot', {
+/*function randomize() {
+  Plotly.animate('linGauss1DPlot', {
     data: [{y: Gauss1D(xValues, 10*Math.random(), 1)}],
     transition: {
       duration: 500,
@@ -226,4 +268,4 @@ function randomize() {
 		  duration: 500
 	  }
   })
-}
+}*/

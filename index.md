@@ -14,7 +14,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 7**
+**test caching: 8**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -44,7 +44,7 @@ Try adjusting the values of $m$ and $c$ on the plot below to find the linear mod
 
 <div id="linModelPlot">
   <div class="slidecontainer" id="linSlopeSlideContainer">
-    <input type="range" min="0" max="100" value="10" class="slider" id="linSlope">
+    <input type="range" min="0" max="50" value="10" class="slider" id="linSlope">
     <p>$m$: <span id="linSlopeVal"></span></p>
   </div>
   <div class="slidecontainer" id="linIceptSlideContainer">
@@ -82,10 +82,10 @@ Let's replace the mean with the one from our linear model: \[ P(y_i \vert t, \si
 
 By using this formula we are able to determine the probability of our CO2 concentration measurement taking a particular value given that we are measuring at time $t$. Try playing around with the model parameters and the Gaussian below to see where our measurements fall.
 
-<div id="myPlot">
+<div id="linGauss1DPlot">
   <button onclick="javascript:randomize();">Randomize!</button>
   <div class="slidecontainer" id="meanslidecontainer">
-    <input type="range" min="0" max="10" value="5" class="slider" id="myMean">
+    <input type="range" min="300" max="400" value="350" class="slider" id="myMean">
     <p>Mean: <span id="meanValue"></span></p>
   </div>
   <div class="slidecontainer" id="stdslidecontainer">
