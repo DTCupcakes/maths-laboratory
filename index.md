@@ -89,7 +89,7 @@ By using this formula we are able to determine the probability of our CO2 concen
     <p>Mean: <span id="meanValue"></span></p>
   </div>
   <div class="slidecontainer" id="stdslidecontainer">
-    <input type="range" min="1" max="5" value="1" class="slider" id="myStd">
+    <input type="range" min="10" max="100" value="1" class="slider" id="myStd">
     <p>Standard deviation: <span id="stdValue"></span></p>
   </div>
 </div>
