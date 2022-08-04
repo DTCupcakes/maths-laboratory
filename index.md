@@ -14,7 +14,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 13**
+**test caching: 14**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -94,7 +94,6 @@ By using this formula we are able to determine the probability of our CO2 concen
     </div>
     <button onclick="javascript:randomize();">Randomize!</button>
   </div>
-</body>
 
 **Figure 5 (Interactive) - CO2 vs time plot and 1D Gaussian over CO2 concentration**
 
