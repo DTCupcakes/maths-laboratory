@@ -10,11 +10,30 @@ function arange(start, stop, step) {
   return linArr
 }
 
+// Add n to all values in array
+function arrAdd(arr, n) {
+  newArr = [];
+  for (let i = 0; i < arr.length; i++) {
+    newArr.push(arr[i] + n);
+  }
+  return newArr
+}
+
+// Multiply all values in array by n
+function arrMult(arr, n) {
+  newArr = [];
+  for (let i = 0; i < arr.length; i++) {
+    newArr.push(arr[i] * n);
+  }
+  return newArr
+}
+
 // Output y values where y = m*x+c
+var linShift = 1960;
 function linModel(xVal, m, c) {
   let yVal = [];
   for (let i = 0; i < xVal.length; i++) {
-    yVal.push(m * (xVal[i] - 1960) + c)
+    yVal.push(m * (xVal[i] - linShift) + c)
 }
   return yVal
 }
@@ -42,7 +61,7 @@ function Trace(xData, yData) {
   this.x = xData;
   this.y = yData;
   this.mode = 'lines';
-  this.name = 'Red';
+  //this.name = 'Red';
   this.line = new Line();
 }
 
@@ -72,50 +91,27 @@ function Layout(xLabel, yLabel, xRange, yRange) {
     mirror: true,
     anchor: 'x1'
   };
-  this.grid = {rows: 1, columns: 1, pattern: 'independent'};
-}
-
-// Add a subplot to the existing plot
-function addSubplot(layout, xLabel, yLabel, xRange, yRange) {
-  layout.grid.columns += 1;
-  if (layout.grid.columns === 2) {
-    layout.xaxis2 = {
-      title: new Title(xLabel),
-      range: xRange,
-      linecolor: 'black',
-      mirror: true,
-      anchor: 'y2'
-    };
-    this.yaxis2 = {
-      title: new Title(yLabel),
-      range: yRange,
-      linecolor: 'black',
-      mirror: true,
-      anchor: 'x2'
-    };
-  } else if (layout.grid.columns === 3) {
-    layout.xaxis3 = {
-      title: new Title(xLabel),
-      range: xRange,
-      linecolor: 'black',
-      mirror: true
-    };
-    this.yaxis3 = {
-      title: new Title(yLabel),
-      range: yRange,
-      linecolor: 'black',
-      mirror: true
-    };
-  };
-}
+}   
 
 /* LINEAR PLOT */
+// Linear model slope (m) slider
+var linSlopeSliderScale = slope => 0.1 * slope;
+var linSlopeSlider = document.getElementById("linSlope");
+var linSlopeOutput = document.getElementById("linSlopeVal");
+linSlopeOutput.innerHTML = linSlopeSliderScale(linSlopeSlider.value);
+
+// Linear model y-intercept (c) slider
+var linIceptSliderScale = std => 1 * std;
+var linIceptSlider = document.getElementById("linIcept");
+var linIceptOutput = document.getElementById("linIceptVal");
+linIceptOutput.innerHTML = linIceptSliderScale(linIceptSlider.value);
+
 let xLimLin = [1960, 2020];
 let yLimLin = [300, 400];
 
 // x values and initial y values
 let xValLinear = arange(xLimLin[0],  xLimLin[1]+10, 1);
-let yValLinear = linModel(xValLinear, 0.1, 300)
+let yValLinear = linModel(xValLinear, linSlopeOutput.innerHTML, 300)
 
 // Data
 let traceLinear = new Trace(xValLinear, yValLinear);
@@ -133,62 +129,124 @@ Plotly.newPlot('linModelPlot', {
   layout: layoutLinear,
 });
 
-// Linear model slope (m) slider
-var linSlopeSliderScale = slope => 0.1 * slope;
-var linSlopeSlider = document.getElementById("linSlope");
-var linSlopeOutput = document.getElementById("linSlopeVal");
-linSlopeOutput.innerHTML = linSlopeSliderScale(linSlopeSlider.value);
-
-// LInear model y-intercept (c) slider
-var linIceptSliderScale = std => 1 * std;
-var linIceptSlider = document.getElementById("linIcept");
-var linIceptOutput = document.getElementById("linIceptVal");
-linIceptOutput.innerHTML = linIceptSliderScale(linIceptSlider.value);
+function sliderLinear(m,c) {
+  var newY = linModel(xValLinear, m, c);
+  var data = [new Trace(xValLinear, newY)];
+  Plotly.react('linModelPlot', data, layoutLinear),
+  Plotly.relayout('linModelPlot', layoutLinear)
+}
 
 linSlopeSlider.oninput = function() {
   let m = linSlopeSliderScale(this.value);
   let c = linIceptSliderScale(linIceptSlider.value);
   linSlopeOutput.innerHTML = m.toPrecision(2);
-  var newY = linModel(xValLinear, m, c);
-  var data = [new Trace(xValLinear, newY)];
-  Plotly.react('linModelPlot', data, layoutLinear),
-  Plotly.relayout('linModelPlot', layoutLinear)
+  sliderLinear(m,c);
 }
 
 linIceptSlider.oninput = function() {
   let m = linSlopeSliderScale(linSlopeSlider.value);
   let c = linIceptSliderScale(this.value);
   linIceptOutput.innerHTML = c;
-  var newY = linModel(xValLinear, m, c);
-  var data = [new Trace(xValLinear, newY)];
-  Plotly.react('linModelPlot', data, layoutLinear),
-  Plotly.relayout('linModelPlot', layoutLinear)
+  sliderLinear(m,c);
 }
 
 /* 1D GAUSSIAN PLOT */
+// Fixed linear model parameters
+const mFixed = 1.4;
+const cFixed = 310;
+
+// Define t slider
+var tSliderScale = t => 1 * t;
+var tSlider = document.getElementById("myt");
+var tOutput = document.getElementById("tValue");
+tOutput.innerHTML = tSliderScale(tSlider.value);
+
+// Define mean calculation from fixed linear model parameters
+var calcMean = t => mFixed * (t - linShift) + cFixed;
+var meanOutput = document.getElementById("meanValue");
+meanOutput.innerHTML = calcMean(tSlider.value);
+
+// Define standard deviation slider
+var stdSliderScale = std => 0.1 * std;
+var stdSlider = document.getElementById("myStd");
+var stdOutput = document.getElementById("stdValue");
+stdOutput.innerHTML = stdSliderScale(stdSlider.value);
+
+// Plot fixed linear model
+let yValLinFixed = linModel(xValLinear, mFixed, cFixed)
+
+// Data
+let traceLinFixed = new Trace(xValLinear, yValLinFixed);
+
 // Axis limits for 1D Gaussian
 let xLimGauss1D = yLimLin;
 let yLimGauss1D = [0, 0.45];
 
-// Data
+// Create data for 1D Gaussian in y
 let xValGauss1D = arange(xLimGauss1D[0], xLimGauss1D[1], 0.1);
-let yValGauss1D = Gauss1D(xValGauss1D, 350, 1);
+let yValGauss1D = Gauss1D(xValGauss1D, meanOutput.innerHTML, stdOutput.innerHTML);
 
-// Plot data
+// Plot 1D Gaussian in y
 var traceGauss1D = new Trace(xValGauss1D, yValGauss1D);
+traceGauss1D.line.color = 'rgb(0, 0, 255)';
 traceGauss1D.xaxis = 'x2';
 traceGauss1D.yaxis = 'y2';
+
+// Function for rotating 1D Gaussian onto time vs Co2 plot
+function rotGauss1D(Gauss1D, t) {
+  var LinGauss1D = arrMult(Gauss1D, 50);
+  var LinGauss1D = arrAdd(LinGauss1D, t);
+  return LinGauss1D
+}
+
+// Plot 1D Gaussian on CO2 vs time plot
+var yValLinGauss1D = rotGauss1D(yValGauss1D, 1980);
+var traceLinGauss1D = new Trace(yValLinGauss1D, xValGauss1D);
+traceLinGauss1D.line.color = traceGauss1D.line.color;
 
 // Plot layout
 xLabelGauss1D = yLabelLin;
 yLabelGauss1D = 'Probability';
-var layoutGauss1D = new Layout(xLabelLin, yLabelLin, xLimLin, yLimLin);
-addSubplot(layoutGauss1D, xLabelGauss1D, yLabelGauss1D, xLimGauss1D, yLimGauss1D);
-layoutGauss1D.width = 650;
-layoutGauss1D.height = 500;
+var layoutGauss1D = {
+  width: 650,
+  height: 500,
+  xaxis: {
+    title: new Title(xLabelLin),
+    range: xLimLin,
+    linecolor: 'black',
+    mirror: true,
+    anchor: 'y1',
+    domain: [0, 0.45]
+  },
+  yaxis: {
+    title: new Title(yLabelLin),
+    range: yLimLin,
+    linecolor: 'black',
+    mirror: true,
+    anchor: 'x1',
+    domain: [0.1, 0.9]
+  },
+  xaxis2: {
+    title: new Title(xLabelGauss1D),
+    range: xLimGauss1D,
+    linecolor: 'black',
+    mirror: true,
+    anchor: 'y2',
+    domain: [0.6, 1]
+  },
+  yaxis2: {
+    title: new Title(yLabelGauss1D),
+    range: yLimGauss1D,
+    linecolor: 'black',
+    mirror: true,
+    anchor: 'x2'
+  },
+  grid: {rows: 1, columns: 2, pattern: 'independent'},
+  showlegend: false
+};
 
 // Data for subplots
-var dataGauss1D = [traceLinear, traceGauss1D];
+var dataGauss1D = [traceLinFixed, traceGauss1D, traceLinGauss1D];
 
 // Create plot
 Plotly.newPlot('linGauss1DPlot', {
@@ -196,43 +254,36 @@ Plotly.newPlot('linGauss1DPlot', {
   layout: layoutGauss1D,
 });
 
-// Update layout with slider movement
-var updateGauss1D = layoutGauss1D;
-
-var meanSliderScale = mean => 1 * mean;
-var meanSlider = document.getElementById("myMean");
-var meanOutput = document.getElementById("meanValue");
-meanOutput.innerHTML = meanSliderScale(meanSlider.value);
-
-var stdSliderScale = std => 1 * std;
-var stdSlider = document.getElementById("myStd");
-var stdOutput = document.getElementById("stdValue");
-stdOutput.innerHTML = stdSliderScale(stdSlider.value);
-
-meanSlider.oninput = function() {
-  let mean = meanSliderScale(this.value);
-  let std = stdSliderScale(stdSlider.value);
-  meanOutput.innerHTML = mean;
+// Things for all sliders to do upon input
+function sliderGauss1D(t, mean, std) {
   var newY = Gauss1D(xValGauss1D, mean, std);
   var traceGauss1D = new Trace(xValGauss1D, newY);
+  traceGauss1D.line.color = 'rgb(0, 0, 255)';
   traceGauss1D.xaxis = 'x2';
   traceGauss1D.yaxis = 'y2';
-  var dataGauss1D = [traceLinear, traceGauss1D];
+  var yValLinGauss1D = rotGauss1D(newY, t);
+  var traceLinGauss1D = new Trace(yValLinGauss1D, xValGauss1D);
+  traceLinGauss1D.line.color = 'rgb(0, 0, 255)';
+  var dataGauss1D = [traceLinFixed, traceGauss1D, traceLinGauss1D];
   Plotly.react('linGauss1DPlot', dataGauss1D, layoutGauss1D),
   Plotly.relayout('linGauss1DPlot', layoutGauss1D)
 }
 
+tSlider.oninput = function() {
+  let t = tSliderScale(this.value);
+  let mean = calcMean(t);
+  let std = stdSliderScale(stdSlider.value);
+  tOutput.innerHTML = t;
+  meanOutput.innerHTML = mean;
+  sliderGauss1D(t, mean, std);
+}
+
 stdSlider.oninput = function() {
-  let mean = meanSliderScale(meanSlider.value);
+  let t = tSliderScale(tSlider.value);
+  let mean = calcMean(t);
   let std = stdSliderScale(this.value);
   stdOutput.innerHTML = std;
-  var newY = Gauss1D(xValGauss1D, mean, std);
-  var traceGauss1D = new Trace(xValGauss1D, newY);
-  traceGauss1D.xaxis = 'x2';
-  traceGauss1D.yaxis = 'y2';
-  var dataGauss1D = [traceLinear, traceGauss1D];
-  Plotly.react('linGauss1DPlot', dataGauss1D, layoutGauss1D),
-  Plotly.relayout('linGauss1DPlot', layoutGauss1D)
+  sliderGauss1D(t, mean, std);
 }
 
 // Randomize button

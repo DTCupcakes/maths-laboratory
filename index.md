@@ -14,7 +14,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 12**
+**test caching: 13**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -83,16 +83,18 @@ Let's replace the mean with the one from our linear model: \[ P(y_i \vert t, \si
 By using this formula we are able to determine the probability of our CO2 concentration measurement taking a particular value given that we are measuring at time $t$. Try playing around with the model parameters and the Gaussian below to see where our measurements fall.
 
 <div id="linGauss1DPlot">
-  <button onclick="javascript:randomize();">Randomize!</button>
-  <div class="slidecontainer" id="meanslidecontainer">
-    <input type="range" min="300" max="400" value="350" class="slider" id="myMean">
-    <p>Mean: <span id="meanValue"></span></p>
+    <div class="slidecontainer" id="tslidecontainer">
+      <input type="range" min="1960" max="2020" value="1980" class="slider" id="myt">
+      <p>$t$: <span id="tValue"></span></p>
+      <p>Mean ($mt+c$): <span id="meanValue"></span></p>
+    </div>
+    <div class="slidecontainer" id="stdslidecontainer">
+      <input type="range" min="10" max="100" value="10" class="slider" id="myStd">
+      <p>Standard deviation: <span id="stdValue"></span></p>
+    </div>
+    <button onclick="javascript:randomize();">Randomize!</button>
   </div>
-  <div class="slidecontainer" id="stdslidecontainer">
-    <input type="range" min="1" max="5" value="1" class="slider" id="myStd">
-    <p>Standard deviation: <span id="stdValue"></span></p>
-  </div>
-</div>
+</body>
 
 **Figure 5 (Interactive) - CO2 vs time plot and 1D Gaussian over CO2 concentration**
 
@@ -114,23 +116,21 @@ Just like the CO2 concentration we can talk about our time measurements as also 
 
 The time measurement we make, $t_i$, is more likely to be closer to the “true” time value $t$, than further away. The width of the normal distribution is given by our uncertainty $\sigma_t$. From now on I will be using $\sigma_t$ to indicate uncertainty in time, and $\sigma_y$ to indicate uncertainty in CO2 concentration, in order to more clearly differentiate between the two.
 
-The calculation to determine the probability of our time measurement taking on any particular value is almost identical to the calculation for CO2 concentration. All we have to do is replace the mean and uncertainty with their corresponding values for time. The mean in this case is the “true” value of time $t$: \[ P(t_i \vert t, \sigma_t) = \frac{1}{\sqrt{2\pi\sigma_t^2}} \exp (-\frac{(t_i-t)^2}{2\sigma_t^2}) \]
+The calculation to determine the probability of our time measurement taking on any particular value is almost identical to the calculation for CO2 concentration. All we have to do is replace the mean and uncertainty with their corresponding values for time. The mean in this case is the “true” value of time $t$: \[ P(t_i \vert t, \sigma_t) = \frac{1}{\sqrt{2\pi\sigma_t^2}} \exp \left( -\frac{(t_i-t)^2}{2\sigma_t^2} \right) \]
 
 Play around with the Gaussian below to see how the values of $t$ and $\sigma_t$ affect our time measurements.
-
-**Figure 7 (Interactive) - CO2 vs time plot, 1D Gaussian over CO2 concentration and 1D Gaussian over time**
 
 ### 2D Gaussians
 
 In order for our measurements to be useful we need to make time measurements and measurements of the CO2 concentration together. To represent this on our CO2 vs time plot we can imagine combining the probability distributions for time and CO2 concentration together. This combined probability distribution tells us the probability of our set of two measurements having two particular values.
 
-One important (and very convenient) property of Gaussian distributions is that we can combine two 1D Gaussians to get a 2D Gaussian that has very similar properties. Our 2D Gaussian that tells us the probability of getting a particular pair of time and CO2 concentration measurements $(t_i,y_i)$ has the following formula: \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^2 \sigma_t^2 \sigma_y^2}} \exp (-\frac{1}{2} (\frac{(t_i - \mu_t)^2}{\sigma_t^2} + \frac{(y_i - \mu_y)^2}{\sigma_y^2})) \]
+One important (and very convenient) property of Gaussian distributions is that we can combine two 1D Gaussians to get a 2D Gaussian that has very similar properties. Our 2D Gaussian that tells us the probability of getting a particular pair of time and CO2 concentration measurements $(t_i,y_i)$ has the following formula: \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^2 \sigma_t^2 \sigma_y^2}} \exp \left( -\frac{1}{2} \left( \frac{(t_i - \mu_t)^2}{\sigma_t^2} + \frac{(y_i - \mu_y)^2}{\sigma_y^2} \right) \right) \]
 
 You may notice that our 2D Gaussian is simply the product of our two 1D Gaussians (try multiplying them together yourself). This idea extends the same way into higher dimensions, and so we can obtain a Gaussian probability distribution using as many different variables as we want.
 
 For now, play around with the 2D Gaussian below to see how changing the means and uncertainties affects the probability distribution.
 
-**Figure 8 (Interactive) - CO2 vs time plot and 2D Gaussian**
+**Figure 7 (Interactive) - CO2 vs time plot and 2D Gaussian**
 
 ## Welcome to GitHub Pages
 
