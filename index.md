@@ -14,7 +14,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 10**
+**test caching: 11**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -95,6 +95,30 @@ By using this formula we are able to determine the probability of our CO2 concen
 </div>
 
 **Figure 5 (Interactive) - CO2 vs time plot and 1D Gaussian over CO2 concentration**
+
+## Time Uncertainty
+
+So that’s it we’re done right? All we need to do is find the right parameters for our linear model and then take into account the uncertainties.
+
+Not quite.
+
+Our plots so far have used yearly measurements of the atmospheric CO2 concentration. What happens if we zoom in a little and look at the monthly measurements instead?
+
+**Figure 6 - Plot of monthly atmospheric CO2 concentration**
+
+Clearly there is some kind of yearly periodic variation in these measurements which we can’t account for if we only use the linear model. You may have some ideas about what type of equation we can use to model this variation, but finding the right equation and parameters is much more involved and uncertain than for our simple linear model. We can model both the periodic variation and the upwards trend easily using a Gaussian process.
+
+But first, a detour (this will become important in a moment, trust me).
+
+Just like the CO2 concentration we can talk about our time measurements as also having associated uncertainty. The means that they are also drawn from a normal distribution: \[ t_i \sim N(t, \sigma_t) \]
+
+The time measurement we make, $t_i$, is more likely to be closer to the “true” time value $t$, than further away. The width of the normal distribution is given by our uncertainty $\sigma_t$. From now on I will be using $\sigma_t$ to indicate uncertainty in time, and $\sigma_y$ to indicate uncertainty in CO2 concentration, in order to more clearly differentiate between the two.
+
+The calculation to determine the probability of our time measurement taking on any particular value is almost identical to the calculation for CO2 concentration. All we have to do is replace the mean and uncertainty with their corresponding values for time. The mean in this case is the “true” value of time $t$: \[ P(t_i \vert t, \sigma_t) = \frac{1}{\sqrt{2\pi\sigma_t^2}} \exp (-\frac{(t_i-t)^2}{2\sigma_t^2}) \]
+
+Play around with the Gaussian below to see how the values of $t$ and $\sigma_t$ affect our time measurements.
+
+**Figure 7 (Interactive) - CO2 vs time plot, 1D Gaussian over CO2 concentration and 1D Gaussian over time**
 
 ## Welcome to GitHub Pages
 
