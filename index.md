@@ -14,7 +14,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 11**
+**test caching: 12**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -119,6 +119,18 @@ The calculation to determine the probability of our time measurement taking on a
 Play around with the Gaussian below to see how the values of $t$ and $\sigma_t$ affect our time measurements.
 
 **Figure 7 (Interactive) - CO2 vs time plot, 1D Gaussian over CO2 concentration and 1D Gaussian over time**
+
+### 2D Gaussians
+
+In order for our measurements to be useful we need to make time measurements and measurements of the CO2 concentration together. To represent this on our CO2 vs time plot we can imagine combining the probability distributions for time and CO2 concentration together. This combined probability distribution tells us the probability of our set of two measurements having two particular values.
+
+One important (and very convenient) property of Gaussian distributions is that we can combine two 1D Gaussians to get a 2D Gaussian that has very similar properties. Our 2D Gaussian that tells us the probability of getting a particular pair of time and CO2 concentration measurements $(t_i,y_i)$ has the following formula: \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^2 \sigma_t^2 \sigma_y^2}} \exp (-\frac{1}{2} (\frac{(t_i - \mu_t)^2}{\sigma_t^2} + \frac{(y_i - \mu_y)^2}{\sigma_y^2})) \]
+
+You may notice that our 2D Gaussian is simply the product of our two 1D Gaussians (try multiplying them together yourself). This idea extends the same way into higher dimensions, and so we can obtain a Gaussian probability distribution using as many different variables as we want.
+
+For now, play around with the 2D Gaussian below to see how changing the means and uncertainties affects the probability distribution.
+
+**Figure 8 (Interactive) - CO2 vs time plot and 2D Gaussian**
 
 ## Welcome to GitHub Pages
 

@@ -185,6 +185,7 @@ yLabelGauss1D = 'Probability';
 var layoutGauss1D = new Layout(xLabelLin, yLabelLin, xLimLin, yLimLin);
 addSubplot(layoutGauss1D, xLabelGauss1D, yLabelGauss1D, xLimGauss1D, yLimGauss1D);
 layoutGauss1D.width = 650;
+layoutGauss1D.height = 500;
 
 // Data for subplots
 var dataGauss1D = [traceLinear, traceGauss1D];
