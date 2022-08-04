@@ -58,19 +58,54 @@ function Axis(titleText, range) {
 }
 
 function Layout(xLabel, yLabel, xRange, yRange) {
-  this.width = 500;
-  this.height = 500;
   this.xaxis = {
     title: new Title(xLabel),
     range: xRange,
     linecolor: 'black',
-    mirror: true
+    mirror: true,
+    anchor: 'y1'
   };
   this.yaxis = {
     title: new Title(yLabel),
     range: yRange,
     linecolor: 'black',
-    mirror: true
+    mirror: true,
+    anchor: 'x1'
+  };
+  this.grid = {rows: 1, columns: 1, pattern: 'independent'};
+}
+
+// Add a subplot to the existing plot
+function addSubplot(layout, xLabel, yLabel, xRange, yRange) {
+  layout.grid.columns += 1;
+  if (layout.grid.columns === 2) {
+    layout.xaxis2 = {
+      title: new Title(xLabel),
+      range: xRange,
+      linecolor: 'black',
+      mirror: true,
+      anchor: 'y2'
+    };
+    this.yaxis2 = {
+      title: new Title(yLabel),
+      range: yRange,
+      linecolor: 'black',
+      mirror: true,
+      anchor: 'x2'
+    };
+  } else if (layout.grid.columns === 3) {
+    layout.xaxis3 = {
+      title: new Title(xLabel),
+      range: xRange,
+      linecolor: 'black',
+      mirror: true
+    };
+    this.yaxis3 = {
+      title: new Title(yLabel),
+      range: yRange,
+      linecolor: 'black',
+      mirror: true
+    };
   };
 }
 
@@ -89,6 +124,8 @@ let traceLinear = new Trace(xValLinear, yValLinear);
 let xLabelLin = 'Year';
 let yLabelLin = 'Carbon Dioxide Concentration (ppm)';
 var layoutLinear = new Layout(xLabelLin, yLabelLin, xLimLin, yLimLin);
+layoutLinear.width = 500;
+layoutLinear.height = 500;
 
 // Create plot
 Plotly.newPlot('linModelPlot', {
@@ -135,42 +172,19 @@ let yLimGauss1D = [0, 0.45];
 
 // Data
 let xValGauss1D = arange(xLimGauss1D[0], xLimGauss1D[1], 0.1);
-//yValues = linModel(xValues, 2, 1);
 let yValGauss1D = Gauss1D(xValGauss1D, 350, 1);
 
 // Plot data
-traceGauss1D = {
-  type: 'scatter',
-  x: xValGauss1D,
-  y: yValGauss1D,
-  xaxis: 'x2',
-  yaxis: 'y2',
-  mode: 'lines',
-  name: 'Red',
-  line: {
-    color: 'rgb(219, 64, 82)',
-    width: 3
-  }
-};
+var traceGauss1D = new Trace(xValGauss1D, yValGauss1D);
+traceGauss1D.xaxis = 'x2';
+traceGauss1D.yaxis = 'y2';
 
 // Plot layout
-var layoutGauss1D = {
-  width: 500,
-  height: 400,
-  xaxis: {
-    title: {text: 'Carbon Dioxide Concentration (ppm)'},
-    range: xLimGauss1D,
-    linecolor: 'black',
-    mirror: true
-  },
-  yaxis: {
-    //title: {text: 'Carbon Dioxide Concentration (ppm)'},
-    range: yLimGauss1D,
-    linecolor: 'black',
-    mirror: true
-  },
-  grid: {rows: 1, columns: 2, pattern: 'independent'}
-};
+xLabelGauss1D = yLabelLin;
+yLabelGauss1D = 'Probability';
+var layoutGauss1D = new Layout(xLabelLin, yLabelLin, xLimLin, yLimLin);
+addSubplot(layoutGauss1D, xLabelGauss1D, yLabelGauss1D, xLimGauss1D, yLimGauss1D);
+layoutGauss1D.width = 650;
 
 // Data for subplots
 var dataGauss1D = [traceLinear, traceGauss1D];
@@ -199,22 +213,12 @@ meanSlider.oninput = function() {
   let std = stdSliderScale(stdSlider.value);
   meanOutput.innerHTML = mean;
   var newY = Gauss1D(xValGauss1D, mean, std);
-  var traceGauss1D = {
-    type: 'scatter',
-    x: xValGauss1D,
-    y: newY,
-    xaxis: 'x2',
-    yaxis: 'y2',
-    mode: 'lines',
-    name: 'Red',
-    line: {
-      color: 'rgb(219, 64, 82)',
-      width: 3
-    }
-  };
+  var traceGauss1D = new Trace(xValGauss1D, newY);
+  traceGauss1D.xaxis = 'x2';
+  traceGauss1D.yaxis = 'y2';
   var dataGauss1D = [traceLinear, traceGauss1D];
   Plotly.react('linGauss1DPlot', dataGauss1D, layoutGauss1D),
-  Plotly.relayout('linGauss1DPlot', updateGauss1D)
+  Plotly.relayout('linGauss1DPlot', layoutGauss1D)
 }
 
 stdSlider.oninput = function() {
@@ -222,22 +226,12 @@ stdSlider.oninput = function() {
   let std = stdSliderScale(this.value);
   stdOutput.innerHTML = std;
   var newY = Gauss1D(xValGauss1D, mean, std);
-  var traceGauss1D = {
-    type: 'scatter',
-    x: xValGauss1D,
-    y: newY,
-    xaxis: 'x2',
-    yaxis: 'y2',
-    mode: 'lines',
-    name: 'Red',
-    line: {
-      color: 'rgb(219, 64, 82)',
-      width: 3
-    }
-  };
+  var traceGauss1D = new Trace(xValGauss1D, newY);
+  traceGauss1D.xaxis = 'x2';
+  traceGauss1D.yaxis = 'y2';
   var dataGauss1D = [traceLinear, traceGauss1D];
   Plotly.react('linGauss1DPlot', dataGauss1D, layoutGauss1D),
-  Plotly.relayout('linGauss1DPlot', updateGauss1D)
+  Plotly.relayout('linGauss1DPlot', layoutGauss1D)
 }
 
 // Randomize button
