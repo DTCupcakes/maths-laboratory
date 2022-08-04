@@ -31,66 +31,70 @@ function Gauss1D(xVal, mean, std) {
   return yVal
 }
 
+/* OBJECT CONSTRUCTORS */
+function Line() {
+  this.color = 'rgb(219, 64, 82)';
+  this.width = 3;
+}
+
+function Trace(xData, yData) {
+  this.type = 'scatter';
+  this.x = xData;
+  this.y = yData;
+  this.mode = 'lines';
+  this.name = 'Red';
+  this.line = new Line();
+}
+
+function Title(titleText) {
+  this.text = titleText;
+}
+
+function Axis(titleText, range) {
+  this.title = new Title(titleText);
+  this.range = range;
+  this.linecolor = 'black';
+  this.mirror = true;
+}
+
+function Layout(xLabel, yLabel, xRange, yRange) {
+  this.width = 500;
+  this.height = 500;
+  this.xaxis = {
+    title: new Title(xLabel),
+    range: xRange,
+    linecolor: 'black',
+    mirror: true
+  };
+  this.yaxis = {
+    title: new Title(yLabel),
+    range: yRange,
+    linecolor: 'black',
+    mirror: true
+  };
+}
+
 /* LINEAR PLOT */
 let xLimLin = [1960, 2020];
 let yLimLin = [300, 400];
 
 // x values and initial y values
 let xValLinear = arange(xLimLin[0],  xLimLin[1]+10, 1);
-let yValLinear = linModel(xValLinear, 1, 1)
+let yValLinear = linModel(xValLinear, 0.1, 300)
 
 // Data
-traceLinear = {
-  type: 'scatter',
-  x: xValLinear,
-  y: yValLinear,
-  mode: 'lines',
-  name: 'Red',
-  line: {
-    color: 'rgb(219, 64, 82)',
-    width: 3
-  }
-};
+let traceLinear = new Trace(xValLinear, yValLinear);
 
 // Plot layout
-var layoutLinear = {
-  width: 500,
-  height: 500,
-  xaxis: {
-    title: {text: 'Year'},
-    range: xLimLin,
-    linecolor: 'black',
-    mirror: true
-  },
-  yaxis: {
-    title: {text: 'Carbon Dioxide Concentration (ppm)'},
-    range: yLimLin,
-    linecolor: 'black',
-    mirror: true
-  }
-};
+let xLabelLin = 'Year';
+let yLabelLin = 'Carbon Dioxide Concentration (ppm)';
+var layoutLinear = new Layout(xLabelLin, yLabelLin, xLimLin, yLimLin);
 
 // Create plot
 Plotly.newPlot('linModelPlot', {
   data: [traceLinear],
   layout: layoutLinear,
 });
-
-// Update layout with slider movement
-var updateLinear ={
-  xaxis: {
-    title: {text: 'Year'},
-    range: xLimLin,
-    linecolor: 'black',
-    mirror: true
-  },
-  yaxis: {
-    title: {text: 'Carbon Dioxide Concentration (ppm)'},
-    range: yLimLin,
-    linecolor: 'black',
-    mirror: true
-  }
-};
 
 // Linear model slope (m) slider
 var linSlopeSliderScale = slope => 0.1 * slope;
@@ -109,19 +113,9 @@ linSlopeSlider.oninput = function() {
   let c = linIceptSliderScale(linIceptSlider.value);
   linSlopeOutput.innerHTML = m.toPrecision(2);
   var newY = linModel(xValLinear, m, c);
-  var data = [{
-    type: 'scatter',
-    x: xValLinear,
-    y: newY,
-    mode: 'lines',
-    name: 'Red',
-    line: {
-      color: 'rgb(219, 64, 82)',
-      width: 3
-    }
-  }]
+  var data = [new Trace(xValLinear, newY)];
   Plotly.react('linModelPlot', data, layoutLinear),
-  Plotly.relayout('linModelPlot', updateLinear)
+  Plotly.relayout('linModelPlot', layoutLinear)
 }
 
 linIceptSlider.oninput = function() {
@@ -129,19 +123,9 @@ linIceptSlider.oninput = function() {
   let c = linIceptSliderScale(this.value);
   linIceptOutput.innerHTML = c;
   var newY = linModel(xValLinear, m, c);
-  var data = [{
-    type: 'scatter',
-    x: xValLinear,
-    y: newY,
-    mode: 'lines',
-    name: 'Red',
-    line: {
-      color: 'rgb(219, 64, 82)',
-      width: 3
-    }
-  }]
+  var data = [new Trace(xValLinear, newY)];
   Plotly.react('linModelPlot', data, layoutLinear),
-  Plotly.relayout('linModelPlot', updateLinear)
+  Plotly.relayout('linModelPlot', layoutLinear)
 }
 
 /* 1D GAUSSIAN PLOT */
