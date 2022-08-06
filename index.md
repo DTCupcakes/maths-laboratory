@@ -15,7 +15,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 24**
+**test caching: 25**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -141,3 +141,27 @@ We can simplify the 2D Gaussian formula by using three different matrices. The m
 \[ \bf{\mu} = \begin{bmatrix} \mu_t \\\ \mu_y \end{bmatrix} \]
 \[ \bf{C} = \begin{bmatrix} \sigma_t^2 & 0 \\\ 0 & \sigma_y^2 \end{bmatrix} \]
 
+Notice the zeroes in the correlation matrix, because those slots will become important soon.
+
+First let’s use our matrices to construct the terms inside the exponential. First we will need to construct the terms \[ (t_i - \mu_t)^2, (y_i - \mu_y)^2.\]
+
+If we subtract $\bf{\mu}$ from $\bf{x}$, we get \[ \bf{x} - \bf{\mu} = \begin{bmatrix} t_i - \mu_t \\\ y_i - \mu_y \end{bmatrix} \]
+
+Multiplying this matrix by its own transpose gives us \[ (\bf{x} - \bf{\mu})^T (\bf{x} - \bf{\mu}) &= \begin{bmatrix} t_i - \mu_t & y_i - \mu_y \end{bmatrix} \begin{bmatrix} t_i - \mu_t \\\ y_i - \mu_y \end{bmatrix} \\\ &= (t_i - \mu_t)^2 + (y_i - \mu_y)^2 \]
+
+To fully express the term in the exponential, we need to divide by the uncertainties. Notice that the inverse of the correlation matrix is \[ \bf{C}^{-1} = \begin{bmatrix} 1/\sigma_t^2 & 0 \\\ 0 & 1/\sigma_y^2 \end{bmatrix} \]
+
+To show this for yourself, try substituting it into the following equation to show that you get the identity matrix: \[ \bf{C}^{-1}\bf{C} = \bf{I} \]
+
+We can insert the inverse correlation matrix into our previous equation to give us \[ (\bf{x} - \bf{\mu})^T \bf{C}^{-1} (\bf{x} - \bf{\mu}) &= \begin{bmatrix} t_i - \mu_t & y_i - \mu_y \end{bmatrix} \begin{bmatrix} 1/\sigma_t^2 & 0 \\\ 0 & 1/\sigma_y^2 \end{bmatrix} \begin{bmatrix} t_i - \mu_t \\\ y_i - \mu_y \end{bmatrix} \\\ &= \frac{(t_i - \mu_t)^2}{\sigma_t^2} + \frac{(y_i - \mu_y)^2}{\sigma_y^2} \]
+
+and then our formula for the 2D Gaussian becomes \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^2\sigma_t^2\sigma_y^2}} \exp \left( -\frac{1}{2} (\bf{x} - \bf{\mu})^T \bf{C}^{-1} (\bf{x} - \bf{\mu}) \right) \]
+
+You’ll also notice that part of the term under the square root is the same as the determinant of our correlation matrix, so we will substitute that in: \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^2 \det(\bf{C})}} \exp \left( -\frac{1}{2} (\bf{x} - \bf{\mu})^T \bf{C}^{-1} (\bf{x} - \bf{\mu}) \right) \]
+
+You’ll notice now that all the variables in this expression are matrices, so now our 2D Gaussian has become an expression for a Gaussian in as many dimensions as we could want. These matrices contain all the information about the means of our model, the uncertainties and the values of our measurements. If we want to expand our model to include more variables then we just need to adjust the matrices. For example, if we wanted to add back in our variable $z$ from before, we would adjust the matrices in the following way
+\[ \bf{x} = \begin{bmatrix} t_i \\\ y_i \\\ z_i \end{bmatrix} \]
+\[ \bf{\mu} = \begin{bmatrix} \mu_t \\\ \mu_y \\\ \mu_z \end{bmatrix} \]
+\[ \bf{C} = \begin{bmatrix} \sigma_t^2 & 0 & 0 \\\ 0 & \sigma_y^2 & 0 \\\ 0 & 0 & \sigma_z^2 \end{bmatrix} \]
+
+## Correlation Coefficients
