@@ -15,7 +15,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 21**
+**test caching: 22**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -38,7 +38,9 @@ Our CO2 data might, at first glance, look like it fits a single straight upwards
 **Figure 3 - CO2 concentration vs time plot with uncertainties**
 
 Ideally our line should fit within the uncertainties of all the data points. On the plot, our line will have the general formula 
+
 $$y = mt +c.$$
+
 $t$ is the time at which we measure each data point (i.e. the year), $m$ is the slope of the line, $c$ moves the line vertically up and down, and $y$ is the value we predict for CO2 concentration.
 
 We can experiment with different values of $m$ and $c$ to see what different lines we get. These values are the PARAMETERS for our model, since they change what our model looks like on the plot, and what predictions we get from it. We know that $m$ needs to be positive to produce an upwards slope.
