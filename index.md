@@ -15,7 +15,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 16**
+**test caching: 17**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -131,40 +131,13 @@ For now, play around with the 2D Gaussian below to see how changing the means an
 
 **Figure 7 (Interactive) - CO2 vs time plot and 2D Gaussian**
 
-## Welcome to GitHub Pages
+## Matrices and n-Dimensional Gaussians
+Imagine we wanted to extend our model out to cover a new variable z representing (for example) temperature. Our 3D Gaussian probability formula would be \[ P(t_i, y_i, z_i \vert \sigma_t, \sigma_y, \sigma_z) = \frac{1}{\sqrt{(2\pi)^3\sigma_t^2\sigma_y^2\sigma_z^2}} \exp \left( -\frac{1}{2} \left( \frac{(t_i-\mu_t)^2}{\sigma_t^2} + \frac{(y_i-\mu_y)^2}{\sigma_y^2} + \frac{(z_i-\mu_z)^2}{\sigma_z^2} \right) \right) \]
 
-You can use the [editor on GitHub](https://github.com/DTCupcakes/maths-laboratory/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+Here $z_i$ is a temperature measurement, $z$ is its mean value, and $\sigma_z$ is its uncertainty. If we wanted to, we could use a Gaussian to describe the relationship between any number of variables. In order to do this more elegantly it is a good idea to simplify this formula using matrices.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+We can simplify the 2D Gaussian formula by using three different matrices. The matrix $\boldsymbol{x}$ contains the values of our measurements, the matrix $\textbf{\mu}$ contains the means of the Gaussian distributions, and the CORRELATION MATRIX $\bf{C}$ contains our uncertainties:
+\[ x = \begin{bmatrix} t_i \\ y_i \end{bmatrix} \]
+\[ \mu = \begin{bmatrix} \mu_t \\ \mu_y \end{bmatrix} \]
+\[ C = \begin{bmatrix} \sigma_t^2 & 0 \\ 0 & \sigma_y^2 \end{bmatrix} \]
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/DTCupcakes/maths-laboratory/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
