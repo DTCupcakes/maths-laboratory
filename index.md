@@ -15,7 +15,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 17**
+**test caching: 18**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -136,8 +136,8 @@ Imagine we wanted to extend our model out to cover a new variable z representing
 
 Here $z_i$ is a temperature measurement, $z$ is its mean value, and $\sigma_z$ is its uncertainty. If we wanted to, we could use a Gaussian to describe the relationship between any number of variables. In order to do this more elegantly it is a good idea to simplify this formula using matrices.
 
-We can simplify the 2D Gaussian formula by using three different matrices. The matrix $\boldsymbol{x}$ contains the values of our measurements, the matrix $\textbf{\mu}$ contains the means of the Gaussian distributions, and the CORRELATION MATRIX $\bf{C}$ contains our uncertainties:
-\[ x = \begin{bmatrix} t_i \\ y_i \end{bmatrix} \]
-\[ \mu = \begin{bmatrix} \mu_t \\ \mu_y \end{bmatrix} \]
-\[ C = \begin{bmatrix} \sigma_t^2 & 0 \\ 0 & \sigma_y^2 \end{bmatrix} \]
+We can simplify the 2D Gaussian formula by using three different matrices. The matrix $\bf{x}$ contains the values of our measurements, the matrix $\bf{\mu}$ contains the means of the Gaussian distributions, and the CORRELATION MATRIX $\bf{C}$ contains our uncertainties:
+\[ x = \begin{matrix} t_i \\ y_i \end{matrix} \]
+\[ \mu = \begin{matrix} \mu_t \\ \mu_y \end{matrix} \]
+\[ C = \begin{matrix} \sigma_t^2 & 0 \\ 0 & \sigma_y^2 \end{matrix} \]
 
