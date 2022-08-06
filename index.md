@@ -4,7 +4,7 @@
       tex2jax: {
         skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
         inlineMath: [['$','$']],
-        displayMath: [ ['$$', '$$'] ]
+        displayMath: [ ['\[', '\]'] ]
       }
     });
   </script>
@@ -15,7 +15,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 22**
+**test caching: 23**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -37,11 +37,7 @@ Our CO2 data might, at first glance, look like it fits a single straight upwards
 
 **Figure 3 - CO2 concentration vs time plot with uncertainties**
 
-Ideally our line should fit within the uncertainties of all the data points. On the plot, our line will have the general formula 
-
-$$y = mt +c.$$
-
-$t$ is the time at which we measure each data point (i.e. the year), $m$ is the slope of the line, $c$ moves the line vertically up and down, and $y$ is the value we predict for CO2 concentration.
+Ideally our line should fit within the uncertainties of all the data points. On the plot, our line will have the general formula \[y = mt +c.\] $t$ is the time at which we measure each data point (i.e. the year), $m$ is the slope of the line, $c$ moves the line vertically up and down, and $y$ is the value we predict for CO2 concentration.
 
 We can experiment with different values of $m$ and $c$ to see what different lines we get. These values are the PARAMETERS for our model, since they change what our model looks like on the plot, and what predictions we get from it. We know that $m$ needs to be positive to produce an upwards slope.
 
@@ -141,7 +137,7 @@ Imagine we wanted to extend our model out to cover a new variable z representing
 Here $z_i$ is a temperature measurement, $z$ is its mean value, and $\sigma_z$ is its uncertainty. If we wanted to, we could use a Gaussian to describe the relationship between any number of variables. In order to do this more elegantly it is a good idea to simplify this formula using matrices.
 
 We can simplify the 2D Gaussian formula by using three different matrices. The matrix $\bf{x}$ contains the values of our measurements, the matrix $\bf{\mu}$ contains the means of the Gaussian distributions, and the CORRELATION MATRIX $\bf{C}$ contains our uncertainties:
-$$ \bf{x} = \begin{bmatrix} t_i \\ y_i \end{bmatrix} $$
-\[ \bf{\mu} = \begin{bmatrix} \mu_t \\ \mu_y \end{bmatrix} \]
-\[ \bf{C} = \begin{bmatrix} \sigma_t^2 & 0 \\ 0 & \sigma_y^2 \end{bmatrix} \]
+\[ \bf{x} = \begin{bmatrix} t_i\\ y_i \end{bmatrix} \]
+\[ \bf{\mu} = \begin{bmatrix} \mu_t\\ \mu_y \end{bmatrix} \]
+\[ \bf{C} = \begin{bmatrix} \sigma_t^2& 0\\ 0& \sigma_y^2 \end{bmatrix} \]
 
