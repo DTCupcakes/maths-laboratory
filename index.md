@@ -15,7 +15,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 25**
+**test caching: 26**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -147,13 +147,13 @@ First let’s use our matrices to construct the terms inside the exponential. Fi
 
 If we subtract $\bf{\mu}$ from $\bf{x}$, we get \[ \bf{x} - \bf{\mu} = \begin{bmatrix} t_i - \mu_t \\\ y_i - \mu_y \end{bmatrix} \]
 
-Multiplying this matrix by its own transpose gives us \[ (\bf{x} - \bf{\mu})^T (\bf{x} - \bf{\mu}) &= \begin{bmatrix} t_i - \mu_t & y_i - \mu_y \end{bmatrix} \begin{bmatrix} t_i - \mu_t \\\ y_i - \mu_y \end{bmatrix} \\\ &= (t_i - \mu_t)^2 + (y_i - \mu_y)^2 \]
+Multiplying this matrix by its own transpose gives us \[ (\bf{x} - \bf{\mu})^T (\bf{x} - \bf{\mu}) = \begin{bmatrix} t_i - \mu_t & y_i - \mu_y \end{bmatrix} \begin{bmatrix} t_i - \mu_t \\\ y_i - \mu_y \end{bmatrix} = (t_i - \mu_t)^2 + (y_i - \mu_y)^2 \]
 
 To fully express the term in the exponential, we need to divide by the uncertainties. Notice that the inverse of the correlation matrix is \[ \bf{C}^{-1} = \begin{bmatrix} 1/\sigma_t^2 & 0 \\\ 0 & 1/\sigma_y^2 \end{bmatrix} \]
 
 To show this for yourself, try substituting it into the following equation to show that you get the identity matrix: \[ \bf{C}^{-1}\bf{C} = \bf{I} \]
 
-We can insert the inverse correlation matrix into our previous equation to give us \[ (\bf{x} - \bf{\mu})^T \bf{C}^{-1} (\bf{x} - \bf{\mu}) &= \begin{bmatrix} t_i - \mu_t & y_i - \mu_y \end{bmatrix} \begin{bmatrix} 1/\sigma_t^2 & 0 \\\ 0 & 1/\sigma_y^2 \end{bmatrix} \begin{bmatrix} t_i - \mu_t \\\ y_i - \mu_y \end{bmatrix} \\\ &= \frac{(t_i - \mu_t)^2}{\sigma_t^2} + \frac{(y_i - \mu_y)^2}{\sigma_y^2} \]
+We can insert the inverse correlation matrix into our previous equation to give us \[ (\bf{x} - \bf{\mu})^T \bf{C}^{-1} (\bf{x} - \bf{\mu}) = \begin{bmatrix} t_i - \mu_t & y_i - \mu_y \end{bmatrix} \begin{bmatrix} 1/\sigma_t^2 & 0 \\\ 0 & 1/\sigma_y^2 \end{bmatrix} \begin{bmatrix} t_i - \mu_t \\\ y_i - \mu_y \end{bmatrix} = \frac{(t_i - \mu_t)^2}{\sigma_t^2} + \frac{(y_i - \mu_y)^2}{\sigma_y^2} \]
 
 and then our formula for the 2D Gaussian becomes \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^2\sigma_t^2\sigma_y^2}} \exp \left( -\frac{1}{2} (\bf{x} - \bf{\mu})^T \bf{C}^{-1} (\bf{x} - \bf{\mu}) \right) \]
 
@@ -165,3 +165,37 @@ You’ll notice now that all the variables in this expression are matrices, so n
 \[ \bf{C} = \begin{bmatrix} \sigma_t^2 & 0 & 0 \\\ 0 & \sigma_y^2 & 0 \\\ 0 & 0 & \sigma_z^2 \end{bmatrix} \]
 
 ## Correlation Coefficients
+
+One very common way to characterise a set of measurements is to calculate the CORRELATION, and more precisely the CORRELATION COEFFICIENT $\rho$. The correlation coefficient gives us a measure of how closely our measurements line up along a straight line. It takes values between -1 and 1. A negative correlation coefficient means our data is clustered along a line with a negative slope and a positive correlation coefficient means our data is clustered along a line with a positive slope. The further away from zero the value is, the less variation there is around the line.
+
+Let’s apply this idea to a set of measurements of the CO2 concentration all taken at the same time $t$. Using our traditional 2D Gaussian these measurements have very little correlation in any direction (which you can see on the interactive 2D Gaussian plot above). This is a result of our assumption that the uncertainties  along each axis are independent, i.e. the variation in measurements along one axis does not affect the variation in measurements along the other.
+
+Now let’s assume that this is not the case. Maybe there is a systematic error in our measurements that causes our measurements of the CO2 concentration to be lower when we measure a higher time value. This would add correlation to our uncertainties, such that our correlation coefficient $\rho$ is no longer zero.
+
+This is where those empty spaces in our correlation matrix come in! Into each of those spaces we will add the product of our correlation coefficient with the uncertainties in time and CO2 concentration. \[ \bf{C} = \begin{bmatrix} \sigma_t^2 & \rho\sigma_t\sigma_y \\\ \rho\sigma_t\sigma_y & \sigma_y^2 \end{bmatrix} \]
+
+To find the probability that our measurement will take a particular value, we can use the same Gaussian formula that we used before. The only difference is that our definition of the correlation matrix has changed. \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^2 \det(\bf{C})}} \exp \left( -\frac{1}{2} (\bf{x} - \bf{\mu})^T \bf{C}^{-1} (\bf{x} - \bf{\mu}) \right) \]
+
+Try playing around with the correlation coefficients in the 2D Gaussian below to see how they affect the distribution of our measurements.
+
+**Figure 8 (Interactive) - CO2 vs time plot and 2D Gaussian (now with correlation coefficients)**
+
+If we wanted to bring back in our temperature measurement $z$, we would need different correlation coefficients for the correlation between each pair of variables. If $\rho_{ty}$ is the correlation coefficient relating $t$ and $y$, $\rho_{tz}$ is the correlation coefficient relating $t$ and $z$, and $\rho_{yz}$ is the correlation coefficient relating $y$ and $z$, then our 3D correlation matrix will look like this: \[ \bf{C} = \begin{bmatrix} \sigma_t^2 & \rho_{ty}\sigma_t\sigma_y & \rho_{tz}\sigma_t\sigma_z \\\ \rho_{ty}\sigma_t\sigma_y & \sigma_y^2 & \rho_{yz}\sigma_y\sigma_z \\\ \rho_{tz}\sigma_t\sigma_z & \rho_{yz}\sigma_y\sigma_z & \sigma_z^2 \end{bmatrix} \]
+
+## Recap
+
+Let’s revisit our linear model and see how it’s changed since we first introduced it. In our old model, each CO2 concentration measurement was drawn from a single one-dimensional Gaussian distribution: \[ y_i \sim N(mt+c, \sigma_y) \]
+
+The probability of our CO2 concentration measurements taking any particular value was given by the following formula: \[ P(y_i \vert t, \sigma) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp \left( -\frac{(y_i - (mt + c))^2}{2\sigma^2} \right) \]
+
+In our new model, each pair of CO2 concentration and time measurements is drawn from a two-dimensional Gaussian distribution: \[ (t_i, y_i) \sim N((\mu_y, \mu_t), (\sigma_t, \sigma_y)) \]
+
+The probability of our CO2 concentration and time measurements taking any particular pair of values is given by the formula \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^2 \sigma_t^2 \sigma_y^2}} \exp \left( -\frac{1}{2} \left( \frac{(t_i - \mu_t)^2}{\sigma_t^2} + \frac{(y_i - \mu_y)^2}{\sigma_y^2} \right) \right) \]
+
+which we generalised using the following matrices \[ \bf{x} = \begin{bmatrix} t_i \\\ y_i \end{bmatrix} \]
+\[ \bf{\mu} = \begin{bmatrix} \mu_t \\\ \mu_y \end{bmatrix} \]
+\[ \bf{C} = \begin{bmatrix} \sigma_t^2 & \rho\sigma_t\sigma_y \\\ \rho\sigma_t\sigma_y & \sigma_y^2 \end{bmatrix} \]
+
+to a formula for the probability of measurements taking particular values along any number of axes: \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^2 \det(\bf{C})}} \exp \left( -\frac{1}{2} (\bf{x} - \bf{\mu})^T \bf{C}^{-1} (\bf{x} - \bf{\mu}) \right) \]
+
+The correlation coefficient/s $\rho$ in the correlation matrix gives us a measure of the correlation between uncertainties along any two axes, taking larger values (more positive or more negative) if the correlation is higher.
