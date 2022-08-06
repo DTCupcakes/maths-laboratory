@@ -1,3 +1,4 @@
+ <link href="styles.css" rel="stylesheet">
  <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
       tex2jax: {
@@ -14,7 +15,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 15**
+**test caching: 16**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
