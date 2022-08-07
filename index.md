@@ -15,7 +15,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 26**
+**test caching: 27**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -87,11 +87,11 @@ By using this formula we are able to determine the probability of our CO2 concen
   <div class="slidecontainer" id="tslidecontainer">
     <input type="range" min="1960" max="2020" value="1980" class="slider" id="myt">
     <p>$t$: <span id="tValue"></span></p>
-    <p>Mean: <span id="meanValue"></span></p>
+    <p>Mean ($\mu=mt+c$): <span id="meanValue"></span></p>
   </div>
   <div class="slidecontainer" id="stdslidecontainer">
     <input type="range" min="10" max="100" value="1" class="slider" id="myStd">
-    <p>Standard deviation: <span id="stdValue"></span></p>
+    <p>Standard deviation ($\sigma$): <span id="stdValue"></span></p>
   </div>
 </div>
 
@@ -128,6 +128,22 @@ One important (and very convenient) property of Gaussian distributions is that w
 You may notice that our 2D Gaussian is simply the product of our two 1D Gaussians (try multiplying them together yourself). This idea extends the same way into higher dimensions, and so we can obtain a Gaussian probability distribution using as many different variables as we want.
 
 For now, play around with the 2D Gaussian below to see how changing the means and uncertainties affects the probability distribution.
+
+<div id="Gauss2DPlot">
+  <div class="slidecontainer" id="meant2DSlideContainer">
+    <input type="range" min="1960" max="2020" value="1980" class="slider" id="meant2D">
+    <p>Mean ($\mu_t=t$): <span id="meant2DValue"></span></p>
+    <p>Mean ($\mu_y=mt+c$): <span id="meany2DValue"></span></p>
+  </div>
+  <div class="slidecontainer" id="stdt2DSlideContainer">
+    <input type="range" min="10" max="100" value="10" class="slider" id="stdt2D">
+    <p>Standard deviation ($\sigma_t$): <span id="stdt2DVal"></span></p>
+  </div>
+  <div class="slidecontainer" id="stdy2DSlideContainer">
+    <input type="range" min="10" max="100" value="10" class="slider" id="stdy2D">
+    <p>Standard deviation ($\sigma_y$): <span id="stdy2DVal"></span></p>
+  </div>
+</div>
 
 **Figure 7 (Interactive) - CO2 vs time plot and 2D Gaussian**
 

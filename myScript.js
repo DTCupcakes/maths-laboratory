@@ -299,3 +299,199 @@ stdSlider.oninput = function() {
 	  }
   })
 }*/
+
+/* 2D Gaussian Plot */
+// Define t slider
+var meant2DSliderScale = tSliderScale;
+var meant2DSlider = document.getElementById("meant2D");
+var meant2DOutput = document.getElementById("meant2DValue");
+meant2DOutput.innerHTML = meant2DSliderScale(meant2DSlider.value);
+
+// Define mean calculation from fixed linear model parameters
+var calcMeany2D = calcMean;
+var meany2DOutput = document.getElementById("meany2DValue");
+meany2DOutput.innerHTML = calcMeany2D(meant2DSlider.value);
+
+// Define standard deviation (in t) slider
+var stdt2DSliderScale = stdSliderScale;
+var stdt2DSlider = document.getElementById("stdt2D");
+var stdt2DOutput = document.getElementById("stdt2DVal");
+stdt2DOutput.innerHTML = stdt2DSliderScale(stdt2DSlider.value);
+
+// Define standard deviation (in y) slider
+var stdy2DSliderScale = stdSliderScale;
+var stdy2DSlider = document.getElementById("stdy2D");
+var stdy2DOutput = document.getElementById("stdy2DVal");
+stdy2DOutput.innerHTML = stdy2DSliderScale(stdy2DSlider.value);
+
+// Axis limits for Gaussian in t
+let xLimGauss2Dt = [1960, 2020];
+let yLimGauss2Dt = [0, 0.45];
+
+// Create data for Gaussian in t
+let xValGauss2Dt = arange(xLimGauss2Dt[0], xLimGauss2Dt[1], 0.1);
+let yValGauss2Dt = Gauss1D(xValGauss2Dt, meant2DOutput.innerHTML, stdt2DOutput.innerHTML);
+
+// Plot Gaussian in t
+//var traceGauss2Dt = new Trace(xValGauss2Dt, yValGauss2Dt);
+var traceGauss2Dt = {
+  type: 'scatter',
+  x: xValGauss2Dt,
+  y: yValGauss2Dt,
+  mode: 'lines',
+  //this.name = 'Red';
+  line: {
+    color: 'rgb(0, 255, 0)',
+    width: 3,
+  },
+  xaxis: 'x2',
+  yaxis: 'y2'
+};
+
+// Plot Gaussian in t on CO2 vs time plot
+var yValLinGauss2Dt = rotGauss1D(yValGauss2Dt, 338);
+var traceLinGauss2Dt = new Trace(xValGauss2Dt, yValLinGauss2Dt);
+traceLinGauss2Dt.line.color = traceGauss2Dt.line.color;
+
+// Axis limits for Gaussian in y
+let xLimGauss2Dy = yLimLin;
+let yLimGauss2Dy = yLimGauss1D;
+
+// Create data for Gaussian in t
+let xValGauss2Dy = arange(xLimGauss2Dy[0], xLimGauss2Dy[1], 0.1);
+let yValGauss2Dy = Gauss1D(xValGauss2Dy, meany2DOutput.innerHTML, stdy2DOutput.innerHTML);
+
+// Plot Gaussian in t
+var traceGauss2Dy = new Trace(xValGauss2Dy, yValGauss2Dy);
+traceGauss2Dy.line.color = 'rgb(0, 0, 255)';
+traceGauss2Dy.xaxis = 'x3';
+traceGauss2Dy.yaxis = 'y3';
+
+// Plot Gaussian in y on CO2 vs time plot
+var yValLinGauss2Dy = rotGauss1D(yValGauss2Dy, 1980);
+var traceLinGauss2Dy = new Trace(yValLinGauss2Dy, xValGauss2Dy);
+traceLinGauss2Dy.line.color = traceGauss2Dy.line.color;
+
+// Plot layout
+var xLabelGauss2Dt = xLabelLin;
+var yLabelGauss2Dt = 'Probability';
+var layoutGauss2D = {
+  width: 650,
+  height: 500,
+  xaxis: {
+    title: new Title(xLabelLin),
+    range: xLimLin,
+    linecolor: 'black',
+    mirror: true,
+    anchor: 'y1',
+    domain: [0, 0.45]
+  },
+  yaxis: {
+    title: new Title(yLabelLin),
+    range: yLimLin,
+    linecolor: 'black',
+    mirror: true,
+    anchor: 'x1',
+    domain: [0.1, 0.9]
+  },
+  xaxis2: {
+    title: new Title(xLabelGauss2Dt),
+    range: xLimGauss2Dt,
+    linecolor: 'black',
+    mirror: true,
+    domain: [0.6, 1],
+    anchor: 'y2'
+  },
+  yaxis2: {
+    title: new Title(yLabelGauss2Dt),
+    range: yLimGauss2Dt,
+    linecolor: 'black',
+    mirror: true,
+    domain: [0.6, 1],
+    anchor: 'x2'
+  },
+  xaxis3: {
+    title: new Title(xLabelGauss1D),
+    range: xLimGauss2Dy,
+    linecolor: 'black',
+    mirror: true,
+    domain: [0.6, 1],
+    anchor: 'y3'
+  },
+  yaxis3: {
+    title: new Title(yLabelGauss1D),
+    range: yLimGauss2Dy,
+    linecolor: 'black',
+    mirror: true,
+    domain: [0, 0.4],
+    anchor: 'x3'
+  },
+  grid: {rows: 1, columns: 2, pattern: 'independent'},
+  showlegend: false
+};
+
+// Data for subplots
+var dataGauss2D = [
+  traceLinFixed, 
+  traceGauss2Dt, 
+  traceLinGauss2Dt, 
+  traceGauss2Dy,
+  traceLinGauss2Dy
+];
+
+// Create plot
+Plotly.newPlot('Gauss2DPlot', {
+  data: dataGauss2D,
+  layout: layoutGauss2D,
+});
+
+// Things for all sliders to do upon input
+function sliderGauss2D(meant, meany, stdt, stdy) {
+  var newGausst = Gauss1D(xValGauss2Dt, meant, stdt);
+  var traceGauss2Dt = new Trace(xValGauss2Dt, newGausst);
+  traceGauss2Dt.line.color = 'rgb(0, 255, 0)';
+  traceGauss2Dt.xaxis = 'x2';
+  traceGauss2Dt.yaxis = 'y2';
+  var newGaussy = Gauss1D(xValGauss2Dy, meany, stdy);
+  var traceGauss2Dy = new Trace(xValGauss2Dy, newGaussy);
+  traceGauss2Dy.line.color = 'rgb(0, 0, 255)';
+  traceGauss2Dy.xaxis = 'x3';
+  traceGauss2Dy.yaxis = 'y3';
+  var yValLinGauss2Dt = rotGauss1D(newGausst, meany);
+  var traceLinGauss2Dt = new Trace(xValGauss2Dt, yValLinGauss2Dt);
+  traceLinGauss2Dt.line.color = 'rgb(0, 255, 0)';
+  var yValLinGauss2Dy = rotGauss1D(newGaussy, meant);
+  var traceLinGauss2Dy = new Trace(yValLinGauss2Dy, xValGauss2Dy);
+  traceLinGauss2Dy.line.color = 'rgb(0, 0, 255)';
+  var dataGauss2D = [traceLinFixed, traceGauss2Dt, traceLinGauss2Dt, traceGauss2Dy, traceLinGauss2Dy];
+  Plotly.react('Gauss2DPlot', dataGauss2D, layoutGauss2D),
+  Plotly.relayout('Gauss2DPlot', layoutGauss2D)
+}
+
+meant2DSlider.oninput = function() {
+  let meant = meant2DSliderScale(this.value);
+  let meany = calcMeany2D(meant);
+  let stdt = stdt2DSliderScale(stdt2DSlider.value);
+  let stdy = stdy2DSliderScale(stdy2DSlider.value);
+  meant2DOutput.innerHTML = meant;
+  meany2DOutput.innerHTML = meany;
+  sliderGauss2D(meant, meany, stdt, stdy);
+}
+
+stdt2DSlider.oninput = function() {
+  let meant = meant2DSliderScale(meant2DSlider.value);
+  let meany = calcMeany2D(meant);
+  let stdt = stdt2DSliderScale(this.value);
+  let stdy = stdy2DSliderScale(stdy2DSlider.value);
+  stdt2DOutput.innerHTML = stdt;
+  sliderGauss2D(meant, meany, stdt, stdy);
+}
+
+stdy2DSlider.oninput = function() {
+  let meant = meant2DSliderScale(meant2DSlider.value);
+  let meany = calcMeany2D(meant);
+  let stdt = stdt2DSliderScale(stdt2DSlider.value);
+  let stdy = stdy2DSliderScale(this.value);
+  stdy2DOutput.innerHTML = stdy;
+  sliderGauss2D(meant, meany, stdt, stdy);
+}
