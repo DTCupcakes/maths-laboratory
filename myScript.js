@@ -10,6 +10,34 @@ function arange(start, stop, step) {
   return linArr
 }
 
+// Get dimesions of an array
+function getDim(arr) {
+  var dim = [];
+  moreDim = true; // True while more dimensions to array
+  while (moreDim === true) {
+    if (Array.isArray(arr)) {
+      dim.push(arr.length);
+    } else {
+      moreDim = false;
+    }
+    arr = arr[0];
+  }
+  return dim
+}
+
+// Reshape 1D array into 2 dimensions
+function reshape2D(arr, dim) {
+  mat2D = [];
+  for (let i = 0; i < dim[0]; i++) {
+    var row = [];
+    for (let j = 0; j < dim[1]; j++) {
+      row.push(arr[i*dim[1]+j])
+    }
+    mat2D.push(row);
+  }
+  return mat2D
+}
+
 // Add n to all values in array
 function arrAdd(arr, n) {
   newArr = [];
@@ -21,11 +49,75 @@ function arrAdd(arr, n) {
 
 // Multiply all values in array by n
 function arrMult(arr, n) {
-  newArr = [];
+  var arrDim = getDim(arr); // Array dimensions
+  arr = arr.flat(); // Flatten array into 1D
+  var newArr = [];
   for (let i = 0; i < arr.length; i++) {
     newArr.push(arr[i] * n);
   }
+  if (arrDim.length === 2) {
+    newArr = reshape2D(newArr, arrDim);
+  }
   return newArr
+}
+
+// Subtract one (1D or 2D) matrix from another
+function matMinus(mat1, mat2) {
+  var matDim = getDim(mat1); // Matrix dimensions
+  mat1 = mat1.flat();
+  mat2 = mat2.flat();
+  var matNew = Array(mat1.length);
+  for (let i = 0; i < mat1.length; i++) {
+  matNew[i] = mat1[i] - mat2[i];
+  } 
+  matNew = reshape2D(matNew, matDim);
+  return matNew
+}
+
+// Return transpose of a 2D matrix
+function transp2D(mat) {
+  var matDim = getDim(mat);
+  var newMat = [];
+  for (let i = 0; i < matDim[1]; i++) {
+    var row = [];
+    for (let j = 0; j < matDim[0]; j++) {
+      row.push(mat[j][i]) 
+    }
+    newMat.push(row)
+  }
+  return newMat
+}
+
+// Return the product of two matrices
+function matMult(mat1, mat2) {
+  var mat1Dim = getDim(mat1);
+  var mat2Dim = getDim(mat2);
+  mat2 = transp2D(mat2);
+  var matNew = [];
+  for (let i = 0; i < mat2Dim[1]; i++) {
+    let row =  [];
+    for (let j = 0; j < mat1Dim[0]; j++) {
+      prod = 0;
+      for (let k = 0; k < mat1Dim[1]; k++) {
+        prod += mat1[j][k] * mat2[i][k];
+      }
+      row.push(prod);
+    }
+    matNew.push(row)
+  }
+  return transp2D(matNew)
+}
+
+// Return determinant of a 2x2 matrix
+function det2D(mat) {
+  return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0]
+}
+
+// Return inverse of a 2x2 matrix
+function inv2D(mat) {
+  var det = det2D(mat);
+  var adj = [[mat[1][1], -1*mat[0][1]], [-1*mat[1][0], mat[0][0]]];
+  return arrMult(adj, 1 / det)
 }
 
 // Output y values where y = m*x+c
@@ -49,6 +141,14 @@ function Gauss1D(xVal, mean, std) {
   }
   return yVal
 }
+
+// Output 2D Gaussian
+/*function Gauss2D(xVal, yVal, mean, corr) {
+  let zVal = [];
+  for (let j=0; j < xVal.length; j++) {
+    
+  }
+}*/
 
 /* OBJECT CONSTRUCTORS */
 function Line() {
@@ -371,6 +471,14 @@ traceGauss2Dy.yaxis = 'y3';
 var yValLinGauss2Dy = rotGauss1D(yValGauss2Dy, 1980);
 var traceLinGauss2Dy = new Trace(yValLinGauss2Dy, xValGauss2Dy);
 traceLinGauss2Dy.line.color = traceGauss2Dy.line.color;
+
+// Create trace for contour plot
+/*var traceGauss2DContour = {
+  z:,
+  x:xValGauss2Dt,
+  y:xValGauss2Dy,
+  type:'contour'
+}*/
 
 // Plot layout
 var xLabelGauss2Dt = xLabelLin;
