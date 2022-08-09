@@ -10,6 +10,15 @@ function arange(start, stop, step) {
   return linArr
 }
 
+// Create an array of shape filled with value
+function fillArr(shape, value) {
+  var newArr = new Array(shape);
+  for (let i = 0; i < newArr.length; i++) {
+    newArr[i] = value;
+  }
+  return newArr
+}
+
 // Get dimesions of an array
 function getDim(arr) {
   var dim = [];
@@ -303,6 +312,9 @@ function rotGauss1D(Gauss1D, t) {
 var yValLinGauss1D = rotGauss1D(yValGauss1D, 1980);
 var traceLinGauss1D = new Trace(yValLinGauss1D, xValGauss1D);
 traceLinGauss1D.line.color = traceGauss1D.line.color;
+var traceDotGauss1D = new Trace(fillArr(xValGauss1D.length, 1980), xValGauss1D)
+traceDotGauss1D.line.color = traceLinGauss1D.line.color;
+traceDotGauss1D.line.dash = 'dot';
 
 // Plot layout
 xLabelGauss1D = yLabelLin;
@@ -346,7 +358,12 @@ var layoutGauss1D = {
 };
 
 // Data for subplots
-var dataGauss1D = [traceLinFixed, traceGauss1D, traceLinGauss1D];
+var dataGauss1D = [
+  traceLinFixed, 
+  traceGauss1D, 
+  traceLinGauss1D,
+  traceDotGauss1D
+];
 
 // Create plot
 Plotly.newPlot('linGauss1DPlot', {
@@ -364,7 +381,15 @@ function sliderGauss1D(t, mean, std) {
   var yValLinGauss1D = rotGauss1D(newY, t);
   var traceLinGauss1D = new Trace(yValLinGauss1D, xValGauss1D);
   traceLinGauss1D.line.color = 'rgb(0, 0, 255)';
-  var dataGauss1D = [traceLinFixed, traceGauss1D, traceLinGauss1D];
+  var traceDotGauss1D = new Trace(fillArr(xValGauss1D.length, t), xValGauss1D)
+  traceDotGauss1D.line.color = traceLinGauss1D.line.color;
+  traceDotGauss1D.line.dash = 'dot';
+  var dataGauss1D = [
+    traceLinFixed, 
+    traceGauss1D, 
+    traceLinGauss1D,
+    traceDotGauss1D
+  ];
   Plotly.react('linGauss1DPlot', dataGauss1D, layoutGauss1D),
   Plotly.relayout('linGauss1DPlot', layoutGauss1D)
 }
@@ -452,6 +477,9 @@ var traceGauss2Dt = {
 var yValLinGauss2Dt = rotGauss1D(yValGauss2Dt, 338);
 var traceLinGauss2Dt = new Trace(xValGauss2Dt, yValLinGauss2Dt);
 traceLinGauss2Dt.line.color = traceGauss2Dt.line.color;
+var traceDotGauss2Dt = new Trace(xValGauss2Dt, fillArr(yValGauss2Dt.length, 338))
+traceDotGauss2Dt.line.color = traceLinGauss2Dt.line.color;
+traceDotGauss2Dt.line.dash = 'dot';
 
 // Axis limits for Gaussian in y
 let xLimGauss2Dy = yLimLin;
@@ -471,6 +499,9 @@ traceGauss2Dy.yaxis = 'y3';
 var yValLinGauss2Dy = rotGauss1D(yValGauss2Dy, 1980);
 var traceLinGauss2Dy = new Trace(yValLinGauss2Dy, xValGauss2Dy);
 traceLinGauss2Dy.line.color = traceGauss2Dy.line.color;
+var traceDotGauss2Dy = new Trace(fillArr(xValGauss2Dy.length, 1980), xValGauss2Dy)
+traceDotGauss2Dy.line.color = traceLinGauss2Dy.line.color;
+traceDotGauss2Dy.line.dash = 'dot';
 
 // Create trace for contour plot
 /*var traceGauss2DContour = {
@@ -542,9 +573,11 @@ var layoutGauss2D = {
 var dataGauss2D = [
   traceLinFixed, 
   traceGauss2Dt, 
-  traceLinGauss2Dt, 
+  traceLinGauss2Dt,
+  traceDotGauss2Dt, 
   traceGauss2Dy,
-  traceLinGauss2Dy
+  traceLinGauss2Dy,
+  traceDotGauss2Dy
 ];
 
 // Create plot
@@ -568,10 +601,24 @@ function sliderGauss2D(meant, meany, stdt, stdy) {
   var yValLinGauss2Dt = rotGauss1D(newGausst, meany);
   var traceLinGauss2Dt = new Trace(xValGauss2Dt, yValLinGauss2Dt);
   traceLinGauss2Dt.line.color = 'rgb(0, 255, 0)';
+  var traceDotGauss2Dt = new Trace(xValGauss2Dt, fillArr(yValGauss2Dt.length, meany))
+  traceDotGauss2Dt.line.color = traceLinGauss2Dt.line.color;
+  traceDotGauss2Dt.line.dash = 'dot';
   var yValLinGauss2Dy = rotGauss1D(newGaussy, meant);
   var traceLinGauss2Dy = new Trace(yValLinGauss2Dy, xValGauss2Dy);
   traceLinGauss2Dy.line.color = 'rgb(0, 0, 255)';
-  var dataGauss2D = [traceLinFixed, traceGauss2Dt, traceLinGauss2Dt, traceGauss2Dy, traceLinGauss2Dy];
+  var traceDotGauss2Dy = new Trace(fillArr(xValGauss2Dy.length, meant), xValGauss2Dy)
+  traceDotGauss2Dy.line.color = traceLinGauss2Dy.line.color;
+  traceDotGauss2Dy.line.dash = 'dot';
+  var dataGauss2D = [
+    traceLinFixed, 
+    traceGauss2Dt, 
+    traceLinGauss2Dt,
+    traceDotGauss2Dt, 
+    traceGauss2Dy, 
+    traceLinGauss2Dy,
+    traceDotGauss2Dy
+  ];
   Plotly.react('Gauss2DPlot', dataGauss2D, layoutGauss2D),
   Plotly.relayout('Gauss2DPlot', layoutGauss2D)
 }
