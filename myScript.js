@@ -175,6 +175,11 @@ function Gauss2D(xVal, yVal, means, corr) {
 var OneSigma = (stdt, stdy) => Math.exp(-2) / (2 * Math.PI * stdt * stdy);
 var TwoSigma = (stdt, stdy) => Math.exp(-4) / (2 * Math.PI * stdt * stdy);
 
+// Squared-exponential kernel
+function kernel_SE(t1, t2, l) {
+  return Math.exp(-0.5 * Math.abs(t1 - t2)**2 / l)
+}
+
 /* OBJECT CONSTRUCTORS */
 function Line() {
   this.color = 'rgb(219, 64, 82)';
