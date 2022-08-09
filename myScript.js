@@ -171,6 +171,10 @@ function Gauss2D(xVal, yVal, means, corr) {
   return zVal
 }
 
+// Calculate Gaussian value n sigma away from mean
+var OneSigma = (stdt, stdy) => Math.exp(-2) / (2 * Math.PI * stdt * stdy);
+var TwoSigma = (stdt, stdy) => Math.exp(-4) / (2 * Math.PI * stdt * stdy);
+
 /* OBJECT CONSTRUCTORS */
 function Line() {
   this.color = 'rgb(219, 64, 82)';
@@ -527,8 +531,8 @@ var traceGauss2DContour = {
   colorscale: 'Greys',
   contours: {
     start: 0,
-    end: 0.02,
-    size: 0.0005
+    end: OneSigma(1,1),
+    size: 0.5 * OneSigma(1,1)
   }
 }
 
@@ -643,8 +647,8 @@ function sliderGauss2D(meant, meany, stdt, stdy) {
     colorscale: 'Greys',
     contours: {
       start: 0,
-      end: 0.02,
-      size: 0.0005
+      end: OneSigma(stdt,stdy),
+      size: OneSigma(stdt,stdy)
     }
   }
   var dataGauss2D = [
