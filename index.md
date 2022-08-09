@@ -15,7 +15,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 29**
+**test caching: 30**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -195,24 +195,24 @@ To find the probability that our measurement will take a particular value, we ca
 Try playing around with the correlation coefficients in the 2D Gaussian below to see how they affect the distribution of our measurements.
 
 <div id="GaussCorrPlot">
-  <div class="slidecontainer" id="meantCorrSlideContainer">
-    <input type="range" min="1960" max="2020" value="1980" class="slider" id="meantCorr">
-    <p>Mean ($\mu_t=t$): <span id="meantCorrValue"></span></p>
-    <p>Mean ($\mu_y=mt+c$): <span id="meanyCorrValue"></span></p>
+    <div class="slidecontainer" id="meantCorrSlideContainer">
+      <input type="range" min="1960" max="2020" value="1980" class="slider" id="meantCorr">
+      <p>Mean ($\mu_t=t$): <span id="meantCorrValue"></span></p>
+      <p>Mean ($\mu_y=mt+c$): <span id="meanyCorrValue"></span></p>
+    </div>
+    <div class="slidecontainer" id="stdtCorrSlideContainer">
+      <input type="range" min="10" max="100" value="10" class="slider" id="stdtCorr">
+      <p>Standard deviation ($\sigma_t$): <span id="stdtCorrVal"></span></p>
+    </div>
+    <div class="slidecontainer" id="stdyCorrSlideContainer">
+      <input type="range" min="10" max="100" value="10" class="slider" id="stdyCorr">
+      <p>Standard deviation ($\sigma_y$): <span id="stdyCorrVal"></span></p>
+    </div>
+    <div class="slidecontainer" id="rhoCorrSlideContainer">
+      <input type="range" min="0" max="9" value="0" class="slider" id="rhoCorr">
+      <p>Correlation coefficient ($\rho$): <span id="rhoCorrVal"></span></p>
+    </div>
   </div>
-  <div class="slidecontainer" id="stdtCorrSlideContainer">
-    <input type="range" min="10" max="100" value="10" class="slider" id="stdtCorr">
-    <p>Standard deviation ($\sigma_t$): <span id="stdtCorrVal"></span></p>
-  </div>
-  <div class="slidecontainer" id="stdyCorrSlideContainer">
-    <input type="range" min="10" max="100" value="10" class="slider" id="stdyCorr">
-    <p>Standard deviation ($\sigma_y$): <span id="stdyCorrVal"></span></p>
-  </div>
-  <div class="slidecontainer" id="rhoCorrSlideContainer">
-    <input type="range" min="0" max="9" value="0" class="slider" id="rhoCorr">
-    <p>Correlation coefficient ($\rho$): <span id="rhoCorrVal"></span></p>
-  </div>
-</div>
 
 **Figure 8 (Interactive) - CO2 vs time plot and 2D Gaussian (now with correlation coefficients)**
 
