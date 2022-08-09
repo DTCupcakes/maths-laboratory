@@ -152,12 +152,24 @@ function Gauss1D(xVal, mean, std) {
 }
 
 // Output 2D Gaussian
-/*function Gauss2D(xVal, yVal, mean, corr) {
+function Gauss2D(xVal, yVal, means, corr) {
   let zVal = [];
-  for (let j=0; j < xVal.length; j++) {
-    
+  for (let i = 0; i < yVal.length; i++) {
+    var row = [];
+    for (let j = 0; j < xVal.length; j++) {
+      var x = [[xVal[j]], [yVal[i]]];
+      var coeff = 1 / (Math.sqrt((2 * Math.PI)**2 * det2D(corr)));
+      var diff = matMinus(x, means);
+      var power1 = matMult(inv2D(corr), diff);
+      var power2 = matMult(transp2D(diff), power1);
+      var power = arrMult(power2, -0.5);
+      var G = coeff * Math.exp(power);
+      row.push(G);
+    }
+    zVal.push(row);
   }
-}*/
+  return zVal
+}
 
 /* OBJECT CONSTRUCTORS */
 function Line() {
@@ -219,7 +231,7 @@ let xLimLin = [1960, 2020];
 let yLimLin = [300, 400];
 
 // x values and initial y values
-let xValLinear = arange(xLimLin[0],  xLimLin[1]+10, 1);
+let xValLinear = arange(xLimLin[0],  xLimLin[1]+10, 20);
 let yValLinear = linModel(xValLinear, linSlopeOutput.innerHTML, 300)
 
 // Data
@@ -292,7 +304,7 @@ let xLimGauss1D = yLimLin;
 let yLimGauss1D = [0, 0.45];
 
 // Create data for 1D Gaussian in y
-let xValGauss1D = arange(xLimGauss1D[0], xLimGauss1D[1], 0.1);
+let xValGauss1D = arange(xLimGauss1D[0], xLimGauss1D[1], 1);
 let yValGauss1D = Gauss1D(xValGauss1D, meanOutput.innerHTML, stdOutput.innerHTML);
 
 // Plot 1D Gaussian in y
@@ -454,7 +466,7 @@ let xLimGauss2Dt = [1960, 2020];
 let yLimGauss2Dt = [0, 0.45];
 
 // Create data for Gaussian in t
-let xValGauss2Dt = arange(xLimGauss2Dt[0], xLimGauss2Dt[1], 0.1);
+let xValGauss2Dt = arange(xLimGauss2Dt[0], xLimGauss2Dt[1], 1);
 let yValGauss2Dt = Gauss1D(xValGauss2Dt, meant2DOutput.innerHTML, stdt2DOutput.innerHTML);
 
 // Plot Gaussian in t
@@ -486,7 +498,7 @@ let xLimGauss2Dy = yLimLin;
 let yLimGauss2Dy = yLimGauss1D;
 
 // Create data for Gaussian in t
-let xValGauss2Dy = arange(xLimGauss2Dy[0], xLimGauss2Dy[1], 0.1);
+let xValGauss2Dy = arange(xLimGauss2Dy[0], xLimGauss2Dy[1], 1);
 let yValGauss2Dy = Gauss1D(xValGauss2Dy, meany2DOutput.innerHTML, stdy2DOutput.innerHTML);
 
 // Plot Gaussian in t
@@ -504,12 +516,21 @@ traceDotGauss2Dy.line.color = traceLinGauss2Dy.line.color;
 traceDotGauss2Dy.line.dash = 'dot';
 
 // Create trace for contour plot
-/*var traceGauss2DContour = {
-  z:,
-  x:xValGauss2Dt,
-  y:xValGauss2Dy,
-  type:'contour'
-}*/
+var means2D = [[1980], [338]];
+var corr2D = [[1, 0], [0, 1]];
+var zValGauss2D = Gauss2D(xValGauss2Dt, xValGauss2Dy, means2D, corr2D);
+var traceGauss2DContour = {
+  z: zValGauss2D,
+  x: xValGauss2Dt,
+  y: xValGauss2Dy,
+  type:'contour',
+  colorscale: 'Greys',
+  contours: {
+    start: 0,
+    end: 0.02,
+    size: 0.0005
+  }
+}
 
 // Plot layout
 var xLabelGauss2Dt = xLabelLin;
@@ -577,7 +598,8 @@ var dataGauss2D = [
   traceDotGauss2Dt, 
   traceGauss2Dy,
   traceLinGauss2Dy,
-  traceDotGauss2Dy
+  traceDotGauss2Dy,
+  traceGauss2DContour
 ];
 
 // Create plot
@@ -610,6 +632,21 @@ function sliderGauss2D(meant, meany, stdt, stdy) {
   var traceDotGauss2Dy = new Trace(fillArr(xValGauss2Dy.length, meant), xValGauss2Dy)
   traceDotGauss2Dy.line.color = traceLinGauss2Dy.line.color;
   traceDotGauss2Dy.line.dash = 'dot';
+  var means2D = [[meant], [meany]];
+  var corr2D = [[stdt**2, 0], [0, stdy**2]];
+  var zValGauss2D = Gauss2D(xValGauss2Dt, xValGauss2Dy, means2D, corr2D);
+  var traceGauss2DContour = {
+    z: zValGauss2D,
+    x: xValGauss2Dt,
+    y: xValGauss2Dy,
+    type:'contour',
+    colorscale: 'Greys',
+    contours: {
+      start: 0,
+      end: 0.02,
+      size: 0.0005
+    }
+  }
   var dataGauss2D = [
     traceLinFixed, 
     traceGauss2Dt, 
@@ -617,7 +654,8 @@ function sliderGauss2D(meant, meany, stdt, stdy) {
     traceDotGauss2Dt, 
     traceGauss2Dy, 
     traceLinGauss2Dy,
-    traceDotGauss2Dy
+    traceDotGauss2Dy,
+    traceGauss2DContour
   ];
   Plotly.react('Gauss2DPlot', dataGauss2D, layoutGauss2D),
   Plotly.relayout('Gauss2DPlot', layoutGauss2D)
