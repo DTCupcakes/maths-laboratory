@@ -15,7 +15,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 31**
+**test caching: 32**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -243,3 +243,14 @@ which we generalised using the following matrices \[ \bf{x} = \begin{bmatrix} t_
 to a formula for the probability of measurements taking particular values along any number of axes: \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^2 \det(\bf{C})}} \exp \left( -\frac{1}{2} (\bf{x} - \bf{\mu})^T \bf{C}^{-1} (\bf{x} - \bf{\mu}) \right) \]
 
 The correlation coefficient/s $\rho$ in the correlation matrix gives us a measure of the correlation between uncertainties along any two axes, taking larger values (more positive or more negative) if the correlation is higher.
+
+## Gaussian Processes
+The best way to understand what a Gaussian process does is to start with a single data point $(t_1_,y_1)$. What we want to determine is the probability of making a second measurement at the point $(t_2,y_2)$, given that we’ve already recorded the first one. Intuitively we may guess that the closer in time we are to the first, already recorded, data point, the more likely our new value of CO2 concentration is to be close to the already recorded one. In mathematical terms, we say that the two values are highly correlated.
+
+How might we show this relationship visually? Let’s create a graph where the value of $y_1$ is represented on the horizontal axis and the value of $y_2$ is represented on the vertical axis. We can create a 2D Gaussian on this graph (seen below) to represent the probability of getting a particular pair of $y_1$ and $y_2$.
+
+**Figure 9 (Interactive) - y1 vs y2 plot and 2D Gaussian**
+
+As we decrease the distance between $t_1$ and $t_2$ on our original plot the correlation between $y_1$ and $y_2$ (and therefore the correlation coefficient in our 2D Gaussian) increases. As the correlation coefficients in our new Gaussian increase it becomes more likely that $y_2$ will have a value close to $y_1$.
+
+***Correlation coefficients play a core role in the construction of Gaussian processes. They link predictions for new data to the data that has already been recorded.***
