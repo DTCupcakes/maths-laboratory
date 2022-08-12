@@ -223,7 +223,66 @@ function Layout(xLabel, yLabel, xRange, yRange) {
   };
 }   
 
-/* LINEAR PLOT */
+/* General Plot Info (Linear) */
+const xLimData = [1960, 2020];
+const yLimData = [300, 400];
+const xLabelData = 'Year';
+const yLabelData = 'Carbon Dioxide Concentration (ppm)';
+
+/* BASIC DATA PLOT */
+// Plot layout
+var layoutData = new Layout(xLabelData, yLabelData, xLimData, yLimData);
+layoutData.width = 500;
+layoutData.height = 500;
+
+// Create plot
+Plotly.newPlot('dataPlot', {
+  data: [],
+  layout: layoutData,
+});
+
+/* DATA PLOT WITH PREDICTIONS */
+let xLimPred = [1960, 2040];
+let yLimPred = [300, 420];
+
+// Plot layout
+var layoutPred = new Layout(xLabelData, yLabelData, xLimPred, yLimPred);
+layoutPred.width = 500;
+layoutPred.height = 500;
+
+// Data
+let pred1 = [[2035], [415]];
+let pred2 = [[2035], [320]];
+let tracePred1 = {
+  type: 'scatter',
+  x: pred1[0],
+  y: pred1[1]
+}
+let tracePred2 = {
+  type: 'scatter',
+  x: pred2[0],
+  y: pred2[1]
+}
+
+// Create plot
+Plotly.newPlot('predPlot', {
+  data: [tracePred1, tracePred2],
+  layout: layoutPred,
+});
+
+/* DATA WITH UNCERTAINTIES PLOT */
+// Plot layout
+var layoutUnc = new Layout(xLabelData, yLabelData, xLimData, yLimData);
+layoutUnc.width = 500;
+layoutUnc.height = 500;
+
+// Create plot
+Plotly.newPlot('uncPlot', {
+  data: [],
+  layout: layoutUnc,
+});
+
+/* LINEAR MODEL PLOT */
 // Linear model slope (m) slider
 var linSlopeSliderScale = slope => 0.1 * slope;
 var linSlopeSlider = document.getElementById("linSlope");
@@ -236,20 +295,15 @@ var linIceptSlider = document.getElementById("linIcept");
 var linIceptOutput = document.getElementById("linIceptVal");
 linIceptOutput.innerHTML = linIceptSliderScale(linIceptSlider.value);
 
-let xLimLin = [1960, 2020];
-let yLimLin = [300, 400];
-
 // x values and initial y values
-let xValLinear = arange(xLimLin[0],  xLimLin[1]+10, 20);
+let xValLinear = arange(xLimData[0],  xLimData[1]+10, 20);
 let yValLinear = linModel(xValLinear, linSlopeOutput.innerHTML, 300)
 
 // Data
 let traceLinear = new Trace(xValLinear, yValLinear);
 
 // Plot layout
-let xLabelLin = 'Year';
-let yLabelLin = 'Carbon Dioxide Concentration (ppm)';
-var layoutLinear = new Layout(xLabelLin, yLabelLin, xLimLin, yLimLin);
+var layoutLinear = new Layout(xLabelData, yLabelData, xLimData, yLimData);
 layoutLinear.width = 500;
 layoutLinear.height = 500;
 
@@ -309,7 +363,7 @@ let yValLinFixed = linModel(xValLinear, mFixed, cFixed)
 let traceLinFixed = new Trace(xValLinear, yValLinFixed);
 
 // Axis limits for 1D Gaussian
-let xLimGauss1D = yLimLin;
+let xLimGauss1D = yLimData;
 let yLimGauss1D = [0, 0.45];
 
 // Create data for 1D Gaussian in y
@@ -338,22 +392,22 @@ traceDotGauss1D.line.color = traceLinGauss1D.line.color;
 traceDotGauss1D.line.dash = 'dot';
 
 // Plot layout
-xLabelGauss1D = yLabelLin;
+xLabelGauss1D = yLabelData;
 yLabelGauss1D = 'Probability';
 var layoutGauss1D = {
   width: 650,
   height: 500,
   xaxis: {
-    title: new Title(xLabelLin),
-    range: xLimLin,
+    title: new Title(xLabelData),
+    range: xLimData,
     linecolor: 'black',
     mirror: true,
     anchor: 'y1',
     domain: [0, 0.45]
   },
   yaxis: {
-    title: new Title(yLabelLin),
-    range: yLimLin,
+    title: new Title(yLabelData),
+    range: yLimData,
     linecolor: 'black',
     mirror: true,
     anchor: 'x1',
@@ -446,7 +500,19 @@ stdSlider.oninput = function() {
   })
 }*/
 
-/* 2D Gaussian Plot */
+/* MONTHLY DATA PLOT */
+// Plot layout
+var layoutMonth = new Layout(xLabelData, yLabelData, xLimData, yLimData);
+layoutMonth.width = 500;
+layoutMonth.height = 500;
+
+// Create plot
+Plotly.newPlot('monthPlot', {
+  data: [],
+  layout: layoutMonth,
+});
+
+/* 2D GAUSSIAN PLOT */
 // Define t slider
 var meant2DSliderScale = tSliderScale;
 var meant2DSlider = document.getElementById("meant2D");
@@ -471,7 +537,7 @@ var stdy2DOutput = document.getElementById("stdy2DVal");
 stdy2DOutput.innerHTML = stdy2DSliderScale(stdy2DSlider.value);
 
 // Axis limits for Gaussian in t
-let xLimGauss2Dt = [1960, 2020];
+let xLimGauss2Dt = xLimData;
 let yLimGauss2Dt = [0, 0.45];
 
 // Create data for Gaussian in t
@@ -503,7 +569,7 @@ traceDotGauss2Dt.line.color = traceLinGauss2Dt.line.color;
 traceDotGauss2Dt.line.dash = 'dot';
 
 // Axis limits for Gaussian in y
-let xLimGauss2Dy = yLimLin;
+let xLimGauss2Dy = yLimData;
 let yLimGauss2Dy = yLimGauss1D;
 
 // Create data for Gaussian in t
@@ -542,22 +608,22 @@ var traceGauss2DContour = {
 }
 
 // Plot layout
-var xLabelGauss2Dt = xLabelLin;
+var xLabelGauss2Dt = xLabelData;
 var yLabelGauss2Dt = 'Probability';
 var layoutGauss2D = {
   width: 650,
   height: 500,
   xaxis: {
-    title: new Title(xLabelLin),
-    range: xLimLin,
+    title: new Title(xLabelData),
+    range: xLimData,
     linecolor: 'black',
     mirror: true,
     anchor: 'y1',
     domain: [0, 0.45]
   },
   yaxis: {
-    title: new Title(yLabelLin),
-    range: yLimLin,
+    title: new Title(yLabelData),
+    range: yLimData,
     linecolor: 'black',
     mirror: true,
     anchor: 'x1',
@@ -729,7 +795,7 @@ var rhoCorrOutput = document.getElementById("rhoCorrVal");
 rhoCorrOutput.innerHTML = rhoCorrSliderScale(rhoCorrSlider.value);
 
 // Axis limits for Gaussian in t
-let xLimGaussCorrt = [1960, 2020];
+let xLimGaussCorrt = xLimData;
 let yLimGaussCorrt = [0, 0.45];
 
 // Create data for Gaussian in t
@@ -761,7 +827,7 @@ traceDotGaussCorrt.line.color = traceLinGaussCorrt.line.color;
 traceDotGaussCorrt.line.dash = 'dot';
 
 // Axis limits for Gaussian in y
-let xLimGaussCorry = yLimLin;
+let xLimGaussCorry = yLimData;
 let yLimGaussCorry = yLimGauss1D;
 
 // Create data for Gaussian in t
@@ -800,22 +866,22 @@ var traceGaussCorrContour = {
 }
 
 // Plot layout
-var xLabelGaussCorrt = xLabelLin;
+var xLabelGaussCorrt = xLabelData;
 var yLabelGaussCorrt = 'Probability';
 var layoutGaussCorr = {
   width: 650,
   height: 500,
   xaxis: {
-    title: new Title(xLabelLin),
-    range: xLimLin,
+    title: new Title(xLabelData),
+    range: xLimData,
     linecolor: 'black',
     mirror: true,
     anchor: 'y1',
     domain: [0, 0.45]
   },
   yaxis: {
-    title: new Title(yLabelLin),
-    range: yLimLin,
+    title: new Title(yLabelData),
+    range: yLimData,
     linecolor: 'black',
     mirror: true,
     anchor: 'x1',

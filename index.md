@@ -15,13 +15,17 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 30**
+**test caching: 31**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
+
+<div id="dataPlot"></div>
 
 **Figure 1 - Plot of atmospheric CO2 concentration vs time**
 
 CO2 is a greenhouse gas, since it traps heat in the atmosphere, making it an important part of climate models. Let’s try to make a prediction about the concentration of CO2 in the atmosphere in March of 2035. Based on the data we have, which of the two predicted values shown below do you think is more likely?
+
+<div id="predPlot"></div>
 
 **Figure 2 - Plot of atmospheric CO2 concentration vs time with added predictions**
 
@@ -34,6 +38,8 @@ Unlike many models you may be familiar with, Gaussian processes aren’t restric
 ## Linear Models
 
 Our CO2 data might, at first glance, look like it fits a single straight upwards facing line. Remember that scientific data comes with uncertainties, so let’s add some to our data.
+
+<div id="uncPlot"></div>
 
 **Figure 3 - CO2 concentration vs time plot with uncertainties**
 
@@ -104,6 +110,8 @@ So that’s it we’re done right? All we need to do is find the right parameter
 Not quite.
 
 Our plots so far have used yearly measurements of the atmospheric CO2 concentration. What happens if we zoom in a little and look at the monthly measurements instead?
+
+<div id="monthPlot"></div>
 
 **Figure 6 - Plot of monthly atmospheric CO2 concentration**
 
