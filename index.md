@@ -217,7 +217,7 @@ Try playing around with the correlation coefficients in the 2D Gaussian below to
       <p>Standard deviation ($\sigma_y$): <span id="stdyCorrVal"></span></p>
     </div>
     <div class="slidecontainer" id="rhoCorrSlideContainer">
-      <input type="range" min="0" max="9" value="0" class="slider" id="rhoCorr">
+      <input type="range" min="-9" max="9" value="0" class="slider" id="rhoCorr">
       <p>Correlation coefficient ($\rho$): <span id="rhoCorrVal"></span></p>
     </div>
   </div>

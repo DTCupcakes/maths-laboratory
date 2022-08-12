@@ -134,6 +134,11 @@ function inv2D(mat) {
   return arrMult(adj, 1 / det)
 }
 
+// Create a 2D correlation matrix
+function makeCorrMat2D(std1, std2, rho) {
+  return [[std1**2, std1 * std2 * rho], [std1 * std2 * rho, std2**2]]
+}
+
 // Output y values where y = m*x+c
 var linShift = 1960;
 function linModel(xVal, m, c) {
@@ -180,6 +185,13 @@ function Gauss2D(xVal, yVal, means, corr) {
 var OneSigma = (stdt, stdy) => Math.exp(-2) / (2 * Math.PI * stdt * stdy);
 var TwoSigma = (stdt, stdy) => Math.exp(-4) / (2 * Math.PI * stdt * stdy);
 
+// Function for rotating 1D Gaussian onto time vs Co2 plot
+function rotGauss1D(GaussVal, shift) {
+  var LinGaussMult = arrMult(GaussVal, 50);
+  var LinGauss1D = arrAdd(LinGaussMult, shift);
+  return LinGauss1D
+}
+
 // Squared-exponential kernel
 function kernel_SE(t1, t2, l) {
   return Math.exp(-0.5 * Math.abs(t1 - t2)**2 / l)
@@ -198,6 +210,40 @@ function Trace(xData, yData) {
   this.mode = 'lines';
   //this.name = 'Red';
   this.line = new Line();
+}
+
+function TraceGauss(xVal, yVal, shift, anchors, color, axSwap) {
+  // shift: Shift for Gaussian to line up with mean on linear plot
+  // anchors: Axis for Gaussian subplot
+  // axSwap: true for Gaussian in t, false otherwise
+  this.trace = new Trace(xVal, yVal);
+  this.trace.line.color = color;
+  this.trace.xaxis = anchors[0];
+  this.trace.yaxis = anchors[1];
+  var yValLin = rotGauss1D(yVal, shift);
+  if (axSwap === true) { // Don't flip Gaussian on linear plot
+    this.traceLin = new Trace(xVal, yValLin);
+    this.traceDot = new Trace(xVal, fillArr(xVal.length, shift))
+  } else { 
+    this.traceLin = new Trace(yValLin, xVal);
+    this.traceDot = new Trace(fillArr(xVal.length, shift), xVal) 
+  }; 
+  this.traceLin.line.color = color;
+  this.traceDot.line.color = color;
+  this.traceDot.line.dash = 'dot';
+}
+
+function TraceContour(xVal, yVal, zVal) {
+  this.z = zVal;
+  this.x = xVal;
+  this.y = yVal,
+  this.type = 'contour';
+  this.colorscale = 'Greys';
+  this.contours = {
+    start: 0,
+    end: OneSigma(1,1),
+    size: 0.5 * OneSigma(1,1)
+  };
 }
 
 function Title(titleText) {
@@ -296,6 +342,7 @@ const yLabelGauss = 'Probability';
 // Fixed linear model parameters
 const mFixed = 1.4;
 const cFixed = 310;
+var calcMean = t => mFixed * (t - linShift) + cFixed; // Calculate mean from fixed model
 
 // Plot labels and ranges
 const xLabelsGauss1D = [xLabelData, yLabelData, nullLabel];
@@ -409,8 +456,7 @@ linIcept.slider.oninput = sliderLin;
 var t1D = new Slider('myt', 'tVal', 1); // t value
 var std1D = new Slider('myStd', 'stdVal', 0.1); // standard deviation value
 
-// Define mean calculation from fixed linear model parameters
-var calcMean = t => mFixed * (t - linShift) + cFixed;
+// Calculate mean
 var meanOutput = document.getElementById("meanVal");
 meanOutput.innerHTML = calcMean(t1D.slider.value);
 
@@ -423,34 +469,6 @@ let traceLinFixed = new Trace(xValLinear, yValLinFixed);
 // Create data for 1D Gaussian in y
 let xValGauss1D = arange(yLimData[0], yLimData[1], 1);
 let yValGauss1D = Gauss1D(xValGauss1D, meanOutput.innerHTML, std1D.out.innerHTML);
-
-// Function for rotating 1D Gaussian onto time vs Co2 plot
-function rotGauss1D(GaussVal, shift) {
-  var LinGaussMult = arrMult(GaussVal, 50);
-  var LinGauss1D = arrAdd(LinGaussMult, shift);
-  return LinGauss1D
-}
-
-function TraceGauss(xVal, yVal, shift, anchors, color, axSwap) {
-  // shift: Shift for Gaussian to line up with mean on linear plot
-  // anchors: Axis for Gaussian subplot
-  // axSwap: true for Gaussian in t, false otherwise
-  this.trace = new Trace(xVal, yVal);
-  this.trace.line.color = color;
-  this.trace.xaxis = anchors[0];
-  this.trace.yaxis = anchors[1];
-  var yValLin = rotGauss1D(yVal, shift);
-  if (axSwap === true) { // Don't flip Gaussian on linear plot
-    this.traceLin = new Trace(xVal, yValLin);
-    this.traceDot = new Trace(xVal, fillArr(xVal.length, shift))
-  } else { 
-    this.traceLin = new Trace(yValLin, xVal);
-    this.traceDot = new Trace(fillArr(xVal.length, shift), xVal) 
-  }; 
-  this.traceLin.line.color = color;
-  this.traceDot.line.color = color;
-  this.traceDot.line.dash = 'dot';
-}
 var traceGauss1D = new TraceGauss(xValGauss1D, yValGauss1D, t1D.out.innerHTML, ['x2', 'y2'], blue);
 
 // Plot layout
@@ -530,38 +548,24 @@ var stdt2D = new Slider('stdt2D', 'stdt2DVal', 0.1); // standard deviation in t
 var stdy2D = new Slider('stdy2D', 'stdy2DVal', 0.1); // standard deviation in y
 
 // Define mean calculation from fixed linear model parameters
-var calcMeany2D = calcMean;
 var meany2DOutput = document.getElementById("meany2DVal");
-meany2DOutput.innerHTML = calcMeany2D(meant2D.out.innerHTML);
+meany2DOutput.innerHTML = calcMean(meant2D.out.innerHTML);
 
 // Create data for Gaussian in t
 let xValGauss2Dt = arange(xLimData[0], xLimData[1], 1);
 let yValGauss2Dt = Gauss1D(xValGauss2Dt, meant2D.out.innerHTML, stdt2D.out.innerHTML);
-
 var traceGauss2Dt = new TraceGauss(xValGauss2Dt, yValGauss2Dt, meany2DOutput.innerHTML, ['x2', 'y2'], green, true);
 
-// Create data for Gaussian in t
+// Create data for Gaussian in y
 let xValGauss2Dy = arange(yLimData[0], yLimData[1], 1);
 let yValGauss2Dy = Gauss1D(xValGauss2Dy, meany2DOutput.innerHTML, stdy2D.out.innerHTML);
-
 var traceGauss2Dy = new TraceGauss(xValGauss2Dy, yValGauss2Dy, meant2D.out.innerHTML, ['x3', 'y3'], blue);
 
 // Create trace for contour plot
 var means2D = [[meant2D.out.innerHTML], [meany2DOutput.innerHTML]];
-var corr2D = [[stdt2D.out.innerHTML**2, 0], [0, stdy2D.out.innerHTML**2]];
+var corr2D = makeCorrMat2D(stdt2D.out.innerHTML, stdy2D.out.innerHTML, 0);
 var zValGauss2D = Gauss2D(xValGauss2Dt, xValGauss2Dy, means2D, corr2D);
-var traceGauss2DContour = {
-  z: zValGauss2D,
-  x: xValGauss2Dt,
-  y: xValGauss2Dy,
-  type:'contour',
-  colorscale: 'Greys',
-  contours: {
-    start: 0,
-    end: OneSigma(1,1),
-    size: 0.5 * OneSigma(1,1)
-  }
-}
+var traceGauss2DContour = new TraceContour(xValGauss2Dt, xValGauss2Dy, zValGauss2D);
 
 // Plot layout
 var layoutGauss2D = new Layout(xLabelsGauss2D, yLabelsGauss2D, xRangesGauss2D, yRangesGauss2D);
@@ -600,20 +604,9 @@ function sliderGauss2D() {
   var traceGauss2Dt = new TraceGauss(xValGauss2Dt, newGausst, meany, ['x2', 'y2'], green, true);
   var traceGauss2Dy = new TraceGauss(xValGauss2Dy, newGaussy, meant, ['x3', 'y3'], blue);
   var means2D = [[meant], [meany]];
-  var corr2D = [[stdt**2, 0], [0, stdy**2]];
+  var corr2D = makeCorrMat2D(stdt, stdy, 0);
   var zValGauss2D = Gauss2D(xValGauss2Dt, xValGauss2Dy, means2D, corr2D);
-  var traceGauss2DContour = {
-    z: zValGauss2D,
-    x: xValGauss2Dt,
-    y: xValGauss2Dy,
-    type:'contour',
-    colorscale: 'Greys',
-    contours: {
-      start: 0,
-      end: OneSigma(stdt, stdy),
-      size: OneSigma(stdt, stdy)
-    }
-  }
+  var traceGauss2DContour = new TraceContour(xValGauss2Dt, xValGauss2Dy, zValGauss2D);
   var dataGauss2D = [
     traceLinFixed, 
     traceGauss2Dt.trace, 
@@ -640,40 +633,24 @@ var stdyCorr = new Slider('stdyCorr', 'stdyCorrVal', 0.1); // Standard deviation
 var rhoCorr = new Slider('rhoCorr', 'rhoCorrVal', 0.1);  // Correlation coefficient
 
 // Define mean calculation from fixed linear model parameters
-var calcMeanyCorr = calcMean;
 var meanyCorrOutput = document.getElementById("meanyCorrVal");
-meanyCorrOutput.innerHTML = calcMeanyCorr(meantCorr.slider.value);
+meanyCorrOutput.innerHTML = calcMean(meantCorr.slider.value);
 
 // Create data for Gaussian in t
 let xValGaussCorrt = arange(xLimData[0], xLimData[1], 1);
 let yValGaussCorrt = Gauss1D(xValGaussCorrt, meantCorr.out.innerHTML, stdtCorr.out.innerHTML);
-
 var traceGaussCorrt = new TraceGauss(xValGaussCorrt, yValGaussCorrt, meanyCorrOutput.innerHTML, ['x2', 'y2'], green, true);
 
 // Create data for Gaussian in t
 let xValGaussCorry = arange(yLimData[0], yLimData[1], 1);
 let yValGaussCorry = Gauss1D(xValGaussCorry, meanyCorrOutput.innerHTML, stdyCorr.out.innerHTML);
-
 var traceGaussCorry = new TraceGauss(xValGaussCorry, yValGaussCorry, meantCorr.out.innerHTML, ['x3', 'y3'], blue);
 
 // Create trace for contour plot
 var meansCorr = [[meantCorr.out.innerHTML], [meanyCorrOutput.innerHTML]];
-var corrCorr = [[stdtCorr.out.innerHTML**2, stdtCorr.out.innerHTML*stdyCorr.out.innerHTML*rhoCorr.out.innerHTML], 
-                [stdtCorr.out.innerHTML*stdyCorr.out.innerHTML*rhoCorr.out.innerHTML, stdyCorr.out.innerHTML**2]
-                ];
+var corrCorr = makeCorrMat2D(stdtCorr.out.innerHTML, stdyCorr.out.innerHTML, rhoCorr.out.innerHTML);
 var zValGaussCorr = Gauss2D(xValGaussCorrt, xValGaussCorry, meansCorr, corrCorr);
-var traceGaussCorrContour = {
-  z: zValGaussCorr,
-  x: xValGaussCorrt,
-  y: xValGaussCorry,
-  type:'contour',
-  colorscale: 'Greys',
-  contours: {
-    start: 0,
-    end: OneSigma(1,1),
-    size: 0.5 * OneSigma(1,1)
-  }
-}
+var traceGaussCorrContour = new TraceContour(xValGaussCorrt, xValGaussCorry, zValGaussCorr);
 
 // Plot layout
 var layoutGaussCorr = new Layout(xLabelsGauss2D, yLabelsGauss2D, xRangesGauss2D, yRangesGauss2D);
@@ -714,20 +691,9 @@ function sliderGaussCorr() {
   var traceGaussCorrt = new TraceGauss(xValGaussCorrt, newGausst, meany, ['x2', 'y2'], green, true);
   var traceGaussCorry = new TraceGauss(xValGaussCorry, newGaussy, meant, ['x3', 'y3'], blue);
   var meansCorr = [[meant], [meany]];
-  var corrCorr = [[stdt**2, rho * stdt * stdy], [rho * stdt * stdy, stdy**2]];
+  var corrCorr = makeCorrMat2D(stdtCorr.out.innerHTML, stdyCorr.out.innerHTML, rhoCorr.out.innerHTML);
   var zValGaussCorr = Gauss2D(xValGaussCorrt, xValGaussCorry, meansCorr, corrCorr);
-  var traceGaussCorrContour = {
-    z: zValGaussCorr,
-    x: xValGaussCorrt,
-    y: xValGaussCorry,
-    type:'contour',
-    colorscale: 'Greys',
-    contours: {
-      start: 0,
-      end: OneSigma(stdt, stdy),
-      size: OneSigma(stdt, stdy)
-    }
-  }
+  var traceGaussCorrContour = new TraceContour(xValGaussCorrt, xValGaussCorry, zValGaussCorr);
   var dataGaussCorr = [
     traceLinFixed, 
     traceGaussCorrt.trace,
