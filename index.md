@@ -92,12 +92,12 @@ By using this formula we are able to determine the probability of our CO2 concen
 <div id="linGauss1DPlot">
   <div class="slidecontainer" id="tslidecontainer">
     <input type="range" min="1960" max="2020" value="1980" class="slider" id="myt">
-    <p>$t$: <span id="tValue"></span></p>
-    <p>Mean ($\mu=mt+c$): <span id="meanValue"></span></p>
+    <p>$t$: <span id="tVal"></span></p>
+    <p>Mean ($\mu=mt+c$): <span id="meanVal"></span></p>
   </div>
   <div class="slidecontainer" id="stdslidecontainer">
     <input type="range" min="10" max="100" value="1" class="slider" id="myStd">
-    <p>Standard deviation ($\sigma$): <span id="stdValue"></span></p>
+    <p>Standard deviation ($\sigma$): <span id="stdVal"></span></p>
   </div>
 </div>
 
@@ -140,8 +140,8 @@ For now, play around with the 2D Gaussian below to see how changing the means an
 <div id="Gauss2DPlot">
   <div class="slidecontainer" id="meant2DSlideContainer">
     <input type="range" min="1960" max="2020" value="1980" class="slider" id="meant2D">
-    <p>Mean ($\mu_t=t$): <span id="meant2DValue"></span></p>
-    <p>Mean ($\mu_y=mt+c$): <span id="meany2DValue"></span></p>
+    <p>Mean ($\mu_t=t$): <span id="meant2DVal"></span></p>
+    <p>Mean ($\mu_y=mt+c$): <span id="meany2DVal"></span></p>
   </div>
   <div class="slidecontainer" id="stdt2DSlideContainer">
     <input type="range" min="10" max="100" value="10" class="slider" id="stdt2D">
@@ -205,8 +205,8 @@ Try playing around with the correlation coefficients in the 2D Gaussian below to
 <div id="GaussCorrPlot">
     <div class="slidecontainer" id="meantCorrSlideContainer">
       <input type="range" min="1960" max="2020" value="1980" class="slider" id="meantCorr">
-      <p>Mean ($\mu_t=t$): <span id="meantCorrValue"></span></p>
-      <p>Mean ($\mu_y=mt+c$): <span id="meanyCorrValue"></span></p>
+      <p>Mean ($\mu_t=t$): <span id="meantCorrVal"></span></p>
+      <p>Mean ($\mu_y=mt+c$): <span id="meanyCorrVal"></span></p>
     </div>
     <div class="slidecontainer" id="stdtCorrSlideContainer">
       <input type="range" min="10" max="100" value="10" class="slider" id="stdtCorr">
