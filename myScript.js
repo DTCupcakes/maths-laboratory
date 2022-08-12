@@ -1,5 +1,10 @@
 const url = "https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_mlo.txt"
 
+// Colours
+const red = 'rgb(219, 64, 82)';
+const blue = 'rgb(0, 0, 255)';
+const green = 'rgb(0, 255, 0)';
+
 /* FUNCTIONS FOR PLOTTING */
 // Create an array from start to stop with size step between elements
 function arange(start, stop, step) {
@@ -51,7 +56,7 @@ function reshape2D(arr, dim) {
 function arrAdd(arr, n) {
   newArr = [];
   for (let i = 0; i < arr.length; i++) {
-    newArr.push(arr[i] + n);
+    newArr.push(arr[i] + parseFloat(n)); // Ensure that number is float not string
   }
   return newArr
 }
@@ -182,7 +187,7 @@ function kernel_SE(t1, t2, l) {
 
 /* OBJECT CONSTRUCTORS */
 function Line() {
-  this.color = 'rgb(219, 64, 82)';
+  this.color = red;
   this.width = 3;
 }
 
@@ -199,72 +204,16 @@ function Title(titleText) {
   this.text = titleText;
 }
 
-function Axis(titleText, range) {
-  this.title = new Title(titleText);
+function Axis(label, range, anchor, domain) {
+  this.title = new Title(label);
   this.range = range;
   this.linecolor = 'black';
   this.mirror = true;
+  this.anchor = anchor;
+  this.domain = domain;
 }
 
-function Layout(xLabel, yLabel, xRange, yRange) {
-  this.width = 500;
-  this.height = 500;
-  this.xaxis = {
-    title: new Title(xLabel),
-    range: xRange,
-    linecolor: 'black',
-    mirror: true,
-    anchor: 'y1'
-  };
-  this.yaxis = {
-    title: new Title(yLabel),
-    range: yRange,
-    linecolor: 'black',
-    mirror: true,
-    anchor: 'x1'
-  };
-  this.showlegend = false;
-}
-
-function LayoutGauss1D(xLabels, yLabels, xRanges, yRanges) {
-  this.width = 650;
-  this.height = 500;
-  this.xaxis = {
-    title: new Title(xLabels[0]),
-    range: xRanges[0],
-    linecolor: 'black',
-    mirror: true,
-    anchor: 'y1',
-    domain: [0, 0.45]
-  };
-  this.yaxis = {
-    title: new Title(yLabels[0]),
-    range: yRanges[0],
-    linecolor: 'black',
-    mirror: true,
-    anchor: 'x1',
-    domain: [0.1, 0.9]
-  };
-  this.xaxis2 = {
-    title: new Title(xLabels[1]),
-    range: xRanges[1],
-    linecolor: 'black',
-    mirror: true,
-    anchor: 'y2',
-    domain: [0.6, 1]
-  };
-  this.yaxis2 = {
-    title: new Title(yLabels[1]),
-    range: yRanges[1],
-    linecolor: 'black',
-    mirror: true,
-    anchor: 'x2'
-  };
-  this.grid = {rows: 1, columns: 2, pattern: 'independent'};
-  this.showlegend = false;
-};
-
-function LayoutGauss2D(xLabels, yLabels, xRanges, yRanges) {
+function Layout(xLabels, yLabels, xRanges, yRanges) {
   this.width = 650;
   this.height = 500;
   this.xaxis = {
@@ -329,10 +278,16 @@ function Slider(sliderID, outputID, sliderScale) {
 }
 
 /* General Plot Info (Linear) */
+const nullLabel = '';
+const nullLim = [0, 0];
 const xLimData = [1960, 2020];
 const yLimData = [300, 400];
 const xLabelData = 'Year';
 const yLabelData = 'Carbon Dioxide Concentration (ppm)';
+const xLabelsLin = [xLabelData, nullLabel, nullLabel];
+const yLabelsLin = [yLabelData, nullLabel, nullLabel]
+const xRangesLin = [xLimData, nullLim, nullLim];
+const yRangesLin = [yLimData, nullLim, nullLim];
 
 /* General Plot Info (Gaussian) */
 const yLimGauss = [0, 0.45];
@@ -343,18 +298,23 @@ const mFixed = 1.4;
 const cFixed = 310;
 
 // Plot labels and ranges
-const xLabelsGauss1D = [xLabelData, yLabelData];
-const yLabelsGauss1D = [yLabelData, yLabelGauss]
-const xRangesGauss1D = [xLimData, yLimData];
-const yRangesGauss1D = [yLimData, yLimGauss];
+const xLabelsGauss1D = [xLabelData, yLabelData, nullLabel];
+const yLabelsGauss1D = [yLabelData, yLabelGauss, nullLabel]
+const xRangesGauss1D = [xLimData, yLimData, nullLim];
+const yRangesGauss1D = [yLimData, yLimGauss, nullLim];
+
 const xLabelsGauss2D = [xLabelData, xLabelData, yLabelData];
 const yLabelsGauss2D = [yLabelData, yLabelGauss, yLabelGauss];
 const xRangesGauss2D = [xLimData, xLimData, yLimData];
 const yRangesGauss2D = [yLimData, yLimGauss, yLimGauss];
 
 /* BASIC DATA PLOT */
+// Create layout
+var layoutData = new Layout(xLabelsLin, yLabelsLin, xRangesLin, yRangesLin);
+layoutData.xaxis.domain = [0, 1];
+layoutData.yaxis.domain = [0, 1];
+
 // Create plot
-var layoutData = new Layout(xLabelData, yLabelData, xLimData, yLimData);
 var dataPlot = document.getElementById("dataPlot");
 Plotly.newPlot(dataPlot, {
   data: [],
@@ -379,8 +339,14 @@ let tracePred2 = {
   y: pred2[1]
 }
 
+// Create layout
+var layoutPred = new Layout(xLabelsLin, yLabelsLin, xRangesLin, yRangesLin);
+layoutPred.xaxis.range = xLimPred;
+layoutPred.yaxis.range = yLimPred;
+layoutPred.xaxis.domain = [0, 1];
+layoutPred.yaxis.domain = [0, 1];
+
 // Create plot
-var layoutPred = new Layout(xLabelData, yLabelData, xLimPred, yLimPred);
 var predPlot = document.getElementById("predPlot");
 Plotly.newPlot(predPlot, {
   data: [tracePred1, tracePred2],
@@ -389,7 +355,9 @@ Plotly.newPlot(predPlot, {
 
 /* DATA WITH UNCERTAINTIES PLOT */
 // Plot layout
-var layoutUnc = new Layout(xLabelData, yLabelData, xLimData, yLimData);
+var layoutUnc = new Layout(xLabelsLin, yLabelsLin, xRangesLin, yRangesLin);
+layoutUnc.xaxis.domain = [0, 1];
+layoutUnc.yaxis.domain = [0, 1];
 var uncPlot = document.getElementById("uncPlot");
 Plotly.newPlot(uncPlot, {
   data: [],
@@ -408,34 +376,33 @@ let yValLinear = linModel(xValLinear, linSlope.out.innerHTML, 300)
 // Data
 let traceLinear = new Trace(xValLinear, yValLinear);
 
+// Create layout
+var layoutLinear = new Layout(xLabelsLin, yLabelsLin, xRangesLin, yRangesLin);
+layoutLinear.xaxis.domain = [0, 1];
+layoutLinear.yaxis.domain = [0, 1];
+
 // Create plot
-var layoutLinear = new Layout(xLabelData, yLabelData, xLimData, yLimData);
 var linModelPlot = document.getElementById("linModelPlot");
 Plotly.newPlot(linModelPlot, {
   data: [traceLinear],
   layout: layoutLinear,
 });
 
-function sliderLinear(m,c) {
+// For sliders to do upon input
+function sliderLin() {
+  let m = linSlope.scale(linSlope.slider.value);
+  let c = linIcept.scale(linIcept.slider.value);
+  linSlope.out.innerHTML = m.toPrecision(2);
+  linIcept.out.innerHTML = c.toPrecision(3);
   var newY = linModel(xValLinear, m, c);
   var data = [new Trace(xValLinear, newY)];
   Plotly.react(linModelPlot, data, layoutLinear),
   Plotly.relayout(linModelPlot, layoutLinear)
 }
 
-linSlope.slider.oninput = function() {
-  let m = linSlope.scale(this.value);
-  let c = linIcept.scale(linIcept.slider.value);
-  linSlope.out.innerHTML = m.toPrecision(2);
-  sliderLinear(m,c);
-}
-
-linIcept.slider.oninput = function() {
-  let m = linSlope.scale(linSlope.slider.value);
-  let c = linIcept.scale(this.value);
-  linIcept.out.innerHTML = c;
-  sliderLinear(m,c);
-}
+// Attach slider input function to sliders
+linSlope.slider.oninput = sliderLin;
+linIcept.slider.oninput = sliderLin;
 
 /* 1D GAUSSIAN PLOT */
 // Define sliders
@@ -457,36 +424,45 @@ let traceLinFixed = new Trace(xValLinear, yValLinFixed);
 let xValGauss1D = arange(yLimData[0], yLimData[1], 1);
 let yValGauss1D = Gauss1D(xValGauss1D, meanOutput.innerHTML, std1D.out.innerHTML);
 
-// Plot 1D Gaussian in y
-var traceGauss1D = new Trace(xValGauss1D, yValGauss1D);
-traceGauss1D.line.color = 'rgb(0, 0, 255)';
-traceGauss1D.xaxis = 'x2';
-traceGauss1D.yaxis = 'y2';
-
 // Function for rotating 1D Gaussian onto time vs Co2 plot
-function rotGauss1D(Gauss1D, shift) {
-  var LinGauss1D = arrMult(Gauss1D, 50);
-  var LinGauss1D = arrAdd(LinGauss1D, shift);
+function rotGauss1D(GaussVal, shift) {
+  var LinGaussMult = arrMult(GaussVal, 50);
+  var LinGauss1D = arrAdd(LinGaussMult, shift);
   return LinGauss1D
 }
 
-// Plot 1D Gaussian on CO2 vs time plot
-var yValLinGauss1D = rotGauss1D(yValGauss1D, 1980);
-var traceLinGauss1D = new Trace(yValLinGauss1D, xValGauss1D);
-traceLinGauss1D.line.color = traceGauss1D.line.color;
-var traceDotGauss1D = new Trace(fillArr(xValGauss1D.length, 1980), xValGauss1D)
-traceDotGauss1D.line.color = traceLinGauss1D.line.color;
-traceDotGauss1D.line.dash = 'dot';
+function TraceGauss(xVal, yVal, shift, anchors, color, axSwap) {
+  // shift: Shift for Gaussian to line up with mean on linear plot
+  // anchors: Axis for Gaussian subplot
+  // axSwap: true for Gaussian in t, false otherwise
+  this.trace = new Trace(xVal, yVal);
+  this.trace.line.color = color;
+  this.trace.xaxis = anchors[0];
+  this.trace.yaxis = anchors[1];
+  var yValLin = rotGauss1D(yVal, shift);
+  if (axSwap === true) { // Don't flip Gaussian on linear plot
+    this.traceLin = new Trace(xVal, yValLin);
+    this.traceDot = new Trace(xVal, fillArr(xVal.length, shift))
+  } else { 
+    this.traceLin = new Trace(yValLin, xVal);
+    this.traceDot = new Trace(fillArr(xVal.length, shift), xVal) 
+  }; 
+  this.traceLin.line.color = color;
+  this.traceDot.line.color = color;
+  this.traceDot.line.dash = 'dot';
+}
+var traceGauss1D = new TraceGauss(xValGauss1D, yValGauss1D, t1D.out.innerHTML, ['x2', 'y2'], blue);
 
 // Plot layout
-var layoutGauss1D = new LayoutGauss1D(xLabelsGauss1D, yLabelsGauss1D, xRangesGauss1D, yRangesGauss1D);
+var layoutGauss1D = new Layout(xLabelsGauss1D, yLabelsGauss1D, xRangesGauss1D, yRangesGauss1D);
+layoutGauss1D.yaxis2.domain = [0, 1];
 
 // Data for subplots
 var dataGauss1D = [
-  traceLinFixed, 
-  traceGauss1D, 
-  traceLinGauss1D,
-  traceDotGauss1D
+  traceLinFixed,
+  traceGauss1D.trace,
+  traceGauss1D.traceLin,
+  traceGauss1D.traceDot,
 ];
 
 // Create plot
@@ -496,45 +472,29 @@ Plotly.newPlot(linGauss1DPlot, {
   layout: layoutGauss1D,
 });
 
-// Things for all sliders to do upon input
-function sliderGauss1D(t, mean, std) {
+// Things for sliders to do upon input
+function sliderGauss1D() {
+  let t = t1D.scale(t1D.slider.value);
+  let mean = calcMean(t);
+  let std = std1D.scale(std1D.slider.value);
+  t1D.out.innerHTML = t.toPrecision(4);
+  meanOutput.innerHTML = mean.toPrecision(3);
+  std1D.out.innerHTML = std.toPrecision(2);
   var newY = Gauss1D(xValGauss1D, mean, std);
-  var traceGauss1D = new Trace(xValGauss1D, newY);
-  traceGauss1D.line.color = 'rgb(0, 0, 255)';
-  traceGauss1D.xaxis = 'x2';
-  traceGauss1D.yaxis = 'y2';
-  var yValLinGauss1D = rotGauss1D(newY, t);
-  var traceLinGauss1D = new Trace(yValLinGauss1D, xValGauss1D);
-  traceLinGauss1D.line.color = 'rgb(0, 0, 255)';
-  var traceDotGauss1D = new Trace(fillArr(xValGauss1D.length, t), xValGauss1D)
-  traceDotGauss1D.line.color = traceLinGauss1D.line.color;
-  traceDotGauss1D.line.dash = 'dot';
+  var traceGauss1D = new TraceGauss(xValGauss1D, newY, t, ['x2', 'y2'], blue);
   var dataGauss1D = [
-    traceLinFixed, 
-    traceGauss1D, 
-    traceLinGauss1D,
-    traceDotGauss1D
+    traceLinFixed,
+    traceGauss1D.trace,
+    traceGauss1D.traceLin,
+    traceGauss1D.traceDot,
   ];
   Plotly.react(linGauss1DPlot, dataGauss1D, layoutGauss1D),
   Plotly.relayout(linGauss1DPlot, layoutGauss1D)
 }
 
-t1D.slider.oninput = function() {
-  let t = t1D.scale(this.value);
-  let mean = calcMean(t);
-  let std = std1D.scale(std1D.slider.value);
-  t1D.out.innerHTML = t;
-  meanOutput.innerHTML = mean;
-  sliderGauss1D(t, mean, std);
-}
-
-std1D.slider.oninput = function() {
-  let t = t1D.scale(t1D.slider.value);
-  let mean = calcMean(t);
-  let std = std1D.scale(this.value);
-  std1D.out.innerHTML = std;
-  sliderGauss1D(t, mean, std);
-}
+// Attach slider input function to sliders
+t1D.slider.oninput = sliderGauss1D;
+std1D.slider.oninput = sliderGauss1D;
 
 // Randomize button
 /*function randomize() {
@@ -551,8 +511,12 @@ std1D.slider.oninput = function() {
 }*/
 
 /* MONTHLY DATA PLOT */
+// Create layout
+var layoutMonth = new Layout(xLabelsLin, yLabelsLin, xRangesLin, yRangesLin);
+layoutMonth.xaxis.domain = [0, 1];
+layoutMonth.yaxis.domain = [0, 1];
+
 // Create plot
-var layoutMonth = new Layout(xLabelData, yLabelData, xLimData, yLimData);
 var monthPlot = document.getElementById("monthPlot");
 Plotly.newPlot(monthPlot, {
   data: [],
@@ -574,47 +538,13 @@ meany2DOutput.innerHTML = calcMeany2D(meant2D.out.innerHTML);
 let xValGauss2Dt = arange(xLimData[0], xLimData[1], 1);
 let yValGauss2Dt = Gauss1D(xValGauss2Dt, meant2D.out.innerHTML, stdt2D.out.innerHTML);
 
-// Plot Gaussian in t
-//var traceGauss2Dt = new Trace(xValGauss2Dt, yValGauss2Dt);
-var traceGauss2Dt = {
-  type: 'scatter',
-  x: xValGauss2Dt,
-  y: yValGauss2Dt,
-  mode: 'lines',
-  //this.name = 'Red';
-  line: {
-    color: 'rgb(0, 255, 0)',
-    width: 3,
-  },
-  xaxis: 'x2',
-  yaxis: 'y2'
-};
-
-// Plot Gaussian in t on CO2 vs time plot
-var yValLinGauss2Dt = rotGauss1D(yValGauss2Dt, 338);
-var traceLinGauss2Dt = new Trace(xValGauss2Dt, yValLinGauss2Dt);
-traceLinGauss2Dt.line.color = traceGauss2Dt.line.color;
-var traceDotGauss2Dt = new Trace(xValGauss2Dt, fillArr(yValGauss2Dt.length, meany2DOutput.innerHTML))
-traceDotGauss2Dt.line.color = traceLinGauss2Dt.line.color;
-traceDotGauss2Dt.line.dash = 'dot';
+var traceGauss2Dt = new TraceGauss(xValGauss2Dt, yValGauss2Dt, meany2DOutput.innerHTML, ['x2', 'y2'], green, true);
 
 // Create data for Gaussian in t
 let xValGauss2Dy = arange(yLimData[0], yLimData[1], 1);
 let yValGauss2Dy = Gauss1D(xValGauss2Dy, meany2DOutput.innerHTML, stdy2D.out.innerHTML);
 
-// Plot Gaussian in t
-var traceGauss2Dy = new Trace(xValGauss2Dy, yValGauss2Dy);
-traceGauss2Dy.line.color = 'rgb(0, 0, 255)';
-traceGauss2Dy.xaxis = 'x3';
-traceGauss2Dy.yaxis = 'y3';
-
-// Plot Gaussian in y on CO2 vs time plot
-var yValLinGauss2Dy = rotGauss1D(yValGauss2Dy, 1980);
-var traceLinGauss2Dy = new Trace(yValLinGauss2Dy, xValGauss2Dy);
-traceLinGauss2Dy.line.color = traceGauss2Dy.line.color;
-var traceDotGauss2Dy = new Trace(fillArr(xValGauss2Dy.length, meant2D.out.innerHTML), xValGauss2Dy)
-traceDotGauss2Dy.line.color = traceLinGauss2Dy.line.color;
-traceDotGauss2Dy.line.dash = 'dot';
+var traceGauss2Dy = new TraceGauss(xValGauss2Dy, yValGauss2Dy, meant2D.out.innerHTML, ['x3', 'y3'], blue);
 
 // Create trace for contour plot
 var means2D = [[meant2D.out.innerHTML], [meany2DOutput.innerHTML]];
@@ -634,17 +564,17 @@ var traceGauss2DContour = {
 }
 
 // Plot layout
-var layoutGauss2D = new LayoutGauss2D(xLabelsGauss2D, yLabelsGauss2D, xRangesGauss2D, yRangesGauss2D);
+var layoutGauss2D = new Layout(xLabelsGauss2D, yLabelsGauss2D, xRangesGauss2D, yRangesGauss2D);
 
 // Data for subplots
 var dataGauss2D = [
   traceLinFixed, 
-  traceGauss2Dt, 
-  traceLinGauss2Dt,
-  traceDotGauss2Dt, 
-  traceGauss2Dy,
-  traceLinGauss2Dy,
-  traceDotGauss2Dy,
+  traceGauss2Dt.trace, 
+  traceGauss2Dt.traceLin,
+  traceGauss2Dt.traceDot,
+  traceGauss2Dy.trace, 
+  traceGauss2Dy.traceLin,
+  traceGauss2Dy.traceDot,
   traceGauss2DContour
 ];
 
@@ -656,29 +586,19 @@ Plotly.newPlot(Gauss2DPlot, {
 });
 
 // Things for all sliders to do upon input
-function sliderGauss2D(meant, meany, stdt, stdy) {
+function sliderGauss2D() {
+  let meant = meant2D.scale(meant2D.slider.value);
+  let meany = calcMeany2D(meant);
+  let stdt = stdt2D.scale(stdt2D.slider.value);
+  let stdy = stdy2D.scale(stdy2D.slider.value);
+  meant2D.out.innerHTML = meant.toPrecision(4);
+  meany2DOutput.innerHTML = meany.toPrecision(3);
+  stdt2D.out.innerHTML = stdt.toPrecision(2);
+  stdy2D.out.innerHTML = stdy.toPrecision(2);
   var newGausst = Gauss1D(xValGauss2Dt, meant, stdt);
-  var traceGauss2Dt = new Trace(xValGauss2Dt, newGausst);
-  traceGauss2Dt.line.color = 'rgb(0, 255, 0)';
-  traceGauss2Dt.xaxis = 'x2';
-  traceGauss2Dt.yaxis = 'y2';
   var newGaussy = Gauss1D(xValGauss2Dy, meany, stdy);
-  var traceGauss2Dy = new Trace(xValGauss2Dy, newGaussy);
-  traceGauss2Dy.line.color = 'rgb(0, 0, 255)';
-  traceGauss2Dy.xaxis = 'x3';
-  traceGauss2Dy.yaxis = 'y3';
-  var yValLinGauss2Dt = rotGauss1D(newGausst, meany);
-  var traceLinGauss2Dt = new Trace(xValGauss2Dt, yValLinGauss2Dt);
-  traceLinGauss2Dt.line.color = 'rgb(0, 255, 0)';
-  var traceDotGauss2Dt = new Trace(xValGauss2Dt, fillArr(yValGauss2Dt.length, meany))
-  traceDotGauss2Dt.line.color = traceLinGauss2Dt.line.color;
-  traceDotGauss2Dt.line.dash = 'dot';
-  var yValLinGauss2Dy = rotGauss1D(newGaussy, meant);
-  var traceLinGauss2Dy = new Trace(yValLinGauss2Dy, xValGauss2Dy);
-  traceLinGauss2Dy.line.color = 'rgb(0, 0, 255)';
-  var traceDotGauss2Dy = new Trace(fillArr(xValGauss2Dy.length, meant), xValGauss2Dy)
-  traceDotGauss2Dy.line.color = traceLinGauss2Dy.line.color;
-  traceDotGauss2Dy.line.dash = 'dot';
+  var traceGauss2Dt = new TraceGauss(xValGauss2Dt, newGausst, meany, ['x2', 'y2'], green, true);
+  var traceGauss2Dy = new TraceGauss(xValGauss2Dy, newGaussy, meant, ['x3', 'y3'], blue);
   var means2D = [[meant], [meany]];
   var corr2D = [[stdt**2, 0], [0, stdy**2]];
   var zValGauss2D = Gauss2D(xValGauss2Dt, xValGauss2Dy, means2D, corr2D);
@@ -696,45 +616,22 @@ function sliderGauss2D(meant, meany, stdt, stdy) {
   }
   var dataGauss2D = [
     traceLinFixed, 
-    traceGauss2Dt, 
-    traceLinGauss2Dt,
-    traceDotGauss2Dt, 
-    traceGauss2Dy, 
-    traceLinGauss2Dy,
-    traceDotGauss2Dy,
+    traceGauss2Dt.trace, 
+    traceGauss2Dt.traceLin,
+    traceGauss2Dt.traceDot,
+    traceGauss2Dy.trace, 
+    traceGauss2Dy.traceLin,
+    traceGauss2Dy.traceDot,
     traceGauss2DContour
   ];
   Plotly.react(Gauss2DPlot, dataGauss2D, layoutGauss2D),
   Plotly.relayout(Gauss2DPlot, layoutGauss2D)
 }
 
-meant2D.slider.oninput = function() {
-  let meant = meant2D.scale(this.value);
-  let meany = calcMeany2D(meant);
-  let stdt = stdt2D.scale(stdt2D.slider.value);
-  let stdy = stdy2D.scale(stdy2D.slider.value);
-  meant2D.out.innerHTML = meant;
-  meany2DOutput.innerHTML = meany;
-  sliderGauss2D(meant, meany, stdt, stdy);
-}
-
-stdt2D.slider.oninput = function() {
-  let meant = meant2D.scale(meant2D.slider.value);
-  let meany = calcMeany2D(meant);
-  let stdt = stdt2D.scale(this.value);
-  let stdy = stdy2D.scale(stdy2D.slider.value);
-  stdt2D.out.innerHTML = stdt;
-  sliderGauss2D(meant, meany, stdt, stdy);
-}
-
-stdy2D.slider.oninput = function() {
-  let meant = meant2D.scale(meant2D.slider.value);
-  let meany = calcMeany2D(meant);
-  let stdt = stdt2D.scale(stdt2D.slider.value);
-  let stdy = stdy2D.scale(this.value);
-  stdy2D.out.innerHTML = stdy;
-  sliderGauss2D(meant, meany, stdt, stdy);
-}
+// Attach slider input function to sliders
+meant2D.slider.oninput = sliderGauss2D;
+stdt2D.slider.oninput = sliderGauss2D;
+stdy2D.slider.oninput = sliderGauss2D;
 
 /* 2D GAUSSIAN PLOT WITH CORRELATION */
 var meantCorr = new Slider('meantCorr', 'meantCorrVal', 1);  // Mean t value
@@ -751,47 +648,13 @@ meanyCorrOutput.innerHTML = calcMeanyCorr(meantCorr.slider.value);
 let xValGaussCorrt = arange(xLimData[0], xLimData[1], 1);
 let yValGaussCorrt = Gauss1D(xValGaussCorrt, meantCorr.out.innerHTML, stdtCorr.out.innerHTML);
 
-// Plot Gaussian in t
-//var traceGaussCorrt = new Trace(xValGaussCorrt, yValGaussCorrt);
-var traceGaussCorrt = {
-  type: 'scatter',
-  x: xValGaussCorrt,
-  y: yValGaussCorrt,
-  mode: 'lines',
-  //this.name = 'Red';
-  line: {
-    color: 'rgb(0, 255, 0)',
-    width: 3,
-  },
-  xaxis: 'x2',
-  yaxis: 'y2'
-};
-
-// Plot Gaussian in t on CO2 vs time plot
-var yValLinGaussCorrt = rotGauss1D(yValGaussCorrt, 338);
-var traceLinGaussCorrt = new Trace(xValGaussCorrt, yValLinGaussCorrt);
-traceLinGaussCorrt.line.color = traceGaussCorrt.line.color;
-var traceDotGaussCorrt = new Trace(xValGaussCorrt, fillArr(yValGaussCorrt.length, meanyCorrOutput.innerHTML))
-traceDotGaussCorrt.line.color = traceLinGaussCorrt.line.color;
-traceDotGaussCorrt.line.dash = 'dot';
+var traceGaussCorrt = new TraceGauss(xValGaussCorrt, yValGaussCorrt, meanyCorrOutput.innerHTML, ['x2', 'y2'], green, true);
 
 // Create data for Gaussian in t
 let xValGaussCorry = arange(yLimData[0], yLimData[1], 1);
 let yValGaussCorry = Gauss1D(xValGaussCorry, meanyCorrOutput.innerHTML, stdyCorr.out.innerHTML);
 
-// Plot Gaussian in t
-var traceGaussCorry = new Trace(xValGaussCorry, yValGaussCorry);
-traceGaussCorry.line.color = 'rgb(0, 0, 255)';
-traceGaussCorry.xaxis = 'x3';
-traceGaussCorry.yaxis = 'y3';
-
-// Plot Gaussian in y on CO2 vs time plot
-var yValLinGaussCorry = rotGauss1D(yValGaussCorry, 1980);
-var traceLinGaussCorry = new Trace(yValLinGaussCorry, xValGaussCorry);
-traceLinGaussCorry.line.color = traceGaussCorry.line.color;
-var traceDotGaussCorry = new Trace(fillArr(xValGaussCorry.length, meantCorr.out.innerHTML), xValGaussCorry)
-traceDotGaussCorry.line.color = traceLinGaussCorry.line.color;
-traceDotGaussCorry.line.dash = 'dot';
+var traceGaussCorry = new TraceGauss(xValGaussCorry, yValGaussCorry, meantCorr.out.innerHTML, ['x3', 'y3'], blue);
 
 // Create trace for contour plot
 var meansCorr = [[meantCorr.out.innerHTML], [meanyCorrOutput.innerHTML]];
@@ -813,17 +676,17 @@ var traceGaussCorrContour = {
 }
 
 // Plot layout
-var layoutGaussCorr = new LayoutGauss2D(xLabelsGauss2D, yLabelsGauss2D, xRangesGauss2D, yRangesGauss2D);
+var layoutGaussCorr = new Layout(xLabelsGauss2D, yLabelsGauss2D, xRangesGauss2D, yRangesGauss2D);
 
 // Data for subplots
 var dataGaussCorr = [
   traceLinFixed, 
-  traceGaussCorrt, 
-  traceLinGaussCorrt,
-  traceDotGaussCorrt, 
-  traceGaussCorry,
-  traceLinGaussCorry,
-  traceDotGaussCorry,
+  traceGaussCorrt.trace,
+  traceGaussCorrt.traceLin,
+  traceGaussCorrt.traceDot,  
+  traceGaussCorry.trace,
+  traceGaussCorry.traceLin,
+  traceGaussCorry.traceDot,
   traceGaussCorrContour
 ];
 
@@ -835,29 +698,21 @@ Plotly.newPlot(GaussCorrPlot, {
 });
 
 // Things for all sliders to do upon input
-function sliderGaussCorr(meant, meany, stdt, stdy, rho) {
+function sliderGaussCorr() {
+  let meant = meantCorr.scale(meantCorr.slider.value);
+  let meany = calcMeanyCorr(meant);
+  let stdt = stdtCorr.scale(stdtCorr.slider.value);
+  let stdy = stdyCorr.scale(stdyCorr.slider.value);
+  let rho = rhoCorr.scale(rhoCorr.slider.value);
+  meantCorr.out.innerHTML = meant.toPrecision(4);
+  meanyCorrOutput.innerHTML = meany.toPrecision(3);
+  stdtCorr.out.innerHTML = stdt.toPrecision(2);
+  stdyCorr.out.innerHTML = stdy.toPrecision(2);
+  rhoCorr.out.innerHTML = rho.toPrecision(2);
   var newGausst = Gauss1D(xValGaussCorrt, meant, stdt);
-  var traceGaussCorrt = new Trace(xValGaussCorrt, newGausst);
-  traceGaussCorrt.line.color = 'rgb(0, 255, 0)';
-  traceGaussCorrt.xaxis = 'x2';
-  traceGaussCorrt.yaxis = 'y2';
   var newGaussy = Gauss1D(xValGaussCorry, meany, stdy);
-  var traceGaussCorry = new Trace(xValGaussCorry, newGaussy);
-  traceGaussCorry.line.color = 'rgb(0, 0, 255)';
-  traceGaussCorry.xaxis = 'x3';
-  traceGaussCorry.yaxis = 'y3';
-  var yValLinGaussCorrt = rotGauss1D(newGausst, meany);
-  var traceLinGaussCorrt = new Trace(xValGaussCorrt, yValLinGaussCorrt);
-  traceLinGaussCorrt.line.color = 'rgb(0, 255, 0)';
-  var traceDotGaussCorrt = new Trace(xValGaussCorrt, fillArr(yValGaussCorrt.length, meany))
-  traceDotGaussCorrt.line.color = traceLinGaussCorrt.line.color;
-  traceDotGaussCorrt.line.dash = 'dot';
-  var yValLinGaussCorry = rotGauss1D(newGaussy, meant);
-  var traceLinGaussCorry = new Trace(yValLinGaussCorry, xValGaussCorry);
-  traceLinGaussCorry.line.color = 'rgb(0, 0, 255)';
-  var traceDotGaussCorry = new Trace(fillArr(xValGaussCorry.length, meant), xValGaussCorry)
-  traceDotGaussCorry.line.color = traceLinGaussCorry.line.color;
-  traceDotGaussCorry.line.dash = 'dot';
+  var traceGaussCorrt = new TraceGauss(xValGaussCorrt, newGausst, meany, ['x2', 'y2'], green, true);
+  var traceGaussCorry = new TraceGauss(xValGaussCorry, newGaussy, meant, ['x3', 'y3'], blue);
   var meansCorr = [[meant], [meany]];
   var corrCorr = [[stdt**2, rho * stdt * stdy], [rho * stdt * stdy, stdy**2]];
   var zValGaussCorr = Gauss2D(xValGaussCorrt, xValGaussCorry, meansCorr, corrCorr);
@@ -875,55 +730,20 @@ function sliderGaussCorr(meant, meany, stdt, stdy, rho) {
   }
   var dataGaussCorr = [
     traceLinFixed, 
-    traceGaussCorrt, 
-    traceLinGaussCorrt,
-    traceDotGaussCorrt, 
-    traceGaussCorry, 
-    traceLinGaussCorry,
-    traceDotGaussCorry,
+    traceGaussCorrt.trace,
+    traceGaussCorrt.traceLin,
+    traceGaussCorrt.traceDot,  
+    traceGaussCorry.trace,
+    traceGaussCorry.traceLin,
+    traceGaussCorry.traceDot,
     traceGaussCorrContour
   ];
   Plotly.react(GaussCorrPlot, dataGaussCorr, layoutGaussCorr),
   Plotly.relayout(GaussCorrPlot, layoutGaussCorr)
 }
 
-meantCorr.slider.oninput = function() {
-  let meant = meantCorr.scale(this.value);
-  let meany = calcMeanyCorr(meant);
-  let stdt = stdtCorr.scale(stdtCorr.slider.value);
-  let stdy = stdyCorr.scale(stdyCorr.slider.value);
-  let rho = rhoCorr.scale(rhoCorr.slider.value);
-  meantCorr.out.innerHTML = meant;
-  meanyCorrOutput.innerHTML = meany;
-  sliderGaussCorr(meant, meany, stdt, stdy, rho);
-}
-
-stdtCorr.slider.oninput = function() {
-  let meant = meantCorr.scale(meantCorr.slider.value);
-  let meany = calcMeanyCorr(meant);
-  let stdt = stdtCorr.scale(this.value);
-  let stdy = stdyCorr.scale(stdyCorr.slider.value);
-  let rho = rhoCorr.scale(rhoCorr.slider.value);
-  stdtCorr.out.innerHTML = stdt;
-  sliderGaussCorr(meant, meany, stdt, stdy, rho);
-}
-
-stdyCorr.slider.oninput = function() {
-  let meant = meantCorr.scale(meantCorr.slider.value);
-  let meany = calcMeanyCorr(meant);
-  let stdt = stdtCorr.scale(stdtCorr.slider.value);
-  let stdy = stdyCorr.scale(this.value);
-  let rho = rhoCorr.scale(rhoCorr.slider.value);
-  stdyCorr.out.innerHTML = stdy;
-  sliderGaussCorr(meant, meany, stdt, stdy, rho);
-}
-
-rhoCorr.slider.oninput = function() {
-  let meant = meantCorr.scale(meantCorr.slider.value);
-  let meany = calcMeanyCorr(meant);
-  let stdt = stdtCorr.scale(stdtCorr.slider.value);
-  let stdy = stdyCorr.scale(stdyCorr.slider.value);
-  let rho = rhoCorr.scale(this.value);
-  rhoCorr.out.innerHTML = rho;
-  sliderGaussCorr(meant, meany, stdt, stdy, rho);
-}
+// Attach slider input function to sliders
+meantCorr.slider.oninput = sliderGaussCorr;
+stdtCorr.slider.oninput = sliderGaussCorr;
+stdyCorr.slider.oninput = sliderGaussCorr;
+rhoCorr.slider.oninput = sliderGaussCorr;
