@@ -15,7 +15,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 32**
+**test caching: 33**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -248,6 +248,22 @@ The correlation coefficient/s $\rho$ in the correlation matrix gives us a measur
 The best way to understand what a Gaussian process does is to start with a single data point $(t_1_,y_1)$. What we want to determine is the probability of making a second measurement at the point $(t_2,y_2)$, given that we’ve already recorded the first one. Intuitively we may guess that the closer in time we are to the first, already recorded, data point, the more likely our new value of CO2 concentration is to be close to the already recorded one. In mathematical terms, we say that the two values are highly correlated.
 
 How might we show this relationship visually? Let’s create a graph where the value of $y_1$ is represented on the horizontal axis and the value of $y_2$ is represented on the vertical axis. We can create a 2D Gaussian on this graph (seen below) to represent the probability of getting a particular pair of $y_1$ and $y_2$.
+
+<div id="GPPlot1">
+  <div class="slidecontainer" id="t2GP1SlideContainer">
+    <input type="range" min="1960" max="2020" value="1980" class="slider" id="t2GP1">
+    <p>$t_2$: <span id="t2GP1Val"></span></p>
+    <p>Correlation coefficient ($\rho$): <span id="rhoGP1Val"></span></p>
+  </div>
+  <div class="slidecontainer" id="stdy1GP1SlideContainer">
+    <input type="range" min="10" max="100" value="10" class="slider" id="stdy1GP1">
+    <p>Standard deviation ($\sigma_t$): <span id="stdy1GP1Val"></span></p>
+  </div>
+  <div class="slidecontainer" id="stdy2GP1SlideContainer">
+    <input type="range" min="10" max="100" value="10" class="slider" id="stdy2GP1">
+    <p>Standard deviation ($\sigma_y$): <span id="stdy2GP1Val"></span></p>
+  </div>
+</div>
 
 **Figure 9 (Interactive) - y1 vs y2 plot and 2D Gaussian**
 

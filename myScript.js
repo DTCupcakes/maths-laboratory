@@ -197,6 +197,14 @@ function kernel_SE(t1, t2, l) {
   return Math.exp(-0.5 * Math.abs(t1 - t2)**2 / l)
 }
 
+// Find array index corresponding to y1
+function interpArg(y1, yLim, n) {
+  // yLim[0] < y1 < yLim[1]
+  // n is the array length between yLim[0] and yLim[1]
+  let frac = (y1 - yLim[0]) / (yLim[1] - yLim[0]);
+  return Math.round(frac * n)
+}
+
 /* OBJECT CONSTRUCTORS */
 function Line() {
   this.color = red;
@@ -335,7 +343,7 @@ const yLabelsLin = [yLabelData, nullLabel, nullLabel]
 const xRangesLin = [xLimData, nullLim, nullLim];
 const yRangesLin = [yLimData, nullLim, nullLim];
 
-/* General Plot Info (Gaussian) */
+/* General Plot Info (Gaussians) */
 const yLimGauss = [0, 0.45];
 const yLabelGauss = 'Probability';
 
@@ -354,6 +362,12 @@ const xLabelsGauss2D = [xLabelData, xLabelData, yLabelData];
 const yLabelsGauss2D = [yLabelData, yLabelGauss, yLabelGauss];
 const xRangesGauss2D = [xLimData, xLimData, yLimData];
 const yRangesGauss2D = [yLimData, yLimGauss, yLimGauss];
+
+/* General Plot Info (Gaussian Processes) */
+const xLabelsGP1 = [yLabelData, xLabelData, yLabelData];
+const yLabelsGP1 = [yLabelData, yLabelData, yLabelGauss];
+const xRangesGP1 = [yLimData, xLimData, yLimData];
+const yRangesGP1 = [yLimData, yLimData, yLimGauss];
 
 /* BASIC DATA PLOT */
 // Create layout
@@ -592,7 +606,7 @@ Plotly.newPlot(Gauss2DPlot, {
 // Things for all sliders to do upon input
 function sliderGauss2D() {
   let meant = meant2D.scale(meant2D.slider.value);
-  let meany = calcMeany2D(meant);
+  let meany = calcMean(meant);
   let stdt = stdt2D.scale(stdt2D.slider.value);
   let stdy = stdy2D.scale(stdy2D.slider.value);
   meant2D.out.innerHTML = meant.toPrecision(4);
@@ -632,7 +646,7 @@ var stdtCorr = new Slider('stdtCorr', 'stdtCorrVal', 0.1); // Standard deviation
 var stdyCorr = new Slider('stdyCorr', 'stdyCorrVal', 0.1); // Standard deviation in y
 var rhoCorr = new Slider('rhoCorr', 'rhoCorrVal', 0.1);  // Correlation coefficient
 
-// Define mean calculation from fixed linear model parameters
+// Calculate mean in y
 var meanyCorrOutput = document.getElementById("meanyCorrVal");
 meanyCorrOutput.innerHTML = calcMean(meantCorr.slider.value);
 
@@ -677,7 +691,7 @@ Plotly.newPlot(GaussCorrPlot, {
 // Things for all sliders to do upon input
 function sliderGaussCorr() {
   let meant = meantCorr.scale(meantCorr.slider.value);
-  let meany = calcMeanyCorr(meant);
+  let meany = calcMean(meant);
   let stdt = stdtCorr.scale(stdtCorr.slider.value);
   let stdy = stdyCorr.scale(stdyCorr.slider.value);
   let rho = rhoCorr.scale(rhoCorr.slider.value);
@@ -713,3 +727,77 @@ meantCorr.slider.oninput = sliderGaussCorr;
 stdtCorr.slider.oninput = sliderGaussCorr;
 stdyCorr.slider.oninput = sliderGaussCorr;
 rhoCorr.slider.oninput = sliderGaussCorr;
+
+/* GAUSSIAN PROCESSES PLOT 1 */
+// Location of t1
+var t1 = 1979;
+var y1 = 349;
+
+// Sliders
+var t2GP1 = new Slider('t2GP1', 't2GP1Val', 1);  // Value of t2
+var stdy1GP1 = new Slider('stdy1GP1', 'stdy1GP1Val', 0.1); // Standard deviation in t
+var stdy2GP1 = new Slider('stdy2GP1', 'stdy2GP1Val', 0.1); // Standard deviation in y
+
+// Calculate correlation coefficient
+var rhoGP1Output = document.getElementById("rhoGP1Val");
+rhoGP1Output.innerHTML = kernel_SE(t1, t2GP1.out.innerHTML, 1).toPrecision(2);
+
+// Plot (t1, y1)
+let dpGP1 = [[t1], [y1]];
+let traceDataGP1 = {
+  type: 'scatter',
+  x: dpGP1[0],
+  y: dpGP1[1],
+  xaxis: 'x2',
+  yaxis: 'y2',
+}
+
+// Create trace for contour plot
+let xValGP1Gauss = arange(yLimData[0], yLimData[1], 1);
+let yValGP1Gauss = arange(yLimData[0], yLimData[1], 1);
+var meansGP1 = [[350], [350]];
+var corrGP1 = makeCorrMat2D(stdy1GP1.out.innerHTML, stdy2GP1.out.innerHTML, rhoGP1Output.innerHTML);
+var ProbValGP1 = Gauss2D(xValGP1Gauss, yValGP1Gauss, meansGP1, corrGP1);
+var traceGP1Contour = new TraceContour(xValGP1Gauss, yValGP1Gauss, ProbValGP1);
+
+// Create trace for 1D Gaussian in y2
+var argGP1Gauss1D = interpArg(y1, yLimData, xValGP1Gauss.length);
+var xValGP1Gauss1D = xValGP1Gauss;
+var yValGP1Gauss1D = ProbValGP1.map(arr => arr[argGP1Gauss1D]);
+var traceGP1Gauss1D = new TraceGauss(xValGP1Gauss1D, yValGP1Gauss1D, y1, ['x3', 'y3'], red);
+
+var xValLinGP1Gauss1D = rotGauss1D(traceGP1Gauss1D.trace.y, t2GP1.out.innerHTML);
+traceGP1Gauss1D.traceLin2 = new Trace(xValLinGP1Gauss1D, traceGP1Gauss1D.traceLin.y);
+traceGP1Gauss1D.traceLin2.xaxis = 'x2';
+traceGP1Gauss1D.traceLin2.yaxis = 'y2';
+
+var xValDotGP1Gauss1D = fillArr(xValLinGP1Gauss1D.length, t2GP1.out.innerHTML);
+traceGP1Gauss1D.traceDot2 = new Trace(xValDotGP1Gauss1D, traceGP1Gauss1D.traceLin.y);
+traceGP1Gauss1D.traceDot2.line.dash = 'dot';
+traceGP1Gauss1D.traceDot2.xaxis = 'x2';
+traceGP1Gauss1D.traceDot2.yaxis = 'y2';
+
+// Plot layout
+var layoutGP1 = new Layout(xLabelsGP1, yLabelsGP1, xRangesGP1, yRangesGP1);
+layoutGP1.xaxis.domain = [0.6, 1];
+layoutGP1.yaxis.domain = [0.6, 1];
+layoutGP1.xaxis2.domain = [0, 0.45];
+layoutGP1.yaxis2.domain = [0.1, 0.9];
+
+// Data for subplots
+var dataGP1 = [ 
+  traceDataGP1,
+  traceGP1Gauss1D.trace,
+  traceGP1Gauss1D.traceLin,
+  traceGP1Gauss1D.traceDot,
+  traceGP1Gauss1D.traceLin2,
+  traceGP1Gauss1D.traceDot2,  
+  traceGP1Contour,
+];
+
+// Create plot
+var GPPlot1 = document.getElementById("GPPlot1");
+Plotly.newPlot(GPPlot1, {
+  data: dataGP1,
+  layout: layoutGP1,
+});
