@@ -1,5 +1,3 @@
-const url = "https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_mlo.txt"
-
 // Colours
 const red = 'rgb(219, 64, 82)';
 const blue = 'rgb(0, 0, 255)';
@@ -220,6 +218,21 @@ function Trace(xData, yData) {
   this.line = new Line();
 }
 
+function TraceData(xData, yData, yErr) {
+  this.type = 'scatter';
+  this.x = xData;
+  this.y = yData;
+  this.mode = 'markers';
+  this.marker = {
+    color: 'black'
+  };
+  this.error_y = {
+    type: 'data',
+    array: yErr,
+    visible: false,
+  }
+}
+
 function TraceGauss(xVal, yVal, shift, anchors, color, axSwap) {
   // shift: Shift for Gaussian to line up with mean on linear plot
   // anchors: Axis for Gaussian subplot
@@ -334,8 +347,8 @@ function Slider(sliderID, outputID, sliderScale) {
 /* General Plot Info (Linear) */
 const nullLabel = '';
 const nullLim = [0, 0];
-const xLimData = [1960, 2020];
-const yLimData = [300, 400];
+const xLimData = [1960, 2040];
+const yLimData = [300, 450];
 const xLabelData = 'Year';
 const yLabelData = 'Carbon Dioxide Concentration (ppm)';
 const xLabelsLin = [xLabelData, nullLabel, nullLabel];
@@ -349,7 +362,7 @@ const yLabelGauss = 'Probability';
 
 // Fixed linear model parameters
 const mFixed = 1.4;
-const cFixed = 310;
+const cFixed = 316;
 var calcMean = t => mFixed * (t - linShift) + cFixed; // Calculate mean from fixed model
 
 // Plot labels and ranges
@@ -369,6 +382,24 @@ const yLabelsGP1 = [yLabelData, yLabelData, yLabelGauss];
 const xRangesGP1 = [yLimData, xLimData, yLimData];
 const yRangesGP1 = [yLimData, yLimData, yLimGauss];
 
+/* CO2 CONCENTRATION DATA */
+var CO2Years = arange(1959, 2022, 1)
+var CO2YearData = [
+  315.98, 316.91, 317.64, 318.45, 318.99, 319.62, 320.04, 321.37, 322.18, 323.05,
+  324.62, 325.68, 326.32, 327.46, 329.68, 330.19, 331.12, 332.03, 333.84, 335.41,
+  336.84, 338.76, 340.12, 341.48, 343.15, 344.85, 346.35, 347.61, 349.31, 351.69,
+  353.2,  354.45, 355.7,  356.54, 357.21, 358.96, 360.97, 362.74, 363.88, 366.84,
+  368.54, 369.71, 371.32, 373.45, 375.98, 377.7,  379.98, 382.09, 384.02, 385.83,
+  387.64, 390.1,  391.85, 394.06, 396.74, 398.81, 401.01, 404.41, 406.76, 408.72,
+  411.66, 414.24, 416.45,
+];
+var CO2YearUnc = fillArr(CO2Years.length, 4)
+
+// Traces
+var traceCO2Data = new TraceData(CO2Years, CO2YearData, CO2YearUnc);
+var traceCO2DataUnc = new TraceData(CO2Years, CO2YearData, CO2YearUnc);
+traceCO2DataUnc.error_y.visible = true;
+
 /* BASIC DATA PLOT */
 // Create layout
 var layoutData = new Layout(xLabelsLin, yLabelsLin, xRangesLin, yRangesLin);
@@ -378,17 +409,17 @@ layoutData.yaxis.domain = [0, 1];
 // Create plot
 var dataPlot = document.getElementById("dataPlot");
 Plotly.newPlot(dataPlot, {
-  data: [],
+  data: [traceCO2Data],
   layout: layoutData,
 });
 
 /* DATA PLOT WITH PREDICTIONS */
 let xLimPred = [1960, 2040];
-let yLimPred = [300, 420];
+let yLimPred = [300, 450];
 
 // Data
-let pred1 = [[2035], [415]];
-let pred2 = [[2035], [320]];
+let pred1 = [[2035], [440]];
+let pred2 = [[2035], [340]];
 let tracePred1 = {
   type: 'scatter',
   x: pred1[0],
@@ -410,7 +441,7 @@ layoutPred.yaxis.domain = [0, 1];
 // Create plot
 var predPlot = document.getElementById("predPlot");
 Plotly.newPlot(predPlot, {
-  data: [tracePred1, tracePred2],
+  data: [traceCO2Data, tracePred1, tracePred2],
   layout: layoutPred,
 });
 
@@ -421,7 +452,7 @@ layoutUnc.xaxis.domain = [0, 1];
 layoutUnc.yaxis.domain = [0, 1];
 var uncPlot = document.getElementById("uncPlot");
 Plotly.newPlot(uncPlot, {
-  data: [],
+  data: [traceCO2DataUnc],
   layout: layoutUnc,
 });
 
@@ -445,7 +476,7 @@ layoutLinear.yaxis.domain = [0, 1];
 // Create plot
 var linModelPlot = document.getElementById("linModelPlot");
 Plotly.newPlot(linModelPlot, {
-  data: [traceLinear],
+  data: [traceCO2DataUnc, traceLinear],
   layout: layoutLinear,
 });
 
@@ -456,7 +487,8 @@ function sliderLin() {
   linSlope.out.innerHTML = m.toPrecision(2);
   linIcept.out.innerHTML = c.toPrecision(3);
   var newY = linModel(xValLinear, m, c);
-  var data = [new Trace(xValLinear, newY)];
+  var traceLinear = new Trace(xValLinear, newY);
+  var data = [traceCO2DataUnc, traceLinear];
   Plotly.react(linModelPlot, data, layoutLinear),
   Plotly.relayout(linModelPlot, layoutLinear)
 }
@@ -491,6 +523,7 @@ layoutGauss1D.yaxis2.domain = [0, 1];
 
 // Data for subplots
 var dataGauss1D = [
+  traceCO2DataUnc,
   traceLinFixed,
   traceGauss1D.trace,
   traceGauss1D.traceLin,
@@ -515,6 +548,7 @@ function sliderGauss1D() {
   var newY = Gauss1D(xValGauss1D, mean, std);
   var traceGauss1D = new TraceGauss(xValGauss1D, newY, t, ['x2', 'y2'], blue);
   var dataGauss1D = [
+    traceCO2DataUnc,
     traceLinFixed,
     traceGauss1D.trace,
     traceGauss1D.traceLin,
@@ -801,3 +835,30 @@ Plotly.newPlot(GPPlot1, {
   data: dataGP1,
   layout: layoutGP1,
 });
+
+//var t2GP1 = new Slider('t2GP1', 't2GP1Val', 1);  // Value of t2
+//rhoGP1Output.innerHTML = kernel_SE(t1, t2GP1.out.innerHTML, 1).toPrecision(2);
+//var stdy1GP1 = new Slider('stdy1GP1', 'stdy1GP1Val', 0.1); // Standard deviation in t
+//var stdy2GP1 = new Slider('stdy2GP1', 'stdy2GP1Val', 0.1); // Standard deviation in y
+
+// Things for all sliders to do upon input
+/*function sliderGP1() {
+  let t2 = t2GP1.scale(t2GP1.slider.value);
+  let rho = kernel_SE(t1, t2, 1);
+  let stdy1 = stdy1GP1.scale(stdy1GP1.slider.value);
+  let stdy2 = stdy2GP1.scale(stdy2GP1.slider.value);
+  t2GP1.out.innerHTML = t2.toPrecision(4);
+  rhoGP1Output.innerHTML = rho.toPrecision(2);
+  stdy1GP1.out.innerHTML = stdy1.toPrecision(2);
+  stdy2GP1.out.innerHTML = stdy2.toPrecision(2);
+  var corrGP1 = makeCorrMat2D(stdy1, stdy2, rho);
+  var ProbValGP1 = Gauss2D(xValGP1Gauss, yValGP1Gauss, meansGP1, corrGP1);
+  var traceGP1Contour = new TraceContour(xValGP1Gauss, yValGP1Gauss, ProbValGP1);
+  var argGP1Gauss1D = interpArg(y1, yLimData, xValGP1Gauss.length);
+  var xValGP1Gauss1D = xValGP1Gauss;
+  var yValGP1Gauss1D = ProbValGP1.map(arr => arr[argGP1Gauss1D]);
+  var traceGP1Gauss1D = new TraceGauss(xValGP1Gauss1D, yValGP1Gauss1D, y1, ['x3', 'y3'], red);
+  var dataGaussCorr = [];
+  Plotly.react(GaussCorrPlot, dataGaussCorr, layoutGaussCorr),
+  Plotly.relayout(GaussCorrPlot, layoutGaussCorr)
+}*/
