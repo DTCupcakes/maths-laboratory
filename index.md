@@ -15,19 +15,17 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 33**
+**test caching: 34**
 
-Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO2) and after more than 40 years of painstaking measurement the results of your measurements look like this.
+Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO<sub>2</sub>) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
 <div id="dataPlot"></div>
 
-**Figure 1 - Plot of atmospheric CO2 concentration vs time**
+*Hover your cursor over the plot above to see the exact data values.*
 
-CO2 is a greenhouse gas, since it traps heat in the atmosphere, making it an important part of climate models. Let’s try to make a prediction about the concentration of CO2 in the atmosphere in March of 2035. Based on the data we have, which of the two predicted values shown below do you think is more likely?
+CO2 is a greenhouse gas, since it traps heat in the atmosphere, making it an important part of climate models. Let’s try to make a prediction about the concentration of CO2 in the atmosphere in March of 2035. Based on the data we have, which of the two predicted values below (shown in orange and green) do you think is more likely?
 
 <div id="predPlot"></div>
-
-**Figure 2 - Plot of atmospheric CO2 concentration vs time with added predictions**
 
 I bet you noticed the upward trend in our data, and so you think the higher data point is much more likely than the lower data point. How do we quantify this intuition?
 
@@ -41,13 +39,13 @@ Our CO2 data might, at first glance, look like it fits a single straight upwards
 
 <div id="uncPlot"></div>
 
-**Figure 3 - CO2 concentration vs time plot with uncertainties**
+*Note: I've increased the size of the uncertainties shown so that they are visible on the plot.*
 
 Ideally our line should fit within the uncertainties of all the data points. On the plot, our line will have the general formula \[y = mt +c.\] $t$ is the time at which we measure each data point (i.e. the year), $m$ is the slope of the line, $c$ moves the line vertically up and down, and $y$ is the value we predict for CO2 concentration.
 
 We can experiment with different values of $m$ and $c$ to see what different lines we get. These values are the PARAMETERS for our model, since they change what our model looks like on the plot, and what predictions we get from it. We know that $m$ needs to be positive to produce an upwards slope.
 
-Try adjusting the values of $m$ and $c$ on the plot below to find the linear model that best fits our data.
+Try adjusting the values of $m$ and $c$ using the sliders on the plot below to find the linear model that best fits our data.
 
 <div id="linModelPlot">
   <div class="slidecontainer" id="linSlopeSlideContainer">
@@ -59,8 +57,6 @@ Try adjusting the values of $m$ and $c$ on the plot below to find the linear mod
     <p>$c$: <span id="linIceptVal"></span></p>
   </div>
 </div>
-
-**Figure 4 (Interactive) - CO2 concentration vs time plot with overlaid linear models**
 
 This process of altering the parameters to find which version of the model best fits the data is known as OPTIMISATION and is an important step of model building. There are many different established optimisation algorithms that can be used to find the best parameters for any model.
 
@@ -87,7 +83,9 @@ This Gaussian has a mean of 0 and a standard deviation of 1. These are the param
 
 Let's replace the mean with the one from our linear model: \[ P(y_i \vert t, \sigma) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp \left( -\frac{(y_i - (mt + c))^2}{2\sigma^2} \right) \]
 
-By using this formula we are able to determine the probability of our CO2 concentration measurement taking a particular value given that we are measuring at time $t$. Try playing around with the model parameters and the Gaussian below to see where our measurements fall.
+By using this formula we are able to determine the probability of our CO2 concentration measurement taking a particular value given that we are measuring at time $t$. 
+
+On the plot below is shown (in red) a linear model where the parameters are fixed to best fit the data. Try playing around with the value of $t$ and the standard deviation of the normal distribution associated with the linear model.
 
 <div id="linGauss1DPlot">
   <div class="slidecontainer" id="tslidecontainer">
@@ -101,8 +99,6 @@ By using this formula we are able to determine the probability of our CO2 concen
   </div>
 </div>
 
-**Figure 5 (Interactive) - CO2 vs time plot and 1D Gaussian over CO2 concentration**
-
 ## Time Uncertainty
 
 So that’s it we’re done right? All we need to do is find the right parameters for our linear model and then take into account the uncertainties.
@@ -113,11 +109,11 @@ Our plots so far have used yearly measurements of the atmospheric CO2 concentrat
 
 <div id="monthPlot"></div>
 
-**Figure 6 - Plot of monthly atmospheric CO2 concentration**
+From zooming in to the monthly measurements we can see that we can't account for all the variation in CO2 concentration by only using our linear model. There is some yearly periodic variation that remains unaccounted for.
 
-Clearly there is some kind of yearly periodic variation in these measurements which we can’t account for if we only use the linear model. You may have some ideas about what type of equation we can use to model this variation, but finding the right equation and parameters is much more involved and uncertain than for our simple linear model. We can model both the periodic variation and the upwards trend easily using a Gaussian process.
+You may have some ideas about what type of equation we can use to model this variation, but finding the right equation and parameters is much more involved and uncertain than for our simple linear model. However, we can model both the periodic variation and the upwards trend easily using a Gaussian process.
 
-But first, a detour (this will become important in a moment, trust me).
+Before we tackle Gaussian processes we will need to understand some intermediate concepts.
 
 Just like the CO2 concentration we can talk about our time measurements as also having associated uncertainty. The means that they are also drawn from a normal distribution: \[ t_i \sim N(t, \sigma_t) \]
 
@@ -245,7 +241,7 @@ to a formula for the probability of measurements taking particular values along 
 The correlation coefficient/s $\rho$ in the correlation matrix gives us a measure of the correlation between uncertainties along any two axes, taking larger values (more positive or more negative) if the correlation is higher.
 
 ## Gaussian Processes
-The best way to understand what a Gaussian process does is to start with a single data point $(t_1_,y_1)$. What we want to determine is the probability of making a second measurement at the point $(t_2,y_2)$, given that we’ve already recorded the first one. Intuitively we may guess that the closer in time we are to the first, already recorded, data point, the more likely our new value of CO2 concentration is to be close to the already recorded one. In mathematical terms, we say that the two values are highly correlated.
+The best way to understand what a Gaussian process does is to start with a single data point $(t_1,y_1)$. What we want to determine is the probability of making a second measurement at the point $(t_2,y_2)$, given that we’ve already recorded the first one. Intuitively we may guess that the closer in time we are to the first, already recorded, data point, the more likely our new value of CO2 concentration is to be close to the already recorded one. In mathematical terms, we say that the two values are highly correlated.
 
 How might we show this relationship visually? Let’s create a graph where the value of $y_1$ is represented on the horizontal axis and the value of $y_2$ is represented on the vertical axis. We can create a 2D Gaussian on this graph (seen below) to represent the probability of getting a particular pair of $y_1$ and $y_2$.
 
@@ -270,3 +266,9 @@ How might we show this relationship visually? Let’s create a graph where the v
 As we decrease the distance between $t_1$ and $t_2$ on our original plot the correlation between $y_1$ and $y_2$ (and therefore the correlation coefficient in our 2D Gaussian) increases. As the correlation coefficients in our new Gaussian increase it becomes more likely that $y_2$ will have a value close to $y_1$.
 
 ***Correlation coefficients play a core role in the construction of Gaussian processes. They link predictions for new data to the data that has already been recorded.***
+
+## References
+**The atmospheric carbon dioxide concentration data comes from the following source:**
+Dr. Pieter Tans, NOAA/GML (gml.noaa.gov/ccgg/trends/) and Dr. Ralph Keeling, Scripps Institution of Oceanography (scrippsco2.ucsd.edu/).
+
+**The data can be found <a href="https://gml.noaa.gov/ccgg/trends/data.html">here</a>.**
