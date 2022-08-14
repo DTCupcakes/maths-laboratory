@@ -583,6 +583,11 @@ Plotly.newPlot(uncPlot, {
 var linSlope = new Slider('linSlope', 'linSlopeVal', 0.1); // Slope (m)
 var linIcept = new Slider('linIcept', 'linIceptVal', 1); // y-intercept (c)
 
+var linModelPlot1 = {
+  xValLin: arange(xLimData[0],  xLimData[1]+10, 20),
+};
+console.log('test');
+
 // x values and initial y values
 let xValLinear = arange(xLimData[0],  xLimData[1]+10, 20);
 let yValLinear = linModel(xValLinear, linSlope.out.innerHTML, 300)
