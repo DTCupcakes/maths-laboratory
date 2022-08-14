@@ -857,7 +857,6 @@ let yValGaussCorrt = Gauss1D(xValGaussCorrt, meantCorr.out.innerHTML, stdtCorr.o
 let xValGaussCorry = arange(yLimData[0], yLimData[1], 1);
 let yValGaussCorry = Gauss1D(xValGaussCorry, meanyCorrOutput.innerHTML, stdyCorr.out.innerHTML);
 
-///
 var GaussCorrPlot = new Object()
 
 GaussCorrPlot.traceLinFixed = Gauss1DPlot.traceLinFixed;
@@ -887,38 +886,6 @@ Plotly.newPlot(GaussCorrPlot.div, {
   data: GaussCorrPlot.data,
   layout: GaussCorrPlot.layout,
 });
-///
-
-/*var traceGaussCorrt = new TraceGauss(xValGaussCorrt, yValGaussCorrt, meanyCorrOutput.innerHTML, ['x2', 'y2'], green, true);
-var traceGaussCorry = new TraceGauss(xValGaussCorry, yValGaussCorry, meantCorr.out.innerHTML, ['x3', 'y3'], blue);
-
-// Create trace for contour plot
-var meansCorr = [[meantCorr.out.innerHTML], [meanyCorrOutput.innerHTML]];
-var corrCorr = makeCorrMat2D(stdtCorr.out.innerHTML, stdyCorr.out.innerHTML, rhoCorr.out.innerHTML);
-var zValGaussCorr = Gauss2D(xValGaussCorrt, xValGaussCorry, meansCorr, corrCorr);
-var traceGaussCorrContour = new TraceContour(xValGaussCorrt, xValGaussCorry, zValGaussCorr);
-
-// Plot layout
-var layoutGaussCorr = new Layout(xLabelsGauss2D, yLabelsGauss2D, xRangesGauss2D, yRangesGauss2D);
-
-// Data for subplots
-var dataGaussCorr = [
-  traceLinFixed, 
-  traceGaussCorrt.trace,
-  traceGaussCorrt.traceLin,
-  traceGaussCorrt.traceDot,  
-  traceGaussCorry.trace,
-  traceGaussCorry.traceLin,
-  traceGaussCorry.traceDot,
-  traceGaussCorrContour
-];
-
-// Create plot
-var GaussCorrPlot = document.getElementById("GaussCorrPlot");
-Plotly.newPlot(GaussCorrPlot, {
-  data: dataGaussCorr,
-  layout: layoutGaussCorr,
-});*/
 
 // Things for all sliders to do upon input
 function sliderGaussCorr() {

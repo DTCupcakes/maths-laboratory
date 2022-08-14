@@ -15,7 +15,7 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 35**
+**test caching: 36**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO<sub>2</sub>) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -96,6 +96,8 @@ On the plot below is shown (in red) a linear model where the parameters are fixe
   <div class="slidecontainer" id="stdslidecontainer">
     <input type="range" min="10" max="100" value="1" class="slider" id="myStd">
     <p>Standard deviation ($\sigma$): <span id="stdVal"></span></p>
+    <button onclick="javascript:createData1D();">Create New Data</button>
+    <button onclick="javascript:clearData1D();">Clear Data</button>
   </div>
 </div>
 
