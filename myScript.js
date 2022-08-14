@@ -203,6 +203,24 @@ function interpArg(y1, yLim, n) {
   return Math.round(frac * n)
 }
 
+// Create random samples from a 2D standard normal distribution
+function BoxMuller() {
+  var u = 0, v = 0;
+  while(u === 0) u = Math.random(); // Convert [0,1) to (0,1)
+  while(v === 0) v = Math.random();
+  return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+}
+
+// Take a random sample of size n from a normal distriubtion
+function randNorm1D(mean, std, n) {
+  var randArr = []; // Array filled with random samples
+  for (let i = 0; i < n; i++) {
+    x = parseFloat(std) * BoxMuller() + parseFloat(mean);
+    randArr.push(x);
+  };
+  return randArr
+}
+
 /* OBJECT CONSTRUCTORS */
 function Line() {
   this.color = red;
@@ -264,6 +282,19 @@ function TraceContour(xVal, yVal, zVal) {
     start: 0,
     end: OneSigma(1,1),
     size: 0.5 * OneSigma(1,1)
+  };
+}
+
+// Trace for data created by a button
+function TraceButtonData(xData, yData) {
+  this.type = 'scatter';
+  this.x = xData;
+  this.y = yData;
+  this.mode = 'markers';
+  this.marker = {
+    color: 'black',
+    //symbol: 'x',
+    //size: 10,
   };
 }
 
@@ -607,7 +638,7 @@ let traceLinFixed = new Trace(xValLinear, yValLinFixed);
 traceLinFixed.name = 'Linear Model';
 
 // Create data for 1D Gaussian in y
-let xValGauss1D = arange(yLimData[0], yLimData[1], 1);
+let xValGauss1D = arange(yLimData[0], yLimData[1], 0.1);
 let yValGauss1D = Gauss1D(xValGauss1D, meanOutput.innerHTML, std1D.out.innerHTML);
 var traceGauss1D = new TraceGauss(xValGauss1D, yValGauss1D, t1D.out.innerHTML, ['x2', 'y2'], blue);
 traceGauss1D.trace.name = 'Normal Distribution';
@@ -618,7 +649,7 @@ layoutGauss1D.yaxis2.domain = [0, 1];
 
 // Data for subplots
 var dataGauss1D = [
-  traceCO2DataUnc,
+  //traceCO2DataUnc,
   traceLinFixed,
   traceGauss1D.trace,
   traceGauss1D.traceLin,
@@ -644,7 +675,7 @@ function sliderGauss1D() {
   var traceGauss1D = new TraceGauss(xValGauss1D, newY, t, ['x2', 'y2'], blue);
   traceGauss1D.trace.name = 'Normal Distribution';
   var dataGauss1D = [
-    traceCO2DataUnc,
+    //traceCO2DataUnc,
     traceLinFixed,
     traceGauss1D.trace,
     traceGauss1D.traceLin,
@@ -658,19 +689,38 @@ function sliderGauss1D() {
 t1D.slider.oninput = sliderGauss1D;
 std1D.slider.oninput = sliderGauss1D;
 
-// Randomize button
-/*function randomize() {
-  Plotly.animate('linGauss1DPlot', {
-    data: [{y: Gauss1D(xValues, 10*Math.random(), 1)}],
-    transition: {
-      duration: 500,
-      easing: 'cubic-in-out'
-    },
-	  frame: {
-		  duration: 500
-	  }
-  })
-}*/
+// Create data button
+function createData1D() {
+  let t = t1D.scale(t1D.slider.value);
+  let mean = calcMean(t);
+  let std = std1D.scale(std1D.slider.value);
+  t1D.out.innerHTML = t.toPrecision(4);
+  meanOutput.innerHTML = mean.toPrecision(3);
+  std1D.out.innerHTML = std.toPrecision(2);
+
+  var xValData = fillArr(10, t);
+  var yValData = randNorm1D(meanOutput.innerHTML, std1D.out.innerHTML, 10);
+  var traceNewData = new TraceButtonData(xValData, yValData);
+  var yValDataGauss = fillArr(10, 0.005);
+  var traceNewDataGauss = new TraceButtonData(yValData, yValDataGauss);
+  traceNewDataGauss.xaxis = 'x2';
+  traceNewDataGauss.yaxis = 'y2';
+
+  var newY = Gauss1D(xValGauss1D, mean, std);
+  var traceGauss1D = new TraceGauss(xValGauss1D, newY, t, ['x2', 'y2'], blue);
+  traceGauss1D.trace.name = 'Normal Distribution';
+  var dataGauss1D = [
+    //traceCO2DataUnc,
+    traceLinFixed,
+    traceGauss1D.trace,
+    traceGauss1D.traceLin,
+    traceGauss1D.traceDot,
+    traceNewData,
+    traceNewDataGauss,
+  ];
+  Plotly.react(linGauss1DPlot, dataGauss1D, layoutGauss1D),
+  Plotly.relayout(linGauss1DPlot, layoutGauss1D)
+}
 
 /* MONTHLY DATA PLOT */
 // Create layout
@@ -861,8 +911,8 @@ rhoCorr.slider.oninput = sliderGaussCorr;
 
 /* GAUSSIAN PROCESSES PLOT 1 */
 // Location of t1
-var t1 = 1979;
-var y1 = 349;
+var t1 = 1982;
+var y1 = 351;
 
 // Sliders
 var t2GP1 = new Slider('t2GP1', 't2GP1Val', 1);  // Value of t2
@@ -870,8 +920,9 @@ var stdy1GP1 = new Slider('stdy1GP1', 'stdy1GP1Val', 0.1); // Standard deviation
 var stdy2GP1 = new Slider('stdy2GP1', 'stdy2GP1Val', 0.1); // Standard deviation in y
 
 // Calculate correlation coefficient
+var lengthScale = 100;
 var rhoGP1Output = document.getElementById("rhoGP1Val");
-rhoGP1Output.innerHTML = kernel_SE(t1, t2GP1.out.innerHTML, 1).toPrecision(2);
+rhoGP1Output.innerHTML = kernel_SE(t1, t2GP1.out.innerHTML, lengthScale).toPrecision(2);
 
 // Plot (t1, y1)
 let dpGP1 = [[t1], [y1]];
@@ -939,9 +990,9 @@ Plotly.newPlot(GPPlot1, {
 //var stdy2GP1 = new Slider('stdy2GP1', 'stdy2GP1Val', 0.1); // Standard deviation in y
 
 // Things for all sliders to do upon input
-/*function sliderGP1() {
+function sliderGP1() {
   let t2 = t2GP1.scale(t2GP1.slider.value);
-  let rho = kernel_SE(t1, t2, 1);
+  let rho = kernel_SE(t1, t2, lengthScale);
   let stdy1 = stdy1GP1.scale(stdy1GP1.slider.value);
   let stdy2 = stdy2GP1.scale(stdy2GP1.slider.value);
   t2GP1.out.innerHTML = t2.toPrecision(4);
@@ -951,11 +1002,30 @@ Plotly.newPlot(GPPlot1, {
   var corrGP1 = makeCorrMat2D(stdy1, stdy2, rho);
   var ProbValGP1 = Gauss2D(xValGP1Gauss, yValGP1Gauss, meansGP1, corrGP1);
   var traceGP1Contour = new TraceContour(xValGP1Gauss, yValGP1Gauss, ProbValGP1);
-  var argGP1Gauss1D = interpArg(y1, yLimData, xValGP1Gauss.length);
-  var xValGP1Gauss1D = xValGP1Gauss;
   var yValGP1Gauss1D = ProbValGP1.map(arr => arr[argGP1Gauss1D]);
   var traceGP1Gauss1D = new TraceGauss(xValGP1Gauss1D, yValGP1Gauss1D, y1, ['x3', 'y3'], red);
-  var dataGaussCorr = [];
-  Plotly.react(GaussCorrPlot, dataGaussCorr, layoutGaussCorr),
-  Plotly.relayout(GaussCorrPlot, layoutGaussCorr)
-}*/
+  var xValLinGP1Gauss1D = rotGauss1D(traceGP1Gauss1D.trace.y, t2);
+  traceGP1Gauss1D.traceLin2 = new Trace(xValLinGP1Gauss1D, traceGP1Gauss1D.traceLin.y);
+  traceGP1Gauss1D.traceLin2.xaxis = 'x2';
+  traceGP1Gauss1D.traceLin2.yaxis = 'y2';
+  var xValDotGP1Gauss1D = fillArr(xValLinGP1Gauss1D.length, t2);
+  traceGP1Gauss1D.traceDot2 = new Trace(xValDotGP1Gauss1D, traceGP1Gauss1D.traceLin.y);
+  traceGP1Gauss1D.traceDot2.line.dash = 'dot';
+  traceGP1Gauss1D.traceDot2.xaxis = 'x2';
+  traceGP1Gauss1D.traceDot2.yaxis = 'y2';
+  var dataGP1 = [
+    traceGP1Gauss1D.trace,
+    traceGP1Gauss1D.traceLin,
+    traceGP1Gauss1D.traceDot,
+    traceGP1Gauss1D.traceLin2,
+    traceGP1Gauss1D.traceDot2,
+    traceGP1Contour,
+  ];
+  Plotly.react(GPPlot1, dataGP1, layoutGP1),
+  Plotly.relayout(GPPlot1, layoutGP1)
+}
+
+// Attach slider input function to sliders
+t2GP1.slider.oninput = sliderGP1;
+stdy1GP1.slider.oninput = sliderGP1;
+stdy2GP1.slider.oninput = sliderGP1;

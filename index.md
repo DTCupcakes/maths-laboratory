@@ -53,7 +53,7 @@ Try adjusting the values of $m$ and $c$ using the sliders on the plot below to f
     <p>$m$: <span id="linSlopeVal"></span></p>
   </div>
   <div class="slidecontainer" id="linIceptSlideContainer">
-    <input type="range" min="300" max="400" value="300" class="slider" id="linIcept">
+    <input type="range" min="300" max="440" value="300" class="slider" id="linIcept">
     <p>$c$: <span id="linIceptVal"></span></p>
   </div>
 </div>
@@ -85,11 +85,11 @@ Let's replace the mean with the one from our linear model: \[ P(y_i \vert t, \si
 
 By using this formula we are able to determine the probability of our CO2 concentration measurement taking a particular value given that we are measuring at time $t$. 
 
-On the plot below is shown (in red) a linear model where the parameters are fixed to best fit the data. Try playing around with the value of $t$ and the standard deviation of the normal distribution associated with the linear model.
+On the plot below is shown (in red) a linear model where the parameters are fixed to best fit the data shown above. Try playing around with the value of $t$ and the standard deviation of the normal distribution associated with the linear model.
 
 <div id="linGauss1DPlot">
   <div class="slidecontainer" id="tslidecontainer">
-    <input type="range" min="1960" max="2020" value="1980" class="slider" id="myt">
+    <input type="range" min="1980" max="2040" value="2000" class="slider" id="myt">
     <p>$t$: <span id="tVal"></span></p>
     <p>Mean ($\mu=mt+c$): <span id="meanVal"></span></p>
   </div>
@@ -135,7 +135,7 @@ For now, play around with the 2D Gaussian below to see how changing the means an
 
 <div id="Gauss2DPlot">
   <div class="slidecontainer" id="meant2DSlideContainer">
-    <input type="range" min="1960" max="2020" value="1980" class="slider" id="meant2D">
+    <input type="range" min="1980" max="2040" value="2000" class="slider" id="meant2D">
     <p>Mean ($\mu_t=t$): <span id="meant2DVal"></span></p>
     <p>Mean ($\mu_y=mt+c$): <span id="meany2DVal"></span></p>
   </div>
@@ -253,11 +253,11 @@ How might we show this relationship visually? Let’s create a graph where the v
   </div>
   <div class="slidecontainer" id="stdy1GP1SlideContainer">
     <input type="range" min="10" max="100" value="10" class="slider" id="stdy1GP1">
-    <p>Standard deviation ($\sigma_t$): <span id="stdy1GP1Val"></span></p>
+    <p>Standard deviation ($\sigma_{y_1}$): <span id="stdy1GP1Val"></span></p>
   </div>
   <div class="slidecontainer" id="stdy2GP1SlideContainer">
     <input type="range" min="10" max="100" value="10" class="slider" id="stdy2GP1">
-    <p>Standard deviation ($\sigma_y$): <span id="stdy2GP1Val"></span></p>
+    <p>Standard deviation ($\sigma_{y_2}$): <span id="stdy2GP1Val"></span></p>
   </div>
 </div>
 
