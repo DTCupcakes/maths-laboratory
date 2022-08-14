@@ -15,13 +15,13 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 34**
+**test caching: 35**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO<sub>2</sub>) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
 <div id="dataPlot"></div>
 
-*Hover your cursor over the plot above to see the exact data values.*
+*Hover your cursor over the plot above to see the exact data values. Click and drag a rectangle over a region of the plot to zoom in.*
 
 CO2 is a greenhouse gas, since it traps heat in the atmosphere, making it an important part of climate models. Let’s try to make a prediction about the concentration of CO2 in the atmosphere in March of 2035. Based on the data we have, which of the two predicted values below (shown in orange and green) do you think is more likely?
 
