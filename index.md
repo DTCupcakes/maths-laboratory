@@ -149,6 +149,8 @@ For now, play around with the 2D Gaussian below to see how changing the means an
     <input type="range" min="10" max="100" value="10" class="slider" id="stdy2D">
     <p>Standard deviation ($\sigma_y$): <span id="stdy2DVal"></span></p>
   </div>
+  <button onclick="javascript:createData2D();">Create New Data</button>
+    <button onclick="javascript:clearData2D();">Clear Data</button>
 </div>
 
 **Figure 7 (Interactive) - CO<sub>2</sub> vs time plot and 2D Gaussian**
@@ -218,6 +220,8 @@ Try playing around with the correlation coefficients in the 2D Gaussian below to
       <input type="range" min="-9" max="9" value="0" class="slider" id="rhoCorr">
       <p>Correlation coefficient ($\rho$): <span id="rhoCorrVal"></span></p>
     </div>
+    <button onclick="javascript:createDataCorr();">Create New Data</button>
+    <button onclick="javascript:clearDataCorr();">Clear Data</button>
   </div>
 
 **Figure 8 (Interactive) - CO<sub>2</sub> vs time plot and 2D Gaussian (now with correlation coefficients)**

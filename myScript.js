@@ -279,7 +279,7 @@ function randNorm2D(means, corr, n) {
     samples[0][i] += parseInt(means[0]);
     samples[1][i] += parseInt(means[1]);
   }
-  return transp2D(samples)
+  return samples
 }
 
 /* OBJECT CONSTRUCTORS */
@@ -383,6 +383,20 @@ function TraceButtonData(xData, yData, yDataGauss, anchors) {
       //color: 'black',
       //symbol: 'x',
       //size: 10,
+    }
+  }
+  this.traceGauss2 = {
+    type: 'scatter',
+    x: xData,
+    y: yDataGauss,
+    xaxis: 'x2',
+    yaxis: 'y2',
+    mode: 'markers',
+    marker: {
+      //color: 'black',
+      //symbol: 'x',
+      //size: 10,
+      visible: false,
     }
   }
 }
@@ -783,9 +797,10 @@ function createData1D() {
   let mean = calcMean(t);
   let std = std1D.scale(std1D.slider.value);
 
-  var xValData = fillArr(10, t);
-  var yValData = randNorm1D(mean, std, 10);
-  var yValDataGauss = fillArr(10, 0.005);
+  var nSamples = 10;
+  var xValData = fillArr(nSamples, t);
+  var yValData = randNorm1D(mean, std, nSamples);
+  var yValDataGauss = fillArr(nSamples, 0.005);
   var traceNewData = new TraceButtonData(xValData, yValData, yValDataGauss, ['x2', 'y2']);
   traceNewData.trace.marker.color = colours[Gauss1DPlot.nButtonData];
   traceNewData.traceGauss.marker.color = colours[Gauss1DPlot.nButtonData];
@@ -861,7 +876,7 @@ Gauss2DPlot.data = [
   Gauss2DPlot.traceGaussy.trace, 
   Gauss2DPlot.traceGaussy.traceLin,
   Gauss2DPlot.traceGaussy.traceDot,
-  Gauss2DPlot.traceContour
+  //Gauss2DPlot.traceContour
 ];
 
 Gauss2DPlot.div = document.getElementById("Gauss2DPlot");
@@ -898,6 +913,48 @@ function sliderGauss2D() {
 meant2D.slider.oninput = sliderGauss2D;
 stdt2D.slider.oninput = sliderGauss2D;
 stdy2D.slider.oninput = sliderGauss2D;
+
+// Create data button
+Gauss2DPlot.nButtonData = 0;
+function createData2D() {
+  let meant = meant2D.scale(meant2D.slider.value);
+  let meany = calcMean(meant);
+  let stdt = stdt2D.scale(stdt2D.slider.value);
+  let stdy = stdy2D.scale(stdy2D.slider.value);
+
+  var nSamples = 20;
+  var means2D = [[meant], [meany]];
+  var corr2D = makeCorrMat2D(stdt, stdy, 0);
+  var samples2D = randNorm2D(means2D, corr2D, nSamples);
+
+  var xValData = samples2D[0];
+  var yValData = samples2D[1];
+  var yValDataGauss = fillArr(nSamples, 0.005);
+  var traceNewData = new TraceButtonData(xValData, yValData, yValDataGauss, ['x3', 'y3']);
+  traceNewData.traceGauss2.visible = true;
+  traceNewData.trace.marker.color = colours[Gauss2DPlot.nButtonData];
+  traceNewData.traceGauss.marker.color = colours[Gauss2DPlot.nButtonData];
+  traceNewData.traceGauss2.marker.color = colours[Gauss2DPlot.nButtonData];
+
+  Gauss2DPlot.data.push(traceNewData.trace);
+  Gauss2DPlot.data.push(traceNewData.traceGauss);
+  Gauss2DPlot.data.push(traceNewData.traceGauss2);
+  Gauss2DPlot.nButtonData += 1;
+  traceNewData.trace.name = 'New Data ' + Gauss2DPlot.nButtonData.toString();
+  traceNewData.traceGauss.name = 'New Data ' + Gauss2DPlot.nButtonData.toString();
+
+  plotUpdate(Gauss2DPlot.div, Gauss2DPlot.data, Gauss2DPlot.layout);
+}
+
+function clearData2D() {
+  if (Gauss2DPlot.nButtonData > 0) {
+    Gauss2DPlot.data.pop();
+    Gauss2DPlot.data.pop();
+    Gauss2DPlot.data.pop();
+    Gauss2DPlot.nButtonData -= 1;
+  }
+  plotUpdate(Gauss2DPlot.div, Gauss2DPlot.data, Gauss2DPlot.layout);
+}
 
 /* 2D GAUSSIAN PLOT WITH CORRELATION */
 var meantCorr = new Slider('meantCorr', 'meantCorrVal', 1);  // Mean t value
@@ -938,7 +995,7 @@ GaussCorrPlot.data = [
   GaussCorrPlot.traceGaussy.trace,
   GaussCorrPlot.traceGaussy.traceLin,
   GaussCorrPlot.traceGaussy.traceDot,
-  GaussCorrPlot.traceContour
+  //GaussCorrPlot.traceContour
 ];
 
 GaussCorrPlot.div = document.getElementById("GaussCorrPlot");
@@ -978,6 +1035,49 @@ meantCorr.slider.oninput = sliderGaussCorr;
 stdtCorr.slider.oninput = sliderGaussCorr;
 stdyCorr.slider.oninput = sliderGaussCorr;
 rhoCorr.slider.oninput = sliderGaussCorr;
+
+// Create data button
+GaussCorrPlot.nButtonData = 0;
+function createDataCorr() {
+  let meant = meantCorr.scale(meantCorr.slider.value);
+  let meany = calcMean(meant);
+  let stdt = stdtCorr.scale(stdtCorr.slider.value);
+  let stdy = stdyCorr.scale(stdyCorr.slider.value);
+  let rho = rhoCorr.scale(rhoCorr.slider.value);
+
+  var nSamples = 20;
+  var meansCorr = [[meant], [meany]];
+  var corrCorr = makeCorrMat2D(stdt, stdy, rho);
+  var samplesCorr = randNorm2D(meansCorr, corrCorr, nSamples);
+
+  var xValData = samplesCorr[0];
+  var yValData = samplesCorr[1];
+  var yValDataGauss = fillArr(nSamples, 0.005);
+  var traceNewData = new TraceButtonData(xValData, yValData, yValDataGauss, ['x3', 'y3']);
+  traceNewData.traceGauss2.visible = true;
+  traceNewData.trace.marker.color = colours[GaussCorrPlot.nButtonData];
+  traceNewData.traceGauss.marker.color = colours[GaussCorrPlot.nButtonData];
+  traceNewData.traceGauss2.marker.color = colours[GaussCorrPlot.nButtonData];
+
+  GaussCorrPlot.data.push(traceNewData.trace);
+  GaussCorrPlot.data.push(traceNewData.traceGauss);
+  GaussCorrPlot.data.push(traceNewData.traceGauss2);
+  GaussCorrPlot.nButtonData += 1;
+  traceNewData.trace.name = 'New Data ' + GaussCorrPlot.nButtonData.toString();
+  traceNewData.traceGauss.name = 'New Data ' + GaussCorrPlot.nButtonData.toString();
+
+  plotUpdate(GaussCorrPlot.div, GaussCorrPlot.data, GaussCorrPlot.layout);
+}
+
+function clearDataCorr() {
+  if (GaussCorrPlot.nButtonData > 0) {
+    GaussCorrPlot.data.pop();
+    GaussCorrPlot.data.pop();
+    GaussCorrPlot.data.pop();
+    GaussCorrPlot.nButtonData -= 1;
+  }
+  plotUpdate(GaussCorrPlot.div, GaussCorrPlot.data, GaussCorrPlot.layout);
+}
 
 /* GAUSSIAN PROCESSES PLOT 1 */
 // Location of t1
