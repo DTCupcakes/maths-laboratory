@@ -934,9 +934,13 @@ var lengthScale = 100;
 var rhoGP1Output = document.getElementById("rhoGP1Val");
 rhoGP1Output.innerHTML = kernel_SE(t1, t2GP1.out.innerHTML, lengthScale).toPrecision(2);
 
-// Plot (t1, y1)
-let dpGP1 = [[t1], [y1]];
-let traceDataGP1 = {
+let xValGP1Gauss = arange(yLimData[0], yLimData[1], 1);
+let yValGP1Gauss = arange(yLimData[0], yLimData[1], 1);
+
+var GPPlot1 = new Object();
+
+let dpGP1 = [[t1], [y1]]; // Data point (t1, y1)
+GPPlot1.tracet1 = {
   type: 'scatter',
   x: dpGP1[0],
   y: dpGP1[1],
@@ -944,60 +948,48 @@ let traceDataGP1 = {
   yaxis: 'y2',
 }
 
-// Create trace for contour plot
-let xValGP1Gauss = arange(yLimData[0], yLimData[1], 1);
-let yValGP1Gauss = arange(yLimData[0], yLimData[1], 1);
 var meansGP1 = [[350], [350]];
 var corrGP1 = makeCorrMat2D(stdy1GP1.out.innerHTML, stdy2GP1.out.innerHTML, rhoGP1Output.innerHTML);
 var ProbValGP1 = Gauss2D(xValGP1Gauss, yValGP1Gauss, meansGP1, corrGP1);
-var traceGP1Contour = new TraceContour(xValGP1Gauss, yValGP1Gauss, ProbValGP1);
+GPPlot1.traceContour = new TraceContour(xValGP1Gauss, yValGP1Gauss, ProbValGP1);
 
-// Create trace for 1D Gaussian in y2
 var argGP1Gauss1D = interpArg(y1, yLimData, xValGP1Gauss.length);
 var xValGP1Gauss1D = xValGP1Gauss;
 var yValGP1Gauss1D = ProbValGP1.map(arr => arr[argGP1Gauss1D]);
-var traceGP1Gauss1D = new TraceGauss(xValGP1Gauss1D, yValGP1Gauss1D, y1, ['x3', 'y3'], red);
+GPPlot1.traceGauss = new TraceGauss(xValGP1Gauss1D, yValGP1Gauss1D, y1, ['x3', 'y3'], red);
 
-var xValLinGP1Gauss1D = rotGauss1D(traceGP1Gauss1D.trace.y, t2GP1.out.innerHTML);
-traceGP1Gauss1D.traceLin2 = new Trace(xValLinGP1Gauss1D, traceGP1Gauss1D.traceLin.y);
-traceGP1Gauss1D.traceLin2.xaxis = 'x2';
-traceGP1Gauss1D.traceLin2.yaxis = 'y2';
+var xValLinGP1Gauss1D = rotGauss1D(GPPlot1.traceGauss.trace.y, t2GP1.out.innerHTML);
+GPPlot1.traceGauss.traceLin2 = new Trace(xValLinGP1Gauss1D, GPPlot1.traceGauss.traceLin.y);
+GPPlot1.traceGauss.traceLin2.xaxis = 'x2';
+GPPlot1.traceGauss.traceLin2.yaxis = 'y2';
 
 var xValDotGP1Gauss1D = fillArr(xValLinGP1Gauss1D.length, t2GP1.out.innerHTML);
-traceGP1Gauss1D.traceDot2 = new Trace(xValDotGP1Gauss1D, traceGP1Gauss1D.traceLin.y);
-traceGP1Gauss1D.traceDot2.line.dash = 'dot';
-traceGP1Gauss1D.traceDot2.xaxis = 'x2';
-traceGP1Gauss1D.traceDot2.yaxis = 'y2';
+GPPlot1.traceGauss.traceDot2 = new Trace(xValDotGP1Gauss1D, GPPlot1.traceGauss.traceLin.y);
+GPPlot1.traceGauss.traceDot2.line.dash = 'dot';
+GPPlot1.traceGauss.traceDot2.xaxis = 'x2';
+GPPlot1.traceGauss.traceDot2.yaxis = 'y2';
 
-// Plot layout
-var layoutGP1 = new Layout(xLabelsGP1, yLabelsGP1, xRangesGP1, yRangesGP1);
-layoutGP1.xaxis.domain = [0.6, 1];
-layoutGP1.yaxis.domain = [0.6, 1];
-layoutGP1.xaxis2.domain = [0, 0.45];
-layoutGP1.yaxis2.domain = [0.1, 0.9];
+GPPlot1.layout = new Layout(xLabelsGP1, yLabelsGP1, xRangesGP1, yRangesGP1);
+GPPlot1.layout.xaxis.domain = [0.6, 1];
+GPPlot1.layout.yaxis.domain = [0.6, 1];
+GPPlot1.layout.xaxis2.domain = [0, 0.45];
+GPPlot1.layout.yaxis2.domain = [0.1, 0.9];
 
-// Data for subplots
-var dataGP1 = [ 
-  traceDataGP1,
-  traceGP1Gauss1D.trace,
-  traceGP1Gauss1D.traceLin,
-  traceGP1Gauss1D.traceDot,
-  traceGP1Gauss1D.traceLin2,
-  traceGP1Gauss1D.traceDot2,  
-  traceGP1Contour,
+GPPlot1.data = [ 
+  GPPlot1.tracet1,
+  GPPlot1.traceGauss.trace,
+  GPPlot1.traceGauss.traceLin,
+  GPPlot1.traceGauss.traceDot,
+  GPPlot1.traceGauss.traceLin2,
+  GPPlot1.traceGauss.traceDot2,  
+  GPPlot1.traceContour,
 ];
 
-// Create plot
-var GPPlot1 = document.getElementById("GPPlot1");
-Plotly.newPlot(GPPlot1, {
-  data: dataGP1,
-  layout: layoutGP1,
+GPPlot1.div = document.getElementById("GPPlot1");
+Plotly.newPlot(GPPlot1.div, {
+  data: GPPlot1.data,
+  layout: GPPlot1.layout,
 });
-
-//var t2GP1 = new Slider('t2GP1', 't2GP1Val', 1);  // Value of t2
-//rhoGP1Output.innerHTML = kernel_SE(t1, t2GP1.out.innerHTML, 1).toPrecision(2);
-//var stdy1GP1 = new Slider('stdy1GP1', 'stdy1GP1Val', 0.1); // Standard deviation in t
-//var stdy2GP1 = new Slider('stdy2GP1', 'stdy2GP1Val', 0.1); // Standard deviation in y
 
 // Things for all sliders to do upon input
 function sliderGP1() {
@@ -1005,34 +997,22 @@ function sliderGP1() {
   let rho = kernel_SE(t1, t2, lengthScale);
   let stdy1 = stdy1GP1.scale(stdy1GP1.slider.value);
   let stdy2 = stdy2GP1.scale(stdy2GP1.slider.value);
+
   t2GP1.out.innerHTML = t2.toPrecision(4);
   rhoGP1Output.innerHTML = rho.toPrecision(2);
   stdy1GP1.out.innerHTML = stdy1.toPrecision(2);
   stdy2GP1.out.innerHTML = stdy2.toPrecision(2);
+
   var corrGP1 = makeCorrMat2D(stdy1, stdy2, rho);
   var ProbValGP1 = Gauss2D(xValGP1Gauss, yValGP1Gauss, meansGP1, corrGP1);
-  var traceGP1Contour = new TraceContour(xValGP1Gauss, yValGP1Gauss, ProbValGP1);
+  GPPlot1.traceContour.z = ProbValGP1;
+  
   var yValGP1Gauss1D = ProbValGP1.map(arr => arr[argGP1Gauss1D]);
-  var traceGP1Gauss1D = new TraceGauss(xValGP1Gauss1D, yValGP1Gauss1D, y1, ['x3', 'y3'], red);
-  var xValLinGP1Gauss1D = rotGauss1D(traceGP1Gauss1D.trace.y, t2);
-  traceGP1Gauss1D.traceLin2 = new Trace(xValLinGP1Gauss1D, traceGP1Gauss1D.traceLin.y);
-  traceGP1Gauss1D.traceLin2.xaxis = 'x2';
-  traceGP1Gauss1D.traceLin2.yaxis = 'y2';
-  var xValDotGP1Gauss1D = fillArr(xValLinGP1Gauss1D.length, t2);
-  traceGP1Gauss1D.traceDot2 = new Trace(xValDotGP1Gauss1D, traceGP1Gauss1D.traceLin.y);
-  traceGP1Gauss1D.traceDot2.line.dash = 'dot';
-  traceGP1Gauss1D.traceDot2.xaxis = 'x2';
-  traceGP1Gauss1D.traceDot2.yaxis = 'y2';
-  var dataGP1 = [
-    traceGP1Gauss1D.trace,
-    traceGP1Gauss1D.traceLin,
-    traceGP1Gauss1D.traceDot,
-    traceGP1Gauss1D.traceLin2,
-    traceGP1Gauss1D.traceDot2,
-    traceGP1Contour,
-  ];
-  Plotly.react(GPPlot1, dataGP1, layoutGP1),
-  Plotly.relayout(GPPlot1, layoutGP1)
+  GPPlot1.traceGauss.update(yValGP1Gauss1D, y1);
+
+  GPPlot1.traceGauss.traceLin2.x = rotGauss1D( GPPlot1.traceGauss.trace.y, t2);
+  GPPlot1.traceGauss.traceLin2.x = fillArr(xValLinGP1Gauss1D.length, t2);
+  plotUpdate( GPPlot1.div,  GPPlot1.data,  GPPlot1.layout);
 }
 
 // Attach slider input function to sliders
