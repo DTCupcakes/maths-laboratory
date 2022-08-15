@@ -263,8 +263,6 @@ How might we show this relationship visually? Let’s create a graph where the v
   </div>
 </div>
 
-**Figure 9 (Interactive) - y1 vs y2 plot and 2D Gaussian**
-
 As we decrease the distance between $t_1$ and $t_2$ on our original plot the correlation between $y_1$ and $y_2$ (and therefore the correlation coefficient in our 2D Gaussian) increases. As the correlation coefficients in our new Gaussian increase it becomes *more likely that* $y_2$ *will have a value close to* $y_1$.
 
 ***Correlation coefficients play a core role in the construction of Gaussian processes. They link predictions for new data to the data that has already been recorded.***
