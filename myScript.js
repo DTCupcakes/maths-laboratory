@@ -267,21 +267,20 @@ function CholeskyDecomp(A, n) {
   return L
 }
 
-// Take a random sample from a 2D normal distribution
+// Take random samples from a 2D normal distribution
 function randNorm2D(means, corr, n) {
   var eps = 0.001; // Very small number
   var K = matAdd(corr, arrMult(identity(2), eps));
   var L = CholeskyDecomp(K, 2);
   //Generate random samples
   var u = reshape2D(randNorm1D(0, 1, 2*n), [2, n]);
-  console.log(matMult(L, u))
-  return matAdd(means, matMult(L, u))
+  var samples = matMult(L, u) // Matrix product of L and u
+  for (let i = 0; i < samples[0].length; i++) {
+    samples[0][i] += parseInt(means[0]);
+    samples[1][i] += parseInt(means[1]);
+  }
+  return transp2D(samples)
 }
-console.log('new')
-var testMeans = [[1], [2]];
-var testCorr = [[2, 1], [1, 2]];
-var testSamples = randNorm2D(testMeans, testCorr, 10);
-console.log(testSamples[0])
 
 /* OBJECT CONSTRUCTORS */
 function Line() {
