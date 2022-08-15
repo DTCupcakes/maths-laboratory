@@ -153,8 +153,6 @@ For now, play around with the 2D Gaussian below to see how changing the means an
     <button onclick="javascript:clearData2D();">Clear Data</button>
 </div>
 
-**Figure 7 (Interactive) - CO<sub>2</sub> vs time plot and 2D Gaussian**
-
 ## Matrices and n-Dimensional Gaussians
 Imagine we wanted to extend our model out to cover a new variable z representing (for example) temperature. Our 3D Gaussian probability formula would be \[ P(t_i, y_i, z_i \vert \sigma_t, \sigma_y, \sigma_z) = \frac{1}{\sqrt{(2\pi)^3\sigma_t^2\sigma_y^2\sigma_z^2}} \exp \left( -\frac{1}{2} \left( \frac{(t_i-\mu_t)^2}{\sigma_t^2} + \frac{(y_i-\mu_y)^2}{\sigma_y^2} + \frac{(z_i-\mu_z)^2}{\sigma_z^2} \right) \right) \]
 
@@ -224,8 +222,6 @@ Try playing around with the correlation coefficients in the 2D Gaussian below to
     <button onclick="javascript:clearDataCorr();">Clear Data</button>
   </div>
 
-**Figure 8 (Interactive) - CO<sub>2</sub> vs time plot and 2D Gaussian (now with correlation coefficients)**
-
 If we wanted to bring back in our temperature measurement $z$, we would need different correlation coefficients for the correlation between each pair of variables. If $\rho_{ty}$ is the correlation coefficient relating $t$ and $y$, $\rho_{tz}$ is the correlation coefficient relating $t$ and $z$, and $\rho_{yz}$ is the correlation coefficient relating $y$ and $z$, then our 3D correlation matrix will look like this: \[ \bf{C} = \begin{bmatrix} \sigma_t^2 & \rho_{ty}\sigma_t\sigma_y & \rho_{tz}\sigma_t\sigma_z \\\ \rho_{ty}\sigma_t\sigma_y & \sigma_y^2 & \rho_{yz}\sigma_y\sigma_z \\\ \rho_{tz}\sigma_t\sigma_z & \rho_{yz}\sigma_y\sigma_z & \sigma_z^2 \end{bmatrix} \]
 
 ## Recap
@@ -259,21 +255,64 @@ How might we show this relationship visually? Let’s create a graph where the v
   </div>
   <div class="slidecontainer" id="stdy1GP1SlideContainer">
     <input type="range" min="10" max="100" value="10" class="slider" id="stdy1GP1">
-    <p>Standard deviation ($\sigma_{y_1}$): <span id="stdy1GP1Val"></span></p>
+    <p>Standard deviation of $y_1$: <span id="stdy1GP1Val"></span></p>
   </div>
   <div class="slidecontainer" id="stdy2GP1SlideContainer">
     <input type="range" min="10" max="100" value="10" class="slider" id="stdy2GP1">
-    <p>Standard deviation ($\sigma_{y_2}$): <span id="stdy2GP1Val"></span></p>
+    <p>Standard deviation $y_2$: <span id="stdy2GP1Val"></span></p>
   </div>
 </div>
 
 **Figure 9 (Interactive) - y1 vs y2 plot and 2D Gaussian**
 
-As we decrease the distance between $t_1$ and $t_2$ on our original plot the correlation between $y_1$ and $y_2$ (and therefore the correlation coefficient in our 2D Gaussian) increases. As the correlation coefficients in our new Gaussian increase it becomes more likely that $y_2$ will have a value close to $y_1$.
+As we decrease the distance between $t_1$ and $t_2$ on our original plot the correlation between $y_1$ and $y_2$ (and therefore the correlation coefficient in our 2D Gaussian) increases. As the correlation coefficients in our new Gaussian increase it becomes *more likely that* $y_2$ *will have a value close to* $y_1$.
 
 ***Correlation coefficients play a core role in the construction of Gaussian processes. They link predictions for new data to the data that has already been recorded.***
 
+Let’s imagine expanding our Gaussian process model to include a third measurement $(t_3,y_3)$. If we take both $y_1$ and $y_2$ as being pre-recorded values of CO<sub>2</sub> concentration, the value of $y_3$ should be influenced by both the distance in time between $t_3$ and $t_1$ and the distance in time between $t_3$ and $t_2$.
+
+To include this third data point in our Gaussian process model, we will need to turn our 2D Gaussian into a 3D Gaussian. This Gaussian will need three correlation coefficients, one to describe the relationship between $y_1$ and $y_2$, one to describe the relationship between $y_1$ and $y_3$, and one to describe the relationship between one to describe the relationship between $y_2$ and $y_3$.
+
+Once we pick a value for $y_1$ our 3D Gaussian becomes a 2D Gaussian for $y_2$ and $y_3$. This is a key idea that allows Gaussian processes to work. The cross-section of a Gaussian in any number of dimensions just becomes a Gaussian in one less dimension.
+
+For a set of $n$ data points we need to use $n$-dimensional Gaussians to represent the predictions of the Gaussian process. Beyond three dimensions, graphical representations become highly impractical, but fortunately we can use the matrices described above (in particular the correlation matrix) to algebraically represent a Gaussian in any number of dimensions. <a href="https://distill.pub/2019/visual-exploration-gaussian-processes/">Distill.pub</a> has some nice visualisations of higher dimensional correlation matrices, using more saturated colours to represent higher correlation.
+
+## The Kernel Trick
+
+You may notice that there’s something missing in our explanation of Gaussian processes so far. What we have at the moment is a way to relate a set of several discrete data points. We can have as many data points as we want, but we need to be able to fit them all into a large, but still finitely-sized, correlation matrix.
+
+The issue here is that the space between any two time points is continuous and therefore represents an infinite set of possible values. In order to create a Gaussian process with an infinite set of possible data points we would need an infinite correlation matrix, which is impossible, right?
+
+This is where the KERNEL TRICK comes in. The KERNEL is a function that lets us put in two different values for $t$, which we will call $t$ and $t'$, and gives us the appropriate correlation matrix entry relating the associated y values.
+
+Think of it like a search engine that lets you search an infinitely spanning matrix for the right correlation coefficient. In fact, the kernel calculates the correlation coefficient using a formula with $t$ and $t'$ as the inputs.
+
+There are many different types of kernels, and the type of kernel you choose can be very dependent on your data, but a key component of any kernel is that they should give higher correlation coefficients if $t$ and $t'$ are closer together. The typical kernel that is used in Gaussian processes is the squared exponential (or RBF) kernel, which has the following formula: \[ K_{SE} (t, t') = \exp (-\frac{\vert t - t' \vert^2}{2L^2}) \]
+
+You’ll notice that our kernel contains an additional term $L$. This term in the squared exponential kernel is known as the *length scale* and determines how far we can extrapolate our Gaussian process model from our data points. These extra terms in our kernels are called HYPERPARAMETERS. They can be adjusted and optimised to affect our infinite correlation matrix in the same way parameters in regular models can be optimised to find the best fitting version of the corresponding equation.
+
+### A Periodic Kernel
+
+The main function of the exponential squared kernel is to ensure that our correlation coefficients are high when $t$ and $t'$ are close together, and that they decrease as $t$ and $t'$ get further apart. In order to model the periodic nature of our CO<sub>2</sub> concentration data, we want to add a kernel that increases correlation coefficients when $t$ and $t'$ are a distance $np$ apart (where $p$ is the length of our period and $n$ is any integer). The best way to do this is by using the periodic kernel: \[ K_P (t, t') = \exp (-\frac{2\sin^2 (\pi \vert t - t' \vert / p)}{L^2}) \]
+
+We can use a sum of these two kernels to create a Gaussian process model for our CO<sub>2</sub> data. We will choose the period $p$ to be 12 months because that’s the periodicity we see in the data.
+
+## Conclusion
+
+Combining these kernels finally gives us a model that properly fits the periodicity of the data. What’s more, this model adapts to our data, allowing us to make predictions without being restrained to a particular relationship between atmospheric CO<sub>2</sub> concentration and time.
+
+An important thing to note is that our Gaussian process model does not tell us anything in particular about the inputs and outputs of CO<sub>2</sub> to and from our atmosphere. If those inputs and/or outputs were to change we would require new data to make new predictions, and those predictions would likely be different from our previous ones. As with any model, you should be cautious about extrapolating too far out from your data.
+
+However, our Gaussian process model does allow us to add new data without changing our model drastically.
+Some of the best uses for Gaussian processes are to model systems where the exact relationship between the inputs and outputs is unclear. Here we’ve used them to model atmospheric CO2 concentration, but they can also be used to predict the brightness of stars, study the distribution of soil, or to aid the movement of robotic arms.
+
+One of the best ways to see the power of Gaussian processes is to build one yourself. You’ll find a link here to a Google Colab notebook where I’ve provided a framework for building a Gaussian Process using Python. All you need to do is fill in the necessary equations and you’ll be able to produce the predictions from a Gaussian process model.
+
+Once you’re done I encourage you to play around with the code. You could adjust the hyperparameters to see what effect that has on the model, or you could change the data.
+
+
 ## References
+
 **The atmospheric carbon dioxide concentration data comes from the following source:**
 Dr. Pieter Tans, NOAA/GML (gml.noaa.gov/ccgg/trends/) and Dr. Ralph Keeling, Scripps Institution of Oceanography (scrippsco2.ucsd.edu/).
 
