@@ -53,9 +53,14 @@ function reshape2D(arr, dim) {
 
 // Add n to all values in array
 function arrAdd(arr, n) {
-  newArr = [];
+  var arrDim = getDim(arr); // Array dimensions
+  arr = arr.flat(); // Flatten array into 1D
+  var newArr = [];
   for (let i = 0; i < arr.length; i++) {
     newArr.push(arr[i] + parseFloat(n)); // Ensure that number is float not string
+  }
+  if (arrDim.length === 2) {
+    newArr = reshape2D(newArr, arrDim);
   }
   return newArr
 }
@@ -75,16 +80,21 @@ function arrMult(arr, n) {
 }
 
 // Subtract one (1D or 2D) matrix from another
-function matMinus(mat1, mat2) {
+function matAdd(mat1, mat2) {
   var matDim = getDim(mat1); // Matrix dimensions
   mat1 = mat1.flat();
   mat2 = mat2.flat();
   var matNew = Array(mat1.length);
   for (let i = 0; i < mat1.length; i++) {
-  matNew[i] = mat1[i] - mat2[i];
+    matNew[i] = mat1[i] + mat2[i];
   } 
   matNew = reshape2D(matNew, matDim);
   return matNew
+}
+
+function matMinus(mat1, mat2) {
+  var mat2New = arrMult(mat2, -1);
+  return matAdd(mat1, mat2New)
 }
 
 // Return transpose of a 2D matrix
@@ -119,6 +129,20 @@ function matMult(mat1, mat2) {
     matNew.push(row)
   }
   return transp2D(matNew)
+}
+
+// Create identity matrix of dimension n
+function identity(n) {
+  var ident = [];
+  for (let i = 0; i < n; i++) {
+    var row = new Array(n)
+    for (let j = 0; j < n; j++) {
+      row[j] = 0;
+    }
+    row[i] = 1;
+    ident.push(row)
+  }
+  return ident
 }
 
 // Return determinant of a 2x2 matrix
@@ -221,6 +245,43 @@ function randNorm1D(mean, std, n) {
   };
   return randArr
 }
+
+// Cholesky decomposition into the product of two matrices (LL^T)
+function CholeskyDecomp(A, n) {
+  var L = Array(n).fill(0).map(x => Array(n).fill(0));
+ 
+  // Decomposing matrix into Lower Triangular
+  for (var i = 0; i < n; i++) {
+    for (var j = 0; j <= i; j++) {
+      var sum = 0;
+      for (var k = 0; k < j; k++) {
+        sum += L[i][k] * L[j][k];
+      }
+      if (i === j) {
+        L[i][j] = Math.sqrt(A[i][i] - sum);
+      } else {
+        L[i][j] = 1.0 / L[j][j] * (A[i][j] - sum);
+      }
+    }
+  }
+  return L
+}
+
+// Take a random sample from a 2D normal distribution
+function randNorm2D(means, corr, n) {
+  var eps = 0.001; // Very small number
+  var K = matAdd(corr, arrMult(identity(2), eps));
+  var L = CholeskyDecomp(K, 2);
+  //Generate random samples
+  var u = reshape2D(randNorm1D(0, 1, 2*n), [2, n]);
+  console.log(matMult(L, u))
+  return matAdd(means, matMult(L, u))
+}
+console.log('new')
+var testMeans = [[1], [2]];
+var testCorr = [[2, 1], [1, 2]];
+var testSamples = randNorm2D(testMeans, testCorr, 10);
+console.log(testSamples[0])
 
 /* OBJECT CONSTRUCTORS */
 function Line() {
