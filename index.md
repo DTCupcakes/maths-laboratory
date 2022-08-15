@@ -15,13 +15,13 @@
 # Gaussian Processes
 ## Introduction
 
-**test caching: 36**
+**test caching: 37**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO<sub>2</sub>) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
 <div id="dataPlot"></div>
 
-*Hover your cursor over the plot above to see the exact data values. Click and drag a rectangle over a region of the plot to zoom in.*
+**Hover your cursor over the plot above to see the exact data values. Click and drag a rectangle over a region of the plot to zoom in.**
 
 CO<sub>2</sub> is a greenhouse gas, since it traps heat in the atmosphere, making it an important part of climate models. Let’s try to make a prediction about the concentration of CO<sub>2</sub> in the atmosphere in March of 2035. Based on the data we have, which of the two predicted values below (shown in orange and green) do you think is more likely?
 
@@ -39,7 +39,7 @@ Our CO<sub>2</sub> data might, at first glance, look like it fits a single strai
 
 <div id="uncPlot"></div>
 
-*Note: I've increased the size of the uncertainties shown so that they are visible on the plot.*
+**Note: I've increased the size of the uncertainties shown so that they are visible on the plot.**
 
 Ideally our line should fit within the uncertainties of all the data points. On the plot, our line will have the general formula \[y = mt +c.\] $t$ is the time at which we measure each data point (i.e. the year), $m$ is the slope of the line, $c$ moves the line vertically up and down, and $y$ is the value we predict for CO<sub>2</sub> concentration.
 
@@ -263,9 +263,9 @@ How might we show this relationship visually? Let’s create a graph where the v
   </div>
 </div>
 
-As we decrease the distance between $t_1$ and $t_2$ on our original plot the correlation between $y_1$ and $y_2$ (and therefore the correlation coefficient in our 2D Gaussian) increases. As the correlation coefficients in our new Gaussian increase it becomes *more likely that* $y_2$ *will have a value close to* $y_1$.
+As we decrease the distance between $t_1$ and $t_2$ on our original plot the correlation between $y_1$ and $y_2$ (and therefore the correlation coefficient in our 2D Gaussian) increases. As the correlation coefficients in our new Gaussian increase it becomes more likely that $y_2$ will have a value close to $y_1$.
 
-***Correlation coefficients play a core role in the construction of Gaussian processes. They link predictions for new data to the data that has already been recorded.***
+**Correlation coefficients play a core role in the construction of Gaussian processes. They link predictions for new data to the data that has already been recorded.**
 
 Let’s imagine expanding our Gaussian process model to include a third measurement $(t_3,y_3)$. If we take both $y_1$ and $y_2$ as being pre-recorded values of CO<sub>2</sub> concentration, the value of $y_3$ should be influenced by both the distance in time between $t_3$ and $t_1$ and the distance in time between $t_3$ and $t_2$.
 
@@ -287,7 +287,7 @@ Think of it like a search engine that lets you search an infinitely spanning mat
 
 There are many different types of kernels, and the type of kernel you choose can be very dependent on your data, but a key component of any kernel is that they should give higher correlation coefficients if $t$ and $t'$ are closer together. The typical kernel that is used in Gaussian processes is the squared exponential (or RBF) kernel, which has the following formula: \[ K_{SE} (t, t') = \exp (-\frac{\vert t - t' \vert^2}{2L^2}) \]
 
-You’ll notice that our kernel contains an additional term $L$. This term in the squared exponential kernel is known as the *length scale* and determines how far we can extrapolate our Gaussian process model from our data points. These extra terms in our kernels are called HYPERPARAMETERS. They can be adjusted and optimised to affect our infinite correlation matrix in the same way parameters in regular models can be optimised to find the best fitting version of the corresponding equation.
+You’ll notice that our kernel contains an additional term $L$. This term in the squared exponential kernel is known as the length scale and determines how far we can extrapolate our Gaussian process model from our data points. These extra terms in our kernels are called HYPERPARAMETERS. They can be adjusted and optimised to affect our infinite correlation matrix in the same way parameters in regular models can be optimised to find the best fitting version of the corresponding equation.
 
 ### A Periodic Kernel
 
