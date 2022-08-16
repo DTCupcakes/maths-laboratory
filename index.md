@@ -12,30 +12,37 @@
 <script defer src="https://cdn.plot.ly/plotly-latest.min.js"> </script>
 <script defer src="myScript.js"></script>
 <style type="text/css" media="screen">
-    .plot > * {
-      display: inline-block;
-      vertical-align: middle;
-    }
-    .outerslidecontainer {
-      width: 49%;
-      height: 200px
-    }
-    .slidecontainer {
-      width: 100%;
-      height: 120px;
-    }
-    .slidecontainer2 {
-      width: 100%;
-      height: 50%;
-    }
-    .slidecontainer3 {
-      width: 100%;
-      height: 33%;
-    }
-    .slider {
-      width: 80%;
-    }
-</style>
+  .plotcontainer {
+    width: 650px;
+    margin: auto;
+  }
+  .plot > * {
+    display: inline-block;
+    vertical-align: middle;
+    margin: auto;
+  }
+  .outerslidecontainer > * {
+    display: inline-block;
+    vertical-align: middle;
+    width: 650px;
+  }
+  .colslidecontainer {
+    width: 49%;
+    height: 200px
+  }
+  .slidecontainer {
+    height: 120px;
+  }
+  .slidecontainer2 {
+    height: 50%;
+  }
+  .slidecontainer3 {
+    height: 33%;
+  }
+  .slider {
+    width: 80%;
+  }
+  </style>
 
 # Gaussian Processes
 
@@ -56,13 +63,17 @@ Click on the links above to learn more about each of these.
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO<sub>2</sub>) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
-<div class="plot" id="dataPlot"></div>
+<div class="plotcontainer">
+  <div class="plot" id="dataPlot"></div>
+</div>
 
 **Hover your cursor over the plot above to see the exact data values. Click and drag a rectangle over a region of the plot to zoom in.**
 
 CO<sub>2</sub> is a greenhouse gas, since it traps heat in the atmosphere, making it an important part of climate models. Let’s try to make a prediction about the concentration of CO<sub>2</sub> in the atmosphere in March of 2035. Based on the data we have, which of the two predicted values below (shown in orange and green) do you think is more likely?
 
-<div class="plot" id="predPlot"></div>
+<div class="plotcontainer">
+  <div class="plot" id="predPlot"></div>
+</div>
 
 I bet you noticed the upward trend in our data, and so you think the higher data point is much more likely than the lower data point. How do we quantify this intuition?
 
@@ -74,7 +85,9 @@ Unlike many models you may be familiar with, Gaussian processes aren’t restric
 
 Our CO<sub>2</sub> data might, at first glance, look like it fits a single straight upwards facing line. Remember that scientific data comes with uncertainties, so let’s add some to our data.
 
-<div class="plot" id="uncPlot"></div>
+<div class="plotcontainer">
+  <div class="plot" id="uncPlot"></div>
+</div>
 
 **Note: I've increased the size of the uncertainties shown so that they are visible on the plot.**
 
@@ -84,17 +97,20 @@ We can experiment with different values of $m$ and $c$ to see what different lin
 
 Try adjusting the values of $m$ and $c$ using the sliders on the plot below to find the linear model that best fits our data.
 
-<div class="plot" id="linModelPlot">
+<div class="plotcontainer">
+  <div class="plot" id="linModelPlot"></div>
   <div class="outerslidecontainer">
-    <div class="slidecontainer" id="linSlopeSlideContainer">
-      <input type="range" min="0" max="50" value="1" class="slider" id="linSlope">
-      <p>m: <span id="linSlopeVal"></span></p>
+    <div class="colslidecontainer">
+      <div class="slidecontainer" id="linSlopeSlideContainer">
+        <input type="range" min="0" max="50" value="1" class="slider" id="linSlope">
+        <p>m: <span id="linSlopeVal"></span></p>
+      </div>
     </div>
-  </div>
-  <div class="outerslidecontainer">
-    <div class="slidecontainer" id="linIceptSlideContainer">
-      <input type="range" min="300" max="400" value="300" class="slider" id="linIcept">
-      <p>c: <span id="linIceptVal"></span></p>
+    <div class="colslidecontainer">
+      <div class="slidecontainer" id="linIceptSlideContainer">
+        <input type="range" min="300" max="400" value="300" class="slider" id="linIcept">
+        <p>c: <span id="linIceptVal"></span></p>
+      </div>
     </div>
   </div>
 </div>
@@ -128,21 +144,24 @@ By using this formula we are able to determine the probability of our CO<sub>2</
 
 On the plot below is shown (in red) a linear model where the parameters are fixed to best fit the data shown above. Try playing around with the value of $t$ and the standard deviation of the normal distribution associated with the linear model.
 
-<div class="plot" id="linGauss1DPlot">
+<div class="plotcontainer">
+  <div class="plot" id="linGauss1DPlot"></div>
   <div class="outerslidecontainer">
-    <div class="slidecontainer" id="tslidecontainer">
-      <input type="range" min="1960" max="2020" value="1980" class="slider" id="myt">
-      <p>$t$: <span id="tVal"></span></p>
-      <p>Mean ($mt+c$): <span id="meanVal"></span></p>
+    <div class="colslidecontainer">
+      <div class="slidecontainer" id="tslidecontainer">
+        <input type="range" min="1960" max="2020" value="1980" class="slider" id="myt">
+        <p>$t$: <span id="tVal"></span></p>
+        <p>Mean ($mt+c$): <span id="meanVal"></span></p>
+      </div>
+      <button onclick="javascript:createData1D();">Create New Data</button>
+      <button onclick="javascript:clearData1D();">Clear Data</button>
     </div>
-    <button onclick="javascript:createData1D();">Create New Data</button>
-    <button onclick="javascript:clearData1D();">Clear Data</button>
-  </div>
-  <div class="outerslidecontainer">
-    <div class="slidecontainer" id="stdslidecontainer">
-      <input type="range" min="10" max="100" value="10" class="slider" id="myStd">
-      <p>Standard deviation: <span id="stdVal"></span></p>
-      <p><span></span></p>
+    <div class="colslidecontainer">
+      <div class="slidecontainer" id="stdslidecontainer">
+        <input type="range" min="10" max="100" value="10" class="slider" id="myStd">
+        <p>Standard deviation: <span id="stdVal"></span></p>
+        <p><span></span></p>
+      </div>
     </div>
   </div>
 </div>
@@ -155,7 +174,9 @@ Not quite.
 
 Our plots so far have used yearly measurements of the atmospheric CO<sub>2</sub> concentration. What happens if we zoom in a little and look at the monthly measurements instead?
 
-<div class="plot" id="monthPlot"></div>
+<div class="plotcontainer">
+  <div class="plot" id="monthPlot"></div>
+</div>
 
 From zooming in to the monthly measurements we can see that we can't account for all the variation in CO<sub>2</sub> concentration by only using our linear model. There is some yearly periodic variation that remains unaccounted for.
 
@@ -181,24 +202,27 @@ You may notice that our 2D Gaussian is simply the product of our two 1D Gaussian
 
 For now, play around with the 2D Gaussian below to see how changing the means and uncertainties affects the probability distribution.
 
-<div class="plot" id="Gauss2DPlot">
+<div class="plotcontainer">
+  <div class="plot" id="Gauss2DPlot"></div>
   <div class="outerslidecontainer">
-    <div class="slidecontainer" id="meant2DSlideContainer">
-      <input type="range" min="1960" max="2020" value="1980" class="slider" id="meant2D">
-      <p>Mean ($\mu_t=t$): <span id="meant2DVal"></span></p>
-      <p>Mean ($\mu_y=mt+c$): <span id="meany2DVal"></span></p>
-      <button onclick="javascript:createData2D();">Create New Data</button>
-      <button onclick="javascript:clearData2D();">Clear Data</button>
+    <div class="colslidecontainer">
+      <div class="slidecontainer" id="meant2DSlideContainer">
+        <input type="range" min="1960" max="2020" value="1980" class="slider" id="meant2D">
+        <p>Mean ($\mu_t=t$): <span id="meant2DVal"></span></p>
+        <p>Mean ($\mu_y=mt+c$): <span id="meany2DVal"></span></p>
+        <button onclick="javascript:createData2D();">Create New Data</button>
+        <button onclick="javascript:clearData2D();">Clear Data</button>
+      </div>
     </div>
-  </div>
-  <div class="outerslidecontainer">
-    <div class="slidecontainer2" id="stdt2DSlideContainer">
-      <input type="range" min="10" max="100" value="10" class="slider" id="stdt2D">
-      <p>Standard deviation ($\sigma_t$): <span id="stdt2DVal"></span></p>
-    </div>
-    <div class="slidecontainer2" id="stdy2DSlideContainer">
-      <input type="range" min="10" max="100" value="10" class="slider" id="stdy2D">
-      <p>Standard deviation ($\sigma_y$): <span id="stdy2DVal"></span></p>
+    <div class="colslidecontainer">
+      <div class="slidecontainer2" id="stdt2DSlideContainer">
+        <input type="range" min="10" max="100" value="10" class="slider" id="stdt2D">
+        <p>Standard deviation ($\sigma_t$): <span id="stdt2DVal"></span></p>
+      </div>
+      <div class="slidecontainer2" id="stdy2DSlideContainer">
+        <input type="range" min="10" max="100" value="10" class="slider" id="stdy2D">
+        <p>Standard deviation ($\sigma_y$): <span id="stdy2DVal"></span></p>
+      </div>
     </div>
   </div>
 </div>
@@ -250,28 +274,31 @@ To find the probability that our measurement will take a particular value, we ca
 
 Try playing around with the correlation coefficients in the 2D Gaussian below to see how they affect the distribution of our measurements.
 
-<div class="plot" id="GaussCorrPlot">
+<div class="plotcontainer">
+  <div class="plot" id="GaussCorrPlot"></div>
   <div class="outerslidecontainer">
-    <div class="slidecontainer" id="meantCorrSlideContainer">
-      <input type="range" min="1960" max="2020" value="1980" class="slider" id="meantCorr">
-      <p>Mean ($\mu_t=t$): <span id="meantCorrVal"></span></p>
-      <p>Mean ($\mu_y=mt+c$): <span id="meanyCorrVal"></span></p>
+    <div class="colslidecontainer">
+      <div class="slidecontainer" id="meantCorrSlideContainer">
+        <input type="range" min="1960" max="2020" value="1980" class="slider" id="meantCorr">
+        <p>Mean ($\mu_t=t$): <span id="meantCorrVal"></span></p>
+        <p>Mean ($\mu_y=mt+c$): <span id="meanyCorrVal"></span></p>
+      </div>
+      <button onclick="javascript:createDataCorr();">Create New Data</button>
+      <button onclick="javascript:clearDataCorr();">Clear Data</button>
     </div>
-    <button onclick="javascript:createDataCorr();">Create New Data</button>
-    <button onclick="javascript:clearDataCorr();">Clear Data</button>
-  </div>
-  <div class="outerslidecontainer">
-    <div class="slidecontainer3" id="stdtCorrSlideContainer">
-      <input type="range" min="10" max="100" value="10" class="slider" id="stdtCorr">
-      <p>Standard deviation ($\sigma_t$): <span id="stdtCorrVal"></span></p>
-    </div>
-    <div class="slidecontainer3" id="stdyCorrSlideContainer">
-      <input type="range" min="10" max="100" value="10" class="slider" id="stdyCorr">
-      <p>Standard deviation ($\sigma_y$): <span id="stdyCorrVal"></span></p>
-    </div>
-    <div class="slidecontainer3" id="rhoCorrSlideContainer">
-      <input type="range" min="-9" max="9" value="0" class="slider" id="rhoCorr">
-      <p>Correlation coefficient ($\rho$): <span id="rhoCorrVal"></span></p>
+    <div class="colslidecontainer">
+      <div class="slidecontainer3" id="stdtCorrSlideContainer">
+        <input type="range" min="10" max="100" value="10" class="slider" id="stdtCorr">
+        <p>Standard deviation ($\sigma_t$): <span id="stdtCorrVal"></span></p>
+      </div>
+      <div class="slidecontainer3" id="stdyCorrSlideContainer">
+        <input type="range" min="10" max="100" value="10" class="slider" id="stdyCorr">
+        <p>Standard deviation ($\sigma_y$): <span id="stdyCorrVal"></span></p>
+      </div>
+      <div class="slidecontainer3" id="rhoCorrSlideContainer">
+        <input type="range" min="-9" max="9" value="0" class="slider" id="rhoCorr">
+        <p>Correlation coefficient ($\rho$): <span id="rhoCorrVal"></span></p>
+      </div>
     </div>
   </div>
 </div>
@@ -301,22 +328,25 @@ The best way to understand what a Gaussian process does is to start with a singl
 
 How might we show this relationship visually? Let’s create a graph where the value of $y_1$ is represented on the horizontal axis and the value of $y_2$ is represented on the vertical axis. We can create a 2D Gaussian on this graph (seen below) to represent the probability of getting a particular pair of $y_1$ and $y_2$.
 
-<div class="plot" id="GPPlot1">
+<div class="plotcontainer">
+  <div class="plot" id="GPPlot1"></div>
   <div class="outerslidecontainer">
-    <div class="slidecontainer" id="t2GP1SlideContainer">
-      <input type="range" min="1960" max="2020" value="1980" class="slider" id="t2GP1">
-      <p>$t_2$: <span id="t2GP1Val"></span></p>
-      <p>Correlation coefficient ($\rho$): <span id="rhoGP1Val"></span></p>
+    <div class="colslidecontainer">
+      <div class="slidecontainer" id="t2GP1SlideContainer">
+        <input type="range" min="1960" max="2020" value="1980" class="slider" id="t2GP1">
+        <p>$t_2$: <span id="t2GP1Val"></span></p>
+        <p>Correlation coefficient ($\rho$): <span id="rhoGP1Val"></span></p>
+      </div>
     </div>
-  </div>
-  <div class="outerslidecontainer">
-    <div class="slidecontainer2" id="stdy1GP1SlideContainer">
-      <input type="range" min="10" max="100" value="10" class="slider" id="stdy1GP1">
-      <p>Standard deviation ($\sigma_y_1$): <span id="stdy1GP1Val"></span></p>
-    </div>
-    <div class="slidecontainer2" id="stdy2GP1SlideContainer">
-      <input type="range" min="10" max="100" value="10" class="slider" id="stdy2GP1">
-      <p>Standard deviation ($\sigma_y_2$): <span id="stdy2GP1Val"></span></p>
+    <div class="colslidecontainer">
+      <div class="slidecontainer2" id="stdy1GP1SlideContainer">
+        <input type="range" min="10" max="100" value="10" class="slider" id="stdy1GP1">
+        <p>Standard deviation ($\sigma_y_1$): <span id="stdy1GP1Val"></span></p>
+      </div>
+      <div class="slidecontainer2" id="stdy2GP1SlideContainer">
+        <input type="range" min="10" max="100" value="10" class="slider" id="stdy2GP1">
+        <p>Standard deviation ($\sigma_y_2$): <span id="stdy2GP1Val"></span></p>
+      </div>
     </div>
   </div>
 </div>
