@@ -38,9 +38,21 @@
 </style>
 
 # Gaussian Processes
+
+### Assumed Knowledge
+
+This explanation assumes you are familiar with the following:
+- <a href="https://www.youtube.com/watch?v=pg827uDPFqA">The exponential function</a> ($e^x$ or $\exp (x)$)
+- <a href="https://www.youtube.com/watch?v=WR9qCSXJlyY">Matrix addition and subtraction</a>
+- <a href="https://www.youtube.com/watch?v=OMA2Mwo0aZg">Matrix multiplication</a>
+- <a href="https://www.youtube.com/watch?v=vTtx-mC61Tw">Inverse</a> and <a href="https://www.youtube.com/watch?v=TZrKrNVhbjI">transposed</a> matrices
+- <a href="https://www.youtube.com/watch?v=3ROzG6n4yMc">Calculating the determinant of a matrix</a>
+
+Click on the links above to learn more about each of these.
+
 ## Introduction
 
-**test caching: 39**
+**test caching: 40**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO<sub>2</sub>) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
