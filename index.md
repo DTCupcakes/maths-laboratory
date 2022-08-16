@@ -11,38 +11,6 @@
   </script>
 <script defer src="https://cdn.plot.ly/plotly-latest.min.js"> </script>
 <script defer src="myScript.js"></script>
-<style type="text/css" media="screen">
-  .plotcontainer {
-    width: 650px;
-    margin: auto;
-  }
-  .plot > * {
-    display: inline-block;
-    vertical-align: middle;
-    margin: auto;
-  }
-  .outerslidecontainer > * {
-    display: inline-block;
-    vertical-align: middle;
-    width: 650px;
-  }
-  .colslidecontainer {
-    width: 49%;
-    height: 200px
-  }
-  .slidecontainer {
-    height: 120px;
-  }
-  .slidecontainer2 {
-    height: 50%;
-  }
-  .slidecontainer3 {
-    height: 33%;
-  }
-  .slider {
-    width: 80%;
-  }
-  </style>
 
 # Gaussian Processes
 
@@ -59,7 +27,7 @@ Click on the links above to learn more about each of these.
 
 ## Introduction
 
-**test caching: 41**
+**test caching: 42**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO<sub>2</sub>) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
