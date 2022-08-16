@@ -47,6 +47,8 @@
 
 # Gaussian Processes
 
+Sometimes the maths notation on this page doesn't load properly. If this happens, try opening this page in another browser.
+
 ### Assumed Knowledge
 
 This explanation assumes you are familiar with the following:
