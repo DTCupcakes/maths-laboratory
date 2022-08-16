@@ -62,8 +62,6 @@ Click on the links above to learn more about each of these.
 
 ## Introduction
 
-**test caching: 47**
-
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO<sub>2</sub>) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
 <div class="plotcontainer">
@@ -384,10 +382,6 @@ An important thing to note is that our Gaussian process model does not tell us a
 
 However, our Gaussian process model does allow us to add new data without changing our model drastically.
 Some of the best uses for Gaussian processes are to model systems where the exact relationship between the inputs and outputs is unclear. Here we’ve used them to model atmospheric CO2 concentration, but they can also be used to predict the brightness of stars, study the distribution of soil, or to aid the movement of robotic arms.
-
-One of the best ways to see the power of Gaussian processes is to build one yourself. You’ll find a link here to a Google Colab notebook where I’ve provided a framework for building a Gaussian Process using Python. All you need to do is fill in the necessary equations and you’ll be able to produce the predictions from a Gaussian process model.
-
-Once you’re done I encourage you to play around with the code. You could adjust the hyperparameters to see what effect that has on the model, or you could change the data.
 
 
 ## References
