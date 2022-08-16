@@ -60,7 +60,7 @@ Click on the links above to learn more about each of these.
 
 ## Introduction
 
-**test caching: 46**
+**test caching: 47**
 
 Imagine that you are a scientist measuring the concentration of atmospheric carbon dioxide (CO<sub>2</sub>) and after more than 40 years of painstaking measurement the results of your measurements look like this.
 
@@ -332,29 +332,17 @@ How might we show this relationship visually? Let’s create a graph where the v
 <div class="plotcontainer">
   <div class="plot" id="GPPlot1"></div>
   <div class="outerslidecontainer">
-    <div class="colslidecontainer">
       <div class="slidecontainer" id="t2GP1SlideContainer">
-        <input type="range" min="1960" max="2020" value="1980" class="slider" id="t2GP1">
+        <input type="range" min="1960" max="2020" value="1982" class="slider" id="t2GP1">
         <p>$t_2$: <span id="t2GP1Val"></span></p>
         <p>Correlation coefficient ($\rho$): <span id="rhoGP1Val"></span></p>
       </div>
-    </div>
-    <div class="colslidecontainer">
-      <div class="slidecontainer2" id="stdy1GP1SlideContainer">
-        <input type="range" min="10" max="100" value="10" class="slider" id="stdy1GP1">
-        <p>Standard deviation ($\sigma_y_1$): <span id="stdy1GP1Val"></span></p>
-      </div>
-      <div class="slidecontainer2" id="stdy2GP1SlideContainer">
-        <input type="range" min="10" max="100" value="10" class="slider" id="stdy2GP1">
-        <p>Standard deviation ($\sigma_y_2$): <span id="stdy2GP1Val"></span></p>
-      </div>
-    </div>
   </div>
 </div>
 
 As we decrease the distance between $t_1$ and $t_2$ on our original plot the correlation between $y_1$ and $y_2$ (and therefore the correlation coefficient in our 2D Gaussian) increases. As the correlation coefficients in our new Gaussian increase it becomes more likely that $y_2$ will have a value close to $y_1$.
 
-**Correlation coefficients play a core role in the construction of Gaussian processes. They link predictions for new data to the data that has already been recorded.**
+***Correlation coefficients play a core role in the construction of Gaussian processes. They link predictions for new data to the data that has already been recorded.***
 
 Let’s imagine expanding our Gaussian process model to include a third measurement $(t_3,y_3)$. If we take both $y_1$ and $y_2$ as being pre-recorded values of CO<sub>2</sub> concentration, the value of $y_3$ should be influenced by both the distance in time between $t_3$ and $t_1$ and the distance in time between $t_3$ and $t_2$.
 

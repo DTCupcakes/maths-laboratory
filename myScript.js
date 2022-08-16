@@ -23,6 +23,15 @@ function fillArr(shape, value) {
   return newArr
 }
 
+// Find maximum value in an array
+function getMax(arr) {
+  var max = 0;
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] > max) {max = arr[i]}
+  }
+  return max
+}
+
 // Get dimesions of an array
 function getDim(arr) {
   var dim = [];
@@ -209,8 +218,8 @@ var OneSigma = (stdt, stdy) => Math.exp(-2) / (2 * Math.PI * stdt * stdy);
 var TwoSigma = (stdt, stdy) => Math.exp(-4) / (2 * Math.PI * stdt * stdy);
 
 // Function for rotating 1D Gaussian onto time vs Co2 plot
-function rotGauss1D(GaussVal, shift) {
-  var LinGaussMult = arrMult(GaussVal, 50);
+function rotGauss1D(GaussVal, shift, scale) {
+  var LinGaussMult = arrMult(GaussVal, scale);
   var LinGauss1D = arrAdd(LinGaussMult, shift);
   return LinGauss1D
 }
@@ -316,13 +325,14 @@ function TraceGauss(xVal, yVal, shift, anchors, color, axSwap) {
   // shift: Shift for Gaussian to line up with mean on linear plot
   // anchors: Axis for Gaussian subplot
   // axSwap: true for Gaussian in t, false otherwise
+  this.shift = shift;
   this.axSwap = axSwap;
 
   this.trace = new Trace(xVal, yVal);
   this.trace.line.color = color;
   this.trace.xaxis = anchors[0];
   this.trace.yaxis = anchors[1];
-  var yValLin = rotGauss1D(yVal, shift);
+  var yValLin = rotGauss1D(yVal, shift, 50);
   if (axSwap === true) { // Don't flip Gaussian on linear plot
     this.traceLin = new Trace(xVal, yValLin);
     this.traceDot = new Trace(xVal, fillArr(xVal.length, shift))
@@ -337,12 +347,18 @@ function TraceGauss(xVal, yVal, shift, anchors, color, axSwap) {
   this.update = function (newY, newShift) {
     this.trace.y = newY;
     if (this.axSwap === true) {
-      this.traceLin.y = rotGauss1D(newY, newShift);
+      this.traceLin.y = rotGauss1D(newY, newShift, 50);
       this.traceDot.y = fillArr(newY.length, newShift);
     } else {
-      this.traceLin.x = rotGauss1D(newY, newShift);
+      this.traceLin.x = rotGauss1D(newY, newShift, 50);
       this.traceDot.x = fillArr(newY.length, newShift);
     }
+  }
+
+  this.scale = function (scale) {
+    this.trace.y = arrMult(this.trace.y, scale)
+    var yValLin = rotGauss1D(this.trace.y, this.shift, 2e4);
+    this.traceLin.x = yValLin;
   }
 }
 
@@ -351,10 +367,10 @@ function TraceContour(xVal, yVal, zVal) {
   this.x = xVal;
   this.y = yVal,
   this.type = 'contour';
-  this.colorscale = 'Greys';
+  this.colorscale = 'Hot';
   this.contours = {
     start: 0,
-    end: OneSigma(1,1),
+    end: 1 * OneSigma(1,1),
     size: 0.5 * OneSigma(1,1)
   };
 }
@@ -1098,15 +1114,15 @@ function clearDataCorr() {
 /* GAUSSIAN PROCESSES PLOT 1 */
 // Location of t1
 var t1 = 1982;
-var y1 = 351;
+var y1 = 380;
 
 // Sliders
 var t2GP1 = new Slider('t2GP1', 't2GP1Val', 1);  // Value of t2
-var stdy1GP1 = new Slider('stdy1GP1', 'stdy1GP1Val', 0.1); // Standard deviation in t
-var stdy2GP1 = new Slider('stdy2GP1', 'stdy2GP1Val', 0.1); // Standard deviation in y
+const stdy1 = 5.0;
+const stdy2 = 5.0;
 
 // Calculate correlation coefficient
-var lengthScale = 100;
+var lengthScale = 30;
 var rhoGP1Output = document.getElementById("rhoGP1Val");
 rhoGP1Output.innerHTML = kernel_SE(t1, t2GP1.out.innerHTML, lengthScale).toPrecision(2);
 
@@ -1123,10 +1139,11 @@ GPPlot1.tracet1 = {
   xaxis: 'x2',
   yaxis: 'y2',
   name: 'y1',
+  marker: {color: 'black'}
 }
 
 var meansGP1 = [[350], [350]];
-var corrGP1 = makeCorrMat2D(stdy1GP1.out.innerHTML, stdy2GP1.out.innerHTML, rhoGP1Output.innerHTML);
+var corrGP1 = makeCorrMat2D(stdy1, stdy2, rhoGP1Output.innerHTML);
 var ProbValGP1 = Gauss2D(xValGP1Gauss, yValGP1Gauss, meansGP1, corrGP1);
 GPPlot1.traceContour = new TraceContour(xValGP1Gauss, yValGP1Gauss, ProbValGP1);
 GPPlot1.traceContour.name = 'Probability Distribution';
@@ -1139,7 +1156,8 @@ GPPlot1.traceGauss.trace.name = 'y2 Normal Distribution';
 GPPlot1.traceGauss.traceLin.name = 'y2 Normal Distribution';
 GPPlot1.traceGauss.traceDot.name = 'y2 Normal Distribution';
 
-var xValLinGP1Gauss1D = rotGauss1D(GPPlot1.traceGauss.trace.y, t2GP1.out.innerHTML);
+var xValLinGP1Gauss1D = rotGauss1D(GPPlot1.traceGauss.trace.y, t2GP1.out.innerHTML, 1e4);
+var yValLinGP1Gauss1D = GPPlot1.traceGauss.traceLin.y;
 GPPlot1.traceGauss.traceLin2 = new Trace(xValLinGP1Gauss1D, GPPlot1.traceGauss.traceLin.y);
 GPPlot1.traceGauss.traceLin2.xaxis = 'x2';
 GPPlot1.traceGauss.traceLin2.yaxis = 'y2';
@@ -1158,6 +1176,10 @@ GPPlot1.layout.yaxis.domain = [0.6, 1];
 GPPlot1.layout.xaxis2.domain = [0, 0.4];
 GPPlot1.layout.yaxis2.domain = [0, 1];
 
+GPPlot1.traceGauss.scale(1e7);
+GPPlot1.layout.yaxis3.title.text = 'Probability (x 10<sup>7</sup>)'
+GPPlot1.layout.yaxis3.range = [0, 1.1 * getMax(GPPlot1.traceGauss.trace.y)];
+
 GPPlot1.data = [ 
   GPPlot1.tracet1,
   GPPlot1.traceGauss.trace,
@@ -1167,6 +1189,10 @@ GPPlot1.data = [
   GPPlot1.traceGauss.traceDot2,  
   GPPlot1.traceContour,
 ];
+
+for (let i= 1; i < 6; i++) {
+  GPPlot1.data[i].line.color = blue;
+}
 
 GPPlot1.div = document.getElementById("GPPlot1");
 Plotly.newPlot(GPPlot1.div, {
@@ -1178,13 +1204,9 @@ Plotly.newPlot(GPPlot1.div, {
 function sliderGP1() {
   let t2 = t2GP1.scale(t2GP1.slider.value);
   let rho = kernel_SE(t1, t2, lengthScale);
-  let stdy1 = stdy1GP1.scale(stdy1GP1.slider.value);
-  let stdy2 = stdy2GP1.scale(stdy2GP1.slider.value);
 
   t2GP1.out.innerHTML = t2.toPrecision(4);
   rhoGP1Output.innerHTML = rho.toPrecision(2);
-  stdy1GP1.out.innerHTML = stdy1.toPrecision(2);
-  stdy2GP1.out.innerHTML = stdy2.toPrecision(2);
 
   var corrGP1 = makeCorrMat2D(stdy1, stdy2, rho);
   var ProbValGP1 = Gauss2D(xValGP1Gauss, yValGP1Gauss, meansGP1, corrGP1);
@@ -1192,13 +1214,13 @@ function sliderGP1() {
   
   var yValGP1Gauss1D = ProbValGP1.map(arr => arr[argGP1Gauss1D]);
   GPPlot1.traceGauss.update(yValGP1Gauss1D, y1);
+  GPPlot1.traceGauss.scale(1e7);
+  GPPlot1.layout.yaxis3.range = [0, 1.1 * getMax(GPPlot1.traceGauss.trace.y)];
 
-  GPPlot1.traceGauss.traceLin2.x = rotGauss1D( GPPlot1.traceGauss.trace.y, t2);
-  GPPlot1.traceGauss.traceLin2.x = fillArr(xValLinGP1Gauss1D.length, t2);
+  GPPlot1.traceGauss.traceLin2.x = rotGauss1D( GPPlot1.traceGauss.trace.y, t2, 1e4);
+  GPPlot1.traceGauss.traceDot2.x = fillArr(xValLinGP1Gauss1D.length, t2);
   plotUpdate( GPPlot1.div,  GPPlot1.data,  GPPlot1.layout);
 }
 
 // Attach slider input function to sliders
 t2GP1.slider.oninput = sliderGP1;
-stdy1GP1.slider.oninput = sliderGP1;
-stdy2GP1.slider.oninput = sliderGP1;
