@@ -45,7 +45,7 @@
     }
     </style>
 
-# Gaussian Processes
+# Why Gaussian Processes are the Most Flexible Model
 
 Sometimes the maths notation on this page doesn't load properly. If this happens, try opening this page in another browser.
 
