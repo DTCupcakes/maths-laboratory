@@ -254,9 +254,11 @@ We can insert the inverse correlation matrix into our previous equation to give 
 
 and then our formula for the 2D Gaussian becomes \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^2\sigma_t^2\sigma_y^2}} \exp \left( -\frac{1}{2} (\bf{x} - \bf{\mu})^T \bf{C}^{-1} (\bf{x} - \bf{\mu}) \right) \]
 
-You’ll also notice that part of the term under the square root is the same as the determinant of our correlation matrix, so we will substitute that in: \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^2 \det(\bf{C})}} \exp \left( -\frac{1}{2} (\bf{x} - \bf{\mu})^T \bf{C}^{-1} (\bf{x} - \bf{\mu}) \right) \]
+You’ll also notice that part of the term under the square root is the same as the determinant of our correlation matrix, so we will substitute that in: \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^n \det(\bf{C})}} \exp \left( -\frac{1}{2} (\bf{x} - \bf{\mu})^T \bf{C}^{-1} (\bf{x} - \bf{\mu}) \right) \]
 
-You’ll notice now that all the variables in this expression are matrices, so now our 2D Gaussian has become an expression for a Gaussian in as many dimensions as we could want. These matrices contain all the information about the means of our model, the uncertainties and the values of our measurements. If we want to expand our model to include more variables then we just need to adjust the matrices. For example, if we wanted to add back in our variable $z$ from before, we would adjust the matrices in the following way
+You’ll notice now that all the variables in this expression are matrices, so now our 2D Gaussian has become an expression for a Gaussian in as many dimensions as we could want. Our final change to the expression is to replace $(2\pi)^2$ in the coefficient out the front with $(2\pi)^n$ where $n$ is the number of dimensions.
+
+These matrices contain all the information about the means of our model, the uncertainties and the values of our measurements. If we want to expand our model to include more variables then we just need to adjust the matrices. For example, if we wanted to add back in our variable $z$ from before, we would adjust the matrices in the following way
 \[ \bf{x} = \begin{bmatrix} t_i \\\ y_i \\\ z_i \end{bmatrix} \]
 \[ \bf{\mu} = \begin{bmatrix} \mu_t \\\ \mu_y \\\ \mu_z \end{bmatrix} \]
 \[ \bf{C} = \begin{bmatrix} \sigma_t^2 & 0 & 0 \\\ 0 & \sigma_y^2 & 0 \\\ 0 & 0 & \sigma_z^2 \end{bmatrix} \]
@@ -320,7 +322,7 @@ which we generalised using the following matrices \[ \bf{x} = \begin{bmatrix} t_
 \[ \bf{\mu} = \begin{bmatrix} \mu_t \\\ \mu_y \end{bmatrix} \]
 \[ \bf{C} = \begin{bmatrix} \sigma_t^2 & \rho\sigma_t\sigma_y \\\ \rho\sigma_t\sigma_y & \sigma_y^2 \end{bmatrix} \]
 
-to a formula for the probability of measurements taking particular values along any number of axes: \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^2 \det(\bf{C})}} \exp \left( -\frac{1}{2} (\bf{x} - \bf{\mu})^T \bf{C}^{-1} (\bf{x} - \bf{\mu}) \right) \]
+to a formula for the probability of measurements taking particular values along any number of axes: \[ P(t_i, y_i \vert \sigma_t, \sigma_y) = \frac{1}{\sqrt{(2\pi)^n \det(\bf{C})}} \exp \left( -\frac{1}{2} (\bf{x} - \bf{\mu})^T \bf{C}^{-1} (\bf{x} - \bf{\mu}) \right) \]
 
 The correlation coefficient/s $\rho$ in the correlation matrix gives us a measure of the correlation between uncertainties along any two axes, taking larger values (more positive or more negative) if the correlation is higher.
 
