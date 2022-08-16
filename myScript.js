@@ -431,7 +431,7 @@ function Layout(xLabels, yLabels, xRanges, yRanges) {
     linecolor: 'black',
     mirror: true,
     anchor: 'x1',
-    domain: [0.1, 0.9]
+    domain: [0, 1]
   };
   this.xaxis2 = {
     title: new Title(xLabels[1]),
@@ -446,7 +446,7 @@ function Layout(xLabels, yLabels, xRanges, yRanges) {
     range: yRanges[1],
     linecolor: 'black',
     mirror: true,
-    domain: [0.6, 1],
+    domain: [0.65, 1],
     anchor: 'x2'
   };
   this.xaxis3 = {
@@ -462,7 +462,7 @@ function Layout(xLabels, yLabels, xRanges, yRanges) {
     range: yRanges[2],
     linecolor: 'black',
     mirror: true,
-    domain: [0, 0.4],
+    domain: [0, 0.35],
     anchor: 'x3'
   };
   this.grid = {rows: 1, columns: 2, pattern: 'independent'};
@@ -492,7 +492,8 @@ const xLimData = [1980, 2040];
 const yLimData = [300, 450];
 const xLimMonth = [2000, 2020];
 const xLabelData = 'Year';
-const yLabelData = 'Carbon Dioxide Concentration (ppm)';
+const yLabelData = 'C0<sub>2</sub> Concentration (ppm)';
+//const yLabelData = 'Carbon Dioxide Concentration (ppm)';
 const xLabelsLin = [xLabelData, nullLabel, nullLabel];
 const yLabelsLin = [yLabelData, nullLabel, nullLabel]
 const xRangesLin = [xLimData, nullLim, nullLim];
@@ -519,8 +520,11 @@ const xRangesGauss2D = [xLimData, xLimData, yLimData];
 const yRangesGauss2D = [yLimData, yLimGauss, yLimGauss];
 
 /* General Plot Info (Gaussian Processes) */
-const xLabelsGP1 = [yLabelData, xLabelData, yLabelData];
-const yLabelsGP1 = [yLabelData, yLabelData, yLabelGauss];
+const xLabelGP = 'y<sub>1</sub>'
+const yLabelGP = 'y<sub>2</sub>'
+
+const xLabelsGP1 = [xLabelGP, xLabelData, yLabelGP];
+const yLabelsGP1 = [yLabelGP, yLabelData, yLabelGauss];
 const xRangesGP1 = [yLimData, xLimData, yLimData];
 const yRangesGP1 = [yLimData, yLimData, yLimGauss];
 
@@ -755,7 +759,7 @@ Gauss1DPlot.traceGauss.traceLin.name = 'Normal Distribution';
 Gauss1DPlot.traceGauss.traceDot.name = 'Normal Distribution';
 
 Gauss1DPlot.layout = new Layout(xLabelsGauss1D, yLabelsGauss1D, xRangesGauss1D, yRangesGauss1D);
-Gauss1DPlot.layout.yaxis2.domain = [0, 1];
+Gauss1DPlot.layout.yaxis2.domain = [0.25, 0.75];
 
 Gauss1DPlot.data = [
   //traceCO2DataUnc,
@@ -861,6 +865,12 @@ Gauss2DPlot.traceLinFixed = Gauss1DPlot.traceLinFixed;
 
 Gauss2DPlot.traceGausst = new TraceGauss(xValGauss2Dt, yValGauss2Dt, meany2DOutput.innerHTML, ['x2', 'y2'], green, true);
 Gauss2DPlot.traceGaussy = new TraceGauss(xValGauss2Dy, yValGauss2Dy, meant2D.out.innerHTML, ['x3', 'y3'], blue);
+Gauss2DPlot.traceGausst.trace.name = 't Normal Distribution'
+Gauss2DPlot.traceGausst.traceLin.name = 't Normal Distribution'
+Gauss2DPlot.traceGausst.traceDot.name = 't Normal Distribution'
+Gauss2DPlot.traceGaussy.trace.name = 'y normal Distribution'
+Gauss2DPlot.traceGaussy.traceLin.name ='y normal Distribution'
+Gauss2DPlot.traceGaussy.traceDot.name = 'y Normal Distribution'
 
 var means2D = [[meant2D.out.innerHTML], [meany2DOutput.innerHTML]];
 var corr2D = makeCorrMat2D(stdt2D.out.innerHTML, stdy2D.out.innerHTML, 0);
@@ -980,6 +990,12 @@ GaussCorrPlot.traceLinFixed = Gauss1DPlot.traceLinFixed;
 
 GaussCorrPlot.traceGausst = new TraceGauss(xValGaussCorrt, yValGaussCorrt, meanyCorrOutput.innerHTML, ['x2', 'y2'], green, true);
 GaussCorrPlot.traceGaussy = new TraceGauss(xValGaussCorry, yValGaussCorry, meantCorr.out.innerHTML, ['x3', 'y3'], blue);
+GaussCorrPlot.traceGausst.trace.name = 't Normal Distribution'
+GaussCorrPlot.traceGausst.traceLin.name = 't Normal Distribution'
+GaussCorrPlot.traceGausst.traceDot.name = 't Normal Distribution'
+GaussCorrPlot.traceGaussy.trace.name= 'y normal Distribution'
+GaussCorrPlot.traceGaussy.traceLin.name ='y normal Distribution'
+GaussCorrPlot.traceGaussy.traceDot.name = 'y Normal Distribution'
 
 var meansCorr = [[meantCorr.out.innerHTML], [meanyCorrOutput.innerHTML]];
 var corrCorr = makeCorrMat2D(stdtCorr.out.innerHTML, stdyCorr.out.innerHTML, rhoCorr.out.innerHTML);
@@ -1106,34 +1122,41 @@ GPPlot1.tracet1 = {
   y: dpGP1[1],
   xaxis: 'x2',
   yaxis: 'y2',
+  name: 'y1',
 }
 
 var meansGP1 = [[350], [350]];
 var corrGP1 = makeCorrMat2D(stdy1GP1.out.innerHTML, stdy2GP1.out.innerHTML, rhoGP1Output.innerHTML);
 var ProbValGP1 = Gauss2D(xValGP1Gauss, yValGP1Gauss, meansGP1, corrGP1);
 GPPlot1.traceContour = new TraceContour(xValGP1Gauss, yValGP1Gauss, ProbValGP1);
+GPPlot1.traceContour.name = 'Probability Distribution';
 
 var argGP1Gauss1D = interpArg(y1, yLimData, xValGP1Gauss.length);
 var xValGP1Gauss1D = xValGP1Gauss;
 var yValGP1Gauss1D = ProbValGP1.map(arr => arr[argGP1Gauss1D]);
 GPPlot1.traceGauss = new TraceGauss(xValGP1Gauss1D, yValGP1Gauss1D, y1, ['x3', 'y3'], red);
+GPPlot1.traceGauss.trace.name = 'y2 Normal Distribution';
+GPPlot1.traceGauss.traceLin.name = 'y2 Normal Distribution';
+GPPlot1.traceGauss.traceDot.name = 'y2 Normal Distribution';
 
 var xValLinGP1Gauss1D = rotGauss1D(GPPlot1.traceGauss.trace.y, t2GP1.out.innerHTML);
 GPPlot1.traceGauss.traceLin2 = new Trace(xValLinGP1Gauss1D, GPPlot1.traceGauss.traceLin.y);
 GPPlot1.traceGauss.traceLin2.xaxis = 'x2';
 GPPlot1.traceGauss.traceLin2.yaxis = 'y2';
+GPPlot1.traceGauss.traceLin2.name = 'y2 Normal Distribution';
 
 var xValDotGP1Gauss1D = fillArr(xValLinGP1Gauss1D.length, t2GP1.out.innerHTML);
 GPPlot1.traceGauss.traceDot2 = new Trace(xValDotGP1Gauss1D, GPPlot1.traceGauss.traceLin.y);
 GPPlot1.traceGauss.traceDot2.line.dash = 'dot';
 GPPlot1.traceGauss.traceDot2.xaxis = 'x2';
 GPPlot1.traceGauss.traceDot2.yaxis = 'y2';
+GPPlot1.traceGauss.traceDot2.name = 'y2 Normal Distribution';
 
 GPPlot1.layout = new Layout(xLabelsGP1, yLabelsGP1, xRangesGP1, yRangesGP1);
 GPPlot1.layout.xaxis.domain = [0.6, 1];
 GPPlot1.layout.yaxis.domain = [0.6, 1];
-GPPlot1.layout.xaxis2.domain = [0, 0.45];
-GPPlot1.layout.yaxis2.domain = [0.1, 0.9];
+GPPlot1.layout.xaxis2.domain = [0, 0.4];
+GPPlot1.layout.yaxis2.domain = [0, 1];
 
 GPPlot1.data = [ 
   GPPlot1.tracet1,
